@@ -294,16 +294,6 @@
   .dc-total{ font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:8px; }
 
   /* ---------- Dashboard ---------- */
-  .segmented{
-    display:flex; background:var(--surface); border:1px solid var(--border);
-    border-radius:100px; padding:4px; margin-bottom:16px;
-  }
-  .segmented button{
-    flex:1; border:none; background:none; color:var(--text-dim);
-    font-family:var(--body); font-weight:600; font-size:13px;
-    padding:9px 0; border-radius:100px; cursor:pointer;
-  }
-  .segmented button.active{ background:var(--gold); color:#1A1200; }
 
   .big-stat{
     background:linear-gradient(160deg, var(--surface-2), var(--surface));
@@ -317,18 +307,6 @@
   .big-stat .bs-num{ font-family:var(--mono); font-size:34px; font-weight:600; }
   .big-stat .bs-sub{ font-size:12px; color:var(--text-faint); margin-top:4px; }
 
-  .balance-card{
-    background:rgba(242,194,48,.08);
-    border:1px solid rgba(242,194,48,.25);
-    border-radius:var(--radius);
-    padding:14px 16px;
-    margin-bottom:16px;
-    font-size:13.5px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .balance-card .bicon{ font-size:20px; }
 
   /* ---------- Categorías tab ---------- */
   .cat-row{
@@ -611,7 +589,7 @@ let db = null;
 const MARGIN = 0.10; // tolerancia visual; no aumenta el presupuesto oficial
 
 const TRIP_DAYS = [
-  { id:'2026-07-29', short:'Lle', label:'Llegada',          sub:'Mié 29 Jul', transporte:65, comida:0  },
+  { id:'2026-07-29', short:'Lle', label:'Llegada',          sub:'Mié 29 Jul', transporte:65, comida:10 },
   { id:'2026-07-30', short:'1',   label:'Día 1',            sub:'Jue 30 Jul', transporte:0,  comida:64 },
   { id:'2026-07-31', short:'2',   label:'Día 2',            sub:'Vie 31 Jul', transporte:0,  comida:52 },
   { id:'2026-08-01', short:'3',   label:'Día 3',            sub:'Sáb 1 Ago',  transporte:12, comida:52 },
@@ -637,7 +615,6 @@ let state = {
   tab: 'hoy',
   expenses: [],
   customCategories: [],
-  dashViewer: 'juntos',
   me: localStorage.getItem('nyc_trip_identity') || null,
   loadedExpenses: false,
   loadedCategories: false,
@@ -949,24 +926,20 @@ function miniBar(spent, limit, color){
 }
 
 function viewDash(){
-  const totalNicky = sumAmount(expensesFor({ paidBy:'Nicky' }));
-  const totalSteven = sumAmount(expensesFor({ paidBy:'Steven' }));
-  const combined = totalNicky + totalSteven;
-  const diff = Math.abs(totalNicky - totalSteven) / 2;
-  const balanceMsg = diff < 0.005 ? 'Van parejos — nadie le debe nada al otro.' : totalNicky > totalSteven
-    ? `Steven le debe a Nicky ${formatMoney(diff)} para quedar 50/50.`
-    : `Nicky le debe a Steven ${formatMoney(diff)} para quedar 50/50.`;
-
-  const viewer = state.dashViewer;
-  const filterPaidBy = viewer === 'juntos' ? null : viewer;
-  const viewerTotal = viewer === 'juntos' ? combined : sumAmount(expensesFor({ paidBy: viewer }));
+  const totalSpent = tripTotalSpentLimitedCats();
   const totalLimit = tripTotalLimit();
   const totalTol = tripTotalTolerance();
-  const limitedSpent = viewer === 'juntos' ? tripTotalSpentLimitedCats()
-    : sumAmount(expensesFor({ paidBy: viewer }).filter(e => e.category==='comida' || e.category==='transporte'));
+  const remaining = Math.max(totalLimit - totalSpent, 0);
+  const totalAllCategories = sumAmount(state.expenses);
+  const overallStatus = statusFor(totalSpent, totalLimit, totalTol);
+  const statusText = overallStatus === 'good'
+    ? `Disponible dentro del plan: ${formatMoney(remaining)}`
+    : overallStatus === 'warn'
+      ? `Exceso sobre el plan: ${formatMoney(totalSpent - totalLimit)} · aún dentro de la tolerancia`
+      : `Exceso sobre el plan: ${formatMoney(totalSpent - totalLimit)}`;
 
   const catRows = allCategories().map(c => {
-    const spent = sumAmount(expensesFor({ categoryId: c.id, paidBy: filterPaidBy }));
+    const spent = sumAmount(expensesFor({ categoryId: c.id }));
     const limit = c.hasLimit ? tripTotalLimitForCat(c.id) : 0;
     const tol = limit * (1+MARGIN);
     const pct = c.hasLimit && tol>0 ? Math.min((spent/tol)*100,100) : (spent>0?100:0);
@@ -974,16 +947,20 @@ function viewDash(){
     const color = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : safeHex(c.hex);
     return `<div class="cat-card"><div class="cc-top"><div class="cc-name"><span class="cc-dot" style="background:${safeHex(c.hex)}"></span>${safeIcon(c.icon)} ${categoryName(c)}</div>
       <div class="cc-amounts"><b>${formatMoney(spent)}</b>${c.hasLimit ? ' / '+formatMoney(limit) : ''}</div></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div></div>`;
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
+      ${c.hasLimit ? `<div class="cc-foot"><span>Plan ${formatMoney(limit)}</span><span>Tolerancia ${formatMoney(tol)}</span></div>` : `<div class="cc-nolimit">Sin límite fijo — informativo</div>`}
+    </div>`;
   }).join('');
 
   return `<div class="section-title">Dashboard</div>
-    <div class="segmented"><button data-view="Nicky" class="${viewer==='Nicky'?'active':''}">Nicky</button><button data-view="Steven" class="${viewer==='Steven'?'active':''}">Steven</button><button data-view="juntos" class="${viewer==='juntos'?'active':''}">Juntos</button></div>
-    <div class="balance-card"><span class="bicon">🤝</span><span>${balanceMsg}</span></div>
-    <div class="big-stat"><div class="bs-label">${viewer==='juntos' ? 'Comida + transporte' : 'Pagado por '+viewer+' (todas las categorías)'}</div>
-      <div class="bs-num">${formatMoney(viewer==='juntos' ? limitedSpent : viewerTotal)}</div>
-      <div class="bs-sub">${viewer==='juntos' ? `Total real de todas las categorías: ${formatMoney(combined)} · Límite controlado ${formatMoney(totalLimit)} · Tolerancia ${formatMoney(totalTol)}` : `Total combinado de la pareja: ${formatMoney(combined)}`}</div></div>
-    <div class="exp-list-title">Por categoría</div>${catRows}`;
+    <div class="big-stat"><div class="bs-label">Gastado en comida + transporte</div>
+      <div class="bs-num">${formatMoney(totalSpent)}</div>
+      <div class="bs-sub">Plan ${formatMoney(totalLimit)} · Tolerancia ${formatMoney(totalTol)}<br>${statusText}</div></div>
+    <div class="day-hero"><div class="dh-top"><div>
+      <div class="dh-label">${formatMoney(totalAllCategories)}</div>
+      <div class="dh-date">Total registrado incluyendo entradas y categorías adicionales</div>
+    </div></div></div>
+    <div class="exp-list-title">Resumen por categoría</div>${catRows}`;
 }
 
 function viewCats(){
@@ -1015,9 +992,6 @@ function bindDynamicEvents(){
     if (!confirm('¿Eliminar este gasto?')) return;
     const promise = deleteDoc(doc(db, 'trips', TRIP_ID, 'expenses', el.dataset.del));
     queueWrite(promise, navigator.onLine ? 'Eliminando…' : 'Eliminación pendiente', 'Gasto eliminado', 'No se pudo eliminar');
-  }));
-  document.querySelectorAll('[data-view]').forEach(el => el.addEventListener('click', () => {
-    state.dashViewer = el.dataset.view; render();
   }));
   document.querySelectorAll('[data-delcat]').forEach(el => el.addEventListener('click', () => {
     const categoryId = el.dataset.delcat;
