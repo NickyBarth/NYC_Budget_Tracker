@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NYC 2026 · Gastos</title>
+<meta name="theme-color" content="#0A1428">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1428;
+    --bg-2:#081020;
+    --surface:#121E36;
+    --surface-2:#1A2A4A;
+    --surface-3:#22345A;
+    --border:rgba(255,255,255,.08);
+    --border-2:rgba(255,255,255,.14);
+    --text:#F5F7FA;
+    --text-dim:#9AA5B8;
+    --text-faint:#6B7690;
+    --gold:#F2C230;
+    --gold-dim:#C89A1F;
+
+    --cat-comida:#FF6B3D;
+    --cat-transporte:#3B7CFF;
+    --cat-entradas:#6CBE45;
+
+    --status-good:#22C55E;
+    --status-warn:#FBBF24;
+    --status-over:#EF4444;
+
+    --display:'Bebas Neue', 'Inter', sans-serif;
+    --body:'Inter', -apple-system, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+
+    --radius:16px;
+    --radius-sm:10px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse 600px 300px at 15% -10%, rgba(59,124,255,.16), transparent),
+      radial-gradient(ellipse 500px 260px at 90% 0%, rgba(242,194,48,.09), transparent);
+    color:var(--text);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+    box-shadow:0 0 60px rgba(0,0,0,.5);
+  }
+
+  ::-webkit-scrollbar{ display:none; }
+  *{ scrollbar-width:none; }
+
+  /* ---------- HEADER ---------- */
+  header.top{
+    padding:18px 18px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:linear-gradient(180deg, var(--bg) 70%, transparent);
+    backdrop-filter:blur(6px);
+  }
+  .brand{ display:flex; flex-direction:column; line-height:1; }
+  .brand .eyebrow{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.14em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .brand h1{
+    font-family:var(--display);
+    font-size:30px;
+    letter-spacing:.03em;
+    margin:0;
+    font-weight:400;
+  }
+  .top-actions{ display:flex; align-items:center; gap:10px; }
+  .sync-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--status-good);
+    box-shadow:0 0 8px var(--status-good);
+    transition:background .3s, box-shadow .3s;
+  }
+  .sync-dot.offline{ background:var(--text-faint); box-shadow:none; }
+  .sync-dot.pending{ background:var(--status-warn); box-shadow:0 0 8px var(--status-warn); }
+  .sync-dot.error{ background:var(--status-over); box-shadow:0 0 8px var(--status-over); }
+  .icon-btn{
+    width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text-dim); cursor:pointer;
+  }
+  .icon-btn:active{ transform:scale(.94); }
+
+  /* ---------- METRO LINE ---------- */
+  .metro-wrap{
+    padding:4px 0 16px;
+  }
+  .metro-scroll{
+    display:flex;
+    align-items:flex-start;
+    padding:10px 18px 4px;
+    overflow-x:auto;
+    gap:0;
+  }
+  .metro-station{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex:0 0 auto;
+    width:46px;
+    position:relative;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+    color:inherit;
+  }
+  .metro-station .line{
+    position:absolute;
+    top:9px;
+    left:-23px;
+    width:46px;
+    height:3px;
+    background:var(--border-2);
+    z-index:0;
+  }
+  .metro-station:first-child .line{ display:none; }
+  .metro-station .dot{
+    width:20px; height:20px; border-radius:50%;
+    background:var(--surface-2);
+    border:3px solid var(--status-good);
+    z-index:1;
+    transition:transform .2s;
+  }
+  .metro-station.warn .dot{ border-color:var(--status-warn); }
+  .metro-station.over .dot{ border-color:var(--status-over); }
+  .metro-station.empty .dot{ border-color:var(--border-2); background:var(--surface); }
+  .metro-station.current .dot{
+    width:26px; height:26px;
+    background:var(--gold);
+    border-color:var(--gold);
+    box-shadow:0 0 0 4px rgba(242,194,48,.2);
+  }
+  .metro-station .stlabel{
+    margin-top:6px;
+    font-family:var(--mono);
+    font-size:9.5px;
+    color:var(--text-faint);
+    letter-spacing:.02em;
+  }
+  .metro-station.current .stlabel{ color:var(--gold); font-weight:600; }
+
+  /* ---------- TABS CONTENT ---------- */
+  main{
+    flex:1;
+    padding:0 18px calc(96px + var(--safe-bottom));
+  }
+  .section-title{
+    font-family:var(--display);
+    font-size:22px;
+    letter-spacing:.02em;
+    margin:18px 0 12px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+  }
+  .section-title span.sub{
+    font-family:var(--body);
+    font-size:12px;
+    color:var(--text-faint);
+    font-weight:500;
+  }
+
+  .day-hero{
+    background:linear-gradient(160deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:16px;
+  }
+  .day-hero .dh-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .day-hero .dh-label{ font-family:var(--display); font-size:26px; }
+  .day-hero .dh-date{ font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin-top:2px;}
+  .pill{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:100px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .pill.good{ background:rgba(34,197,94,.15); color:var(--status-good); }
+  .pill.warn{ background:rgba(251,191,36,.15); color:var(--status-warn); }
+  .pill.over{ background:rgba(239,68,68,.15); color:var(--status-over); }
+  .pill.empty{ background:var(--surface-2); color:var(--text-faint); }
+
+  .cat-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+  }
+  .cat-card .cc-top{
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;
+  }
+  .cc-name{ display:flex; align-items:center; gap:8px; font-weight:600; font-size:14.5px; }
+  .cc-dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  .cc-amounts{ font-family:var(--mono); font-size:13.5px; color:var(--text-dim); text-align:right; }
+  .cc-amounts b{ color:var(--text); font-size:16px; }
+  .bar-track{
+    position:relative;
+    height:8px;
+    background:var(--surface-3);
+    border-radius:100px;
+    overflow:visible;
+    margin-top:2px;
+  }
+  .bar-fill{
+    position:absolute; left:0; top:0; height:100%;
+    border-radius:100px;
+    transition:width .4s ease;
+  }
+  .bar-tick{
+    position:absolute; top:-3px; width:2px; height:14px;
+    background:rgba(255,255,255,.35);
+    border-radius:2px;
+  }
+  .cc-foot{ display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; font-family:var(--mono); color:var(--text-faint); }
+  .cc-nolimit{ font-size:11px; color:var(--text-faint); font-style:italic; margin-top:2px;}
+
+  .exp-list-title{ font-size:12.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); margin:20px 2px 8px; font-weight:600;}
+  .exp-item{
+    display:flex; align-items:center; gap:12px;
+    padding:11px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .exp-item:last-child{ border-bottom:none; }
+  .exp-cat-dot{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
+  .exp-info{ flex:1; min-width:0; }
+  .exp-note{ font-size:13.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .exp-meta{ font-size:11px; color:var(--text-faint); margin-top:1px; }
+  .exp-amount{ font-family:var(--mono); font-weight:600; font-size:14.5px; }
+  .exp-del{ color:var(--text-faint); font-size:18px; padding:4px 2px; cursor:pointer; background:none; border:none; font-family:var(--body); }
+
+  .empty-state{
+    text-align:center; padding:34px 10px; color:var(--text-faint);
+  }
+  .empty-state .es-icon{ font-size:30px; margin-bottom:8px; }
+  .empty-state p{ font-size:13.5px; margin:0; line-height:1.5; }
+
+  .day-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+    cursor:pointer;
+  }
+  .day-card .dc-top{ display:flex; justify-content:space-between; align-items:center; }
+  .day-card .dc-label{ font-weight:700; font-size:14.5px; }
+  .day-card .dc-date{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+  .dc-bars{ display:flex; gap:6px; margin-top:10px; }
+  .dc-bars .bar-track{ flex:1; height:6px; }
+  .dc-total{ font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:8px; }
+
+  /* ---------- Dashboard ---------- */
+  .segmented{
+    display:flex; background:var(--surface); border:1px solid var(--border);
+    border-radius:100px; padding:4px; margin-bottom:16px;
+  }
+  .segmented button{
+    flex:1; border:none; background:none; color:var(--text-dim);
+    font-family:var(--body); font-weight:600; font-size:13px;
+    padding:9px 0; border-radius:100px; cursor:pointer;
+  }
+  .segmented button.active{ background:var(--gold); color:#1A1200; }
+
+  .big-stat{
+    background:linear-gradient(160deg, var(--surface-2), var(--surface));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px 18px;
+    margin-bottom:16px;
+    text-align:center;
+  }
+  .big-stat .bs-label{ font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+  .big-stat .bs-num{ font-family:var(--mono); font-size:34px; font-weight:600; }
+  .big-stat .bs-sub{ font-size:12px; color:var(--text-faint); margin-top:4px; }
+
+  .balance-card{
+    background:rgba(242,194,48,.08);
+    border:1px solid rgba(242,194,48,.25);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:16px;
+    font-size:13.5px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .balance-card .bicon{ font-size:20px; }
+
+  /* ---------- Categorías tab ---------- */
+  .cat-row{
+    display:flex; align-items:center; gap:12px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px;
+  }
+  .cat-row .cr-dot{ width:14px; height:14px; border-radius:50%; flex:0 0 auto; }
+  .cat-row .cr-name{ flex:1; font-weight:600; font-size:14px; }
+  .cat-row .cr-total{ font-family:var(--mono); font-size:13px; color:var(--text-dim); }
+  .cat-row .cr-del{ color:var(--text-faint); cursor:pointer; font-size:16px; padding:2px 6px; background:none; border:none; font-family:var(--body); }
+
+  .add-cat-form{
+    display:flex; gap:8px; margin-top:14px;
+  }
+  .add-cat-form input{ flex:1; }
+  .btn-sm{
+    background:var(--gold); color:#1A1200; border:none; border-radius:var(--radius-sm);
+    padding:0 16px; font-weight:700; font-size:13.5px; cursor:pointer;
+  }
+
+  /* ---------- Bottom nav ---------- */
+  nav.bottom{
+    position:fixed;
+    bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px;
+    background:rgba(18,30,54,.92);
+    backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);
+    display:flex;
+    padding:8px 6px calc(8px + var(--safe-bottom));
+    z-index:30;
+  }
+  nav.bottom button{
+    flex:1; background:none; border:none; color:var(--text-faint);
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    font-family:var(--body); font-size:10px; font-weight:600;
+    padding:6px 0; cursor:pointer;
+  }
+  nav.bottom button svg{ width:20px; height:20px; }
+  nav.bottom button.active{ color:var(--gold); }
+
+  .fab{
+    position:fixed;
+    bottom:calc(78px + var(--safe-bottom));
+    left:50%;
+    transform:translateX(calc(-50% + 190px));
+    width:56px; height:56px; border-radius:50%;
+    background:var(--gold);
+    color:#1A1200;
+    border:none;
+    font-size:28px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px rgba(242,194,48,.4);
+    cursor:pointer;
+    z-index:31;
+  }
+  .fab:active{ transform:translateX(calc(-50% + 190px)) scale(.93); }
+
+  /* ---------- Sheet / Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(4,8,18,.7);
+    backdrop-filter:blur(2px);
+    z-index:40; display:none;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .overlay.show{ display:flex; }
+  .sheet{
+    width:100%; max-width:480px;
+    background:var(--bg-2);
+    border-top:1px solid var(--border-2);
+    border-radius:22px 22px 0 0;
+    padding:10px 20px calc(24px + var(--safe-bottom));
+    max-height:88vh;
+    overflow-y:auto;
+    animation:slideUp .25s ease;
+  }
+  @keyframes slideUp{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .sheet-handle{ width:40px; height:4px; background:var(--border-2); border-radius:4px; margin:6px auto 14px; }
+  .sheet h2{ font-family:var(--display); font-size:22px; margin:0 0 16px; letter-spacing:.02em; }
+  .field-label{ font-size:12px; color:var(--text-dim); font-weight:600; margin:14px 0 6px; text-transform:uppercase; letter-spacing:.06em; }
+  .amount-input{
+    width:100%; background:var(--surface); border:1px solid var(--border-2);
+    border-radius:var(--radius-sm); color:var(--text); font-family:var(--mono);
+    font-size:28px; font-weight:600; padding:14px 16px; text-align:center;
+  }
+  .amount-input:focus{ outline:none; border-color:var(--gold); }
+  input[type=text], input[type=email], input[type=password], select{
+    width:100%; background:var(--surface); border:1px solid var(--border-2);
+    border-radius:var(--radius-sm); color:var(--text); font-family:var(--body);
+    font-size:14.5px; padding:11px 13px;
+  }
+  input:focus, select:focus{ outline:none; border-color:var(--gold); }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    display:flex; align-items:center; gap:6px;
+    background:var(--surface); border:1.5px solid var(--border-2);
+    border-radius:100px; padding:8px 13px; font-size:13px; font-weight:600;
+    cursor:pointer; color:var(--text-dim); font-family:var(--body);
+  }
+  .chip .chip-dot{ width:8px; height:8px; border-radius:50%; }
+  .chip.sel{ border-color:var(--gold); color:var(--text); background:rgba(242,194,48,.1); }
+  .chip.add-chip{ border-style:dashed; color:var(--text-faint); }
+  .who-row{ display:flex; gap:10px; }
+  .who-btn{
+    flex:1; padding:14px 0; text-align:center; border-radius:var(--radius-sm);
+    border:1.5px solid var(--border-2); background:var(--surface);
+    font-weight:700; font-size:14px; color:var(--text-dim); cursor:pointer;
+  }
+  .who-btn.sel{ border-color:var(--gold); background:rgba(242,194,48,.12); color:var(--text); }
+  .btn-main{
+    width:100%; margin-top:20px;
+    background:var(--gold); color:#1A1200; border:none;
+    border-radius:var(--radius-sm); padding:15px 0;
+    font-weight:800; font-size:15px; cursor:pointer;
+    font-family:var(--body);
+  }
+  .btn-main:active{ transform:scale(.98); }
+  .btn-ghost{
+    width:100%; margin-top:8px; background:none; border:none;
+    color:var(--text-faint); padding:10px 0; font-size:13px; cursor:pointer;
+  }
+
+  /* identity modal */
+  .identity-box{ text-align:center; padding-top:6px; }
+  .identity-box p{ color:var(--text-dim); font-size:13.5px; margin:0 0 18px; }
+  .identity-options{ display:flex; gap:12px; }
+  .identity-opt{
+    flex:1; padding:22px 0; border-radius:var(--radius);
+    border:1.5px solid var(--border-2); background:var(--surface);
+    font-family:var(--display); font-size:20px; cursor:pointer; color:var(--text);
+  }
+  .identity-opt:active{ border-color:var(--gold); }
+  .auth-copy{ color:var(--text-dim); font-size:13px; line-height:1.5; margin:-4px 0 14px; }
+  .auth-error{ min-height:18px; color:var(--status-over); font-size:12px; margin-top:10px; }
+  .setup-box{ background:var(--surface); border:1px solid var(--border-2); border-radius:var(--radius-sm); padding:12px 14px; color:var(--text-dim); font-size:13px; line-height:1.5; }
+  .setup-box code{ color:var(--gold); font-family:var(--mono); }
+
+  .toast{
+    position:fixed; bottom:calc(96px + var(--safe-bottom)); left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--surface-3); border:1px solid var(--border-2);
+    color:var(--text); padding:10px 18px; border-radius:100px;
+    font-size:13px; font-weight:600; opacity:0; pointer-events:none;
+    transition:all .3s ease; z-index:50; white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow">Jul 29 &ndash; Ago 7, 2026</span>
+      <h1>NYC TRIP</h1>
+    </div>
+    <div class="top-actions">
+      <div class="sync-dot" id="syncDot" title="Estado de conexión"></div>
+      <button class="icon-btn" id="btnIdentity" title="Cambiar identidad" aria-label="Cambiar identidad">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </button>
+      <button class="icon-btn" id="btnLogout" title="Cerrar sesión" aria-label="Cerrar sesión" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <button class="fab" id="fabAdd">+</button>
+
+  <nav class="bottom">
+    <button data-tab="hoy" class="navbtn active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      Hoy
+    </button>
+    <button data-tab="dias" class="navbtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+      Días
+    </button>
+    <button data-tab="dash" class="navbtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+      Dashboard
+    </button>
+    <button data-tab="cats" class="navbtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.9L12.9 20.6a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8L10.8 3h6.8a3 3 0 0 1 3 3v6.8z"/><circle cx="15" cy="8" r="1.5"/></svg>
+      Categorías
+    </button>
+  </nav>
+
+  <!-- Add expense sheet -->
+  <div class="overlay" id="overlayAdd">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>Agregar gasto</h2>
+      <input class="amount-input" id="inAmount" type="number" inputmode="decimal" placeholder="$0" min="0" step="0.01">
+
+      <div class="field-label">Categoría</div>
+      <div class="chip-row" id="chipCategories"></div>
+
+      <div class="field-label">¿Quién pagó?</div>
+      <div class="who-row">
+        <button class="who-btn" id="whoNicky">Nicky</button>
+        <button class="who-btn" id="whoSteven">Steven</button>
+      </div>
+
+      <div class="field-label">Día</div>
+      <select id="inDay"></select>
+
+      <div class="field-label">Nota (opcional)</div>
+      <input type="text" id="inNote" placeholder="ej. Ramen en Ichiran">
+
+      <button class="btn-main" id="btnSaveExpense">Guardar gasto</button>
+      <button class="btn-ghost" id="btnCancelExpense">Cancelar</button>
+    </div>
+  </div>
+
+
+  <!-- Login sheet -->
+  <div class="overlay" id="overlayLogin">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>Acceso al viaje</h2>
+      <p class="auth-copy">Inicia sesión con una de las dos cuentas autorizadas en Firebase.</p>
+      <div class="field-label">Correo</div>
+      <input type="email" id="inEmail" autocomplete="username" placeholder="correo@ejemplo.com">
+      <div class="field-label">Contraseña</div>
+      <input type="password" id="inPassword" autocomplete="current-password" placeholder="Contraseña">
+      <div class="auth-error" id="authError"></div>
+      <button class="btn-main" id="btnLogin">Entrar</button>
+    </div>
+  </div>
+
+  <!-- Identity sheet -->
+  <div class="overlay" id="overlayIdentity">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>¿Quién eres?</h2>
+      <div class="identity-box">
+        <p>Se usa para marcar quién pagó cada gasto en este teléfono.</p>
+        <div class="identity-options">
+          <button class="identity-opt" data-id="Nicky">Nicky</button>
+          <button class="identity-opt" data-id="Steven">Steven</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged,
+  signInWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+/* =========================================================
+   1. CONFIGURA FIREBASE AQUÍ
+   Copia el objeto EXACTO desde:
+   Firebase Console > Configuración del proyecto > Tus apps > SDK setup > Config
+   ========================================================= */
+const firebaseConfig = {// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDmLt8AoUS69V_f8bRijN6RVf_R8wKMHZ4",
+  authDomain: "nyc-budget-tracker.firebaseapp.com",
+  projectId: "nyc-budget-tracker",
+  storageBucket: "nyc-budget-tracker.firebasestorage.app",
+  messagingSenderId: "622056546325",
+  appId: "1:622056546325:web:e3c4d0e981377f9b04ee1c"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+  apiKey: "PEGA_AQUI_API_KEY",
+  authDomain: "PEGA_AQUI_AUTH_DOMAIN",
+  projectId: "PEGA_AQUI_PROJECT_ID",
+  storageBucket: "PEGA_AQUI_STORAGE_BUCKET",
+  messagingSenderId: "PEGA_AQUI_MESSAGING_SENDER_ID",
+  appId: "PEGA_AQUI_APP_ID"
+};
+
+const TRIP_ID = 'nyc-2026';
+const FIREBASE_CONFIGURED = !Object.values(firebaseConfig).some(v => String(v).startsWith('PEGA_AQUI'));
+let firebaseApp = null;
+let auth = null;
+let db = null;
+
+/* =========================================================
+   2. DATOS DEL VIAJE (The Shoreham — límites del Excel)
+   ========================================================= */
+const MARGIN = 0.10; // tolerancia visual; no aumenta el presupuesto oficial
+
+const TRIP_DAYS = [
+  { id:'2026-07-29', short:'Lle', label:'Llegada',          sub:'Mié 29 Jul', transporte:65, comida:0  },
+  { id:'2026-07-30', short:'1',   label:'Día 1',            sub:'Jue 30 Jul', transporte:0,  comida:64 },
+  { id:'2026-07-31', short:'2',   label:'Día 2',            sub:'Vie 31 Jul', transporte:0,  comida:52 },
+  { id:'2026-08-01', short:'3',   label:'Día 3',            sub:'Sáb 1 Ago',  transporte:12, comida:52 },
+  { id:'2026-08-02', short:'4',   label:'Día 4 · BTS 🎵',    sub:'Dom 2 Ago',  transporte:83, comida:55 },
+  { id:'2026-08-03', short:'5',   label:'Día 5',            sub:'Lun 3 Ago',  transporte:0,  comida:46 },
+  { id:'2026-08-04', short:'6',   label:'Día 6',            sub:'Mar 4 Ago',  transporte:0,  comida:52 },
+  { id:'2026-08-05', short:'7',   label:'Día 7',            sub:'Mié 5 Ago',  transporte:12, comida:52 },
+  { id:'2026-08-06', short:'8',   label:'Día 8',            sub:'Jue 6 Ago',  transporte:0,  comida:52 },
+  { id:'2026-08-07', short:'Sal', label:'Salida',           sub:'Vie 7 Ago',  transporte:65, comida:12 },
+];
+
+const FIXED_CATEGORIES = [
+  { id:'comida',      name:'Comida',              color:'var(--cat-comida)',      hex:'#FF6B3D', icon:'🍔', fixed:true, hasLimit:true },
+  { id:'transporte',  name:'Transporte',          color:'var(--cat-transporte)',  hex:'#3B7CFF', icon:'🚇', fixed:true, hasLimit:true },
+  { id:'entradas',    name:'Entradas turísticas', color:'var(--cat-entradas)',    hex:'#6CBE45', icon:'🎟️', fixed:true, hasLimit:false },
+];
+const CUSTOM_COLOR_POOL = ['#B933AD','#00A3A3','#EE4B8A','#8B5CF6','#F2994A','#5DADE2'];
+
+/* =========================================================
+   3. STATE
+   ========================================================= */
+let state = {
+  tab: 'hoy',
+  expenses: [],
+  customCategories: [],
+  dashViewer: 'juntos',
+  me: localStorage.getItem('nyc_trip_identity') || null,
+  authUser: null,
+  authReady: false,
+  loadedExpenses: false,
+  loadedCategories: false,
+  pending: { expenses:false, categories:false },
+  syncError: false,
+};
+let unsubscribers = [];
+
+function allCategories(){ return [...FIXED_CATEGORIES, ...state.customCategories]; }
+function getCategory(id){ return allCategories().find(c => c.id === id); }
+function tripCollection(name){ return collection(db, 'trips', TRIP_ID, name); }
+function isLoaded(){ return state.loadedExpenses && state.loadedCategories; }
+
+function localISODate(date = new Date()){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  const d = String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+function todayId(){
+  const iso = localISODate();
+  const found = TRIP_DAYS.find(t => t.id === iso);
+  if (found) return found.id;
+  if (iso < TRIP_DAYS[0].id) return TRIP_DAYS[0].id;
+  return TRIP_DAYS[TRIP_DAYS.length - 1].id;
+}
+let selectedDayId = todayId();
+
+/* =========================================================
+   4. FIREBASE / AUTH / LISTENERS
+   ========================================================= */
+function initializeFirebase(){
+  firebaseApp = initializeApp(firebaseConfig);
+  auth = getAuth(firebaseApp);
+  setPersistence(auth, browserLocalPersistence).catch(err => console.warn('Auth persistence', err));
+  db = initializeFirestore(firebaseApp, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+
+  onAuthStateChanged(auth, user => {
+    state.authReady = true;
+    state.authUser = user;
+    document.getElementById('btnLogout').style.display = user ? 'flex' : 'none';
+    if (user){
+      closeLoginSheet();
+      initListeners();
+      if (!state.me) openIdentitySheet();
+    } else {
+      stopListeners();
+      state.expenses = [];
+      state.customCategories = [];
+      state.loadedExpenses = false;
+      state.loadedCategories = false;
+      openLoginSheet();
+    }
+    render();
+  });
+}
+
+function stopListeners(){
+  unsubscribers.forEach(unsub => { try { unsub(); } catch(_){} });
+  unsubscribers = [];
+  state.pending = { expenses:false, categories:false };
+  updateSyncIndicator();
+}
+
+function initListeners(){
+  stopListeners();
+  state.loadedExpenses = false;
+  state.loadedCategories = false;
+  state.syncError = false;
+  render();
+
+  const expQ = query(tripCollection('expenses'), orderBy('createdAtMs', 'desc'));
+  const unsubExpenses = onSnapshot(expQ, { includeMetadataChanges:true }, snap => {
+    state.expenses = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    state.loadedExpenses = true;
+    state.pending.expenses = snap.metadata.hasPendingWrites;
+    state.syncError = false;
+    updateSyncIndicator();
+    render();
+  }, err => handleListenerError('gastos', err));
+
+  const catQ = query(tripCollection('categories'), orderBy('createdAtMs', 'asc'));
+  const unsubCategories = onSnapshot(catQ, { includeMetadataChanges:true }, snap => {
+    state.customCategories = snap.docs.map(d => ({ id:d.id, ...d.data(), fixed:false, hasLimit:false }));
+    state.loadedCategories = true;
+    state.pending.categories = snap.metadata.hasPendingWrites;
+    state.syncError = false;
+    updateSyncIndicator();
+    render();
+  }, err => handleListenerError('categorías', err));
+
+  unsubscribers.push(unsubExpenses, unsubCategories);
+}
+
+function handleListenerError(area, err){
+  console.error(`${area} snapshot error`, err);
+  state.syncError = true;
+  updateSyncIndicator();
+  showToast(`Error cargando ${area}`);
+}
+
+window.addEventListener('online', updateSyncIndicator);
+window.addEventListener('offline', updateSyncIndicator);
+function updateSyncIndicator(){
+  const dot = document.getElementById('syncDot');
+  if (!dot) return;
+  dot.classList.remove('offline','pending','error');
+  if (state.syncError){
+    dot.classList.add('error');
+    dot.title = 'Error de sincronización';
+  } else if (!navigator.onLine){
+    dot.classList.add('offline');
+    dot.title = 'Sin conexión — los cambios quedan pendientes';
+  } else if (state.pending.expenses || state.pending.categories){
+    dot.classList.add('pending');
+    dot.title = 'Sincronizando cambios';
+  } else {
+    dot.title = state.authUser ? 'Sincronizado' : 'Sin sesión';
+  }
+}
+
+/* =========================================================
+   5. HELPERS
+   ========================================================= */
+function formatMoney(n){
+  n = Number(n) || 0;
+  const isInt = Math.round(n*100) % 100 === 0;
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: isInt ? 0 : 2, maximumFractionDigits: 2 });
+}
+function roundMoney(n){ return Math.round((Number(n) + Number.EPSILON) * 100) / 100; }
+function expensesFor({ dayId, categoryId, paidBy } = {}){
+  return state.expenses.filter(e =>
+    (dayId ? e.dayId === dayId : true) &&
+    (categoryId ? e.category === categoryId : true) &&
+    (paidBy ? e.paidBy === paidBy : true)
+  );
+}
+function sumAmount(list){ return list.reduce((s,e) => s + (Number(e.amount)||0), 0); }
+function limitFor(dayId, categoryId){
+  const day = TRIP_DAYS.find(d => d.id === dayId);
+  if (!day) return 0;
+  if (categoryId === 'comida') return day.comida;
+  if (categoryId === 'transporte') return day.transporte;
+  return 0;
+}
+function toleranceFor(dayId, categoryId){ return limitFor(dayId, categoryId) * (1 + MARGIN); }
+function statusFor(spent, limit, tolerance){
+  if (limit === 0 && tolerance === 0) return spent > 0 ? 'info' : 'empty';
+  if (spent <= limit) return 'good';
+  if (spent <= tolerance) return 'warn';
+  return 'over';
+}
+function tripTotalLimit(){ return TRIP_DAYS.reduce((s,d) => s + d.comida + d.transporte, 0); }
+function tripTotalTolerance(){ return tripTotalLimit() * (1 + MARGIN); }
+function tripTotalSpentLimitedCats(){
+  return sumAmount(state.expenses.filter(e => e.category === 'comida' || e.category === 'transporte'));
+}
+function tripTotalLimitForCat(catId){
+  if (catId === 'comida') return TRIP_DAYS.reduce((s,d)=>s+d.comida,0);
+  if (catId === 'transporte') return TRIP_DAYS.reduce((s,d)=>s+d.transporte,0);
+  return 0;
+}
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function safeHex(value){ return /^#[0-9A-Fa-f]{6}$/.test(String(value)) ? value : '#888888'; }
+function safeIcon(value){ return escapeHtml(String(value || '').slice(0, 8)); }
+function categoryName(cat){ return escapeHtml(cat?.name || 'Gasto'); }
+function queueWrite(promise, pendingMessage, successMessage, failureMessage){
+  showToast(pendingMessage);
+  promise.then(() => showToast(successMessage)).catch(err => {
+    console.error(err);
+    showToast(failureMessage);
+  });
+}
+
+/* =========================================================
+   6. RENDER
+   ========================================================= */
+function render(){
+  renderMain();
+  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
+  const canAdd = Boolean(state.authUser) && isLoaded() && state.tab !== 'cats';
+  document.getElementById('fabAdd').style.display = canAdd ? 'flex' : 'none';
+  updateSyncIndicator();
+}
+function renderMain(){
+  const main = document.getElementById('main');
+  if (!FIREBASE_CONFIGURED){
+    main.innerHTML = `<div class="section-title">Configuración pendiente</div><div class="setup-box">Pega el objeto <code>firebaseConfig</code> de tu proyecto en este archivo y vuelve a publicarlo.</div>`;
+    return;
+  }
+  if (!state.authReady || !state.authUser){
+    main.innerHTML = `<div class="empty-state"><div class="es-icon">🔒</div><p>Inicia sesión para cargar y sincronizar los gastos.</p></div>`;
+    return;
+  }
+  if (!isLoaded()){
+    main.innerHTML = `<div class="empty-state"><div class="es-icon">🚇</div><p>Cargando los datos del viaje…</p></div>`;
+    return;
+  }
+  if (state.tab === 'hoy') main.innerHTML = viewHoy();
+  else if (state.tab === 'dias') main.innerHTML = viewDias();
+  else if (state.tab === 'dash') main.innerHTML = viewDash();
+  else if (state.tab === 'cats') main.innerHTML = viewCats();
+  bindDynamicEvents();
+}
+
+function metroLine(activeId){
+  const stations = TRIP_DAYS.map(d => {
+    const spentC = sumAmount(expensesFor({ dayId:d.id, categoryId:'comida' }));
+    const spentT = sumAmount(expensesFor({ dayId:d.id, categoryId:'transporte' }));
+    const stC = statusFor(spentC, d.comida, d.comida*(1+MARGIN));
+    const stT = statusFor(spentT, d.transporte, d.transporte*(1+MARGIN));
+    const order = { over:3, warn:2, good:1, empty:0, info:1 };
+    let cls = order[stC] >= order[stT] ? stC : stT;
+    if (cls === 'info') cls = 'good';
+    const isCurrent = d.id === activeId;
+    return `<button class="metro-station ${cls} ${isCurrent?'current':''}" data-day="${d.id}" aria-label="${escapeHtml(d.label)} ${escapeHtml(d.sub)}">
+      <span class="line"></span><span class="dot"></span><span class="stlabel">${d.short}</span>
+    </button>`;
+  }).join('');
+  return `<div class="metro-wrap"><div class="metro-scroll">${stations}</div></div>`;
+}
+
+function catCard(dayId, cat){
+  const spent = sumAmount(expensesFor({ dayId, categoryId: cat.id }));
+  const limit = cat.hasLimit ? limitFor(dayId, cat.id) : 0;
+  const tolerance = cat.hasLimit ? toleranceFor(dayId, cat.id) : 0;
+  const status = cat.hasLimit ? statusFor(spent, limit, tolerance) : (spent>0 ? 'info' : 'empty');
+  const pct = cat.hasLimit && tolerance>0 ? Math.min((spent/tolerance)*100, 100) : (spent>0?100:0);
+  const tickPct = cat.hasLimit && tolerance>0 ? (limit/tolerance)*100 : 0;
+  const barColor = status==='over' ? 'var(--status-over)' : status==='warn' ? 'var(--status-warn)' : status==='good' ? 'var(--status-good)' : 'var(--text-faint)';
+  const hex = safeHex(cat.hex);
+
+  return `<div class="cat-card">
+    <div class="cc-top">
+      <div class="cc-name"><span class="cc-dot" style="background:${hex}"></span>${safeIcon(cat.icon)} ${categoryName(cat)}</div>
+      <div class="cc-amounts"><b>${formatMoney(spent)}</b>${cat.hasLimit ? ' / '+formatMoney(limit) : ''}</div>
+    </div>
+    ${cat.hasLimit ? `
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%; background:${barColor}"></div>
+        <div class="bar-tick" style="left:calc(${tickPct}% - 1px)" title="Límite oficial"></div>
+      </div>
+      <div class="cc-foot"><span>Límite Excel: ${formatMoney(limit)}</span><span>Tolerancia +10%: ${formatMoney(tolerance)}</span></div>
+    ` : `<div class="cc-nolimit">Sin límite fijo — informativo</div>`}
+  </div>`;
+}
+
+function expenseListHTML(dayId){
+  const list = [...expensesFor({ dayId })].sort((a,b) => (Number(b.createdAtMs)||0) - (Number(a.createdAtMs)||0));
+  if (list.length === 0){
+    return `<div class="empty-state"><div class="es-icon">🧾</div><p>Sin gastos registrados este día.<br>Toca + para agregar el primero.</p></div>`;
+  }
+  return list.map(e => {
+    const cat = getCategory(e.category) || { name:'Categoría eliminada', icon:'💵', hex:'#888888' };
+    const hex = safeHex(cat.hex);
+    return `<div class="exp-item">
+      <div class="exp-cat-dot" style="background:${hex}22; color:${hex}">${safeIcon(cat.icon)||'💵'}</div>
+      <div class="exp-info">
+        <div class="exp-note">${e.note ? escapeHtml(e.note) : categoryName(cat)}</div>
+        <div class="exp-meta">${categoryName(cat)} · ${escapeHtml(e.paidBy||'?')}</div>
+      </div>
+      <div class="exp-amount">${formatMoney(e.amount)}</div>
+      <button class="exp-del" data-del="${e.id}" aria-label="Eliminar gasto">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function viewHoy(){
+  const day = TRIP_DAYS.find(d => d.id === selectedDayId) || TRIP_DAYS.find(d=>d.id===todayId());
+  const spentC = sumAmount(expensesFor({ dayId: day.id, categoryId:'comida' }));
+  const spentT = sumAmount(expensesFor({ dayId: day.id, categoryId:'transporte' }));
+  const allSpent = sumAmount(expensesFor({ dayId:day.id }));
+  const limit = day.comida + day.transporte;
+  const tolerance = limit * (1+MARGIN);
+  const budgetedSpent = spentC + spentT;
+  const status = statusFor(budgetedSpent, limit, tolerance);
+  const pillClass = limit===0 ? (budgetedSpent>0?'good':'empty') : status;
+  const pillText = limit===0 ? (budgetedSpent>0? 'sin límite fijo':'sin gastos') : status==='good' ? 'dentro del límite' : status==='warn' ? 'dentro del margen' : 'se pasaron';
+
+  return `
+    ${metroLine(day.id)}
+    <div class="day-hero"><div class="dh-top"><div>
+      <div class="dh-label">${escapeHtml(day.label)}</div>
+      <div class="dh-date">${escapeHtml(day.sub)} · Controlado ${formatMoney(budgetedSpent)} de ${formatMoney(limit)} · Total día ${formatMoney(allSpent)}</div>
+    </div><span class="pill ${pillClass}">${pillText}</span></div></div>
+    ${allCategories().map(c => catCard(day.id, c)).join('')}
+    <div class="exp-list-title">Gastos de este día</div>
+    ${expenseListHTML(day.id)}
+  `;
+}
+
+function viewDias(){
+  const totalSpent = tripTotalSpentLimitedCats();
+  const totalLimit = tripTotalLimit();
+  const totalTol = tripTotalTolerance();
+  const st = statusFor(totalSpent, totalLimit, totalTol);
+  const pct = totalTol ? Math.min((totalSpent/totalTol)*100, 100) : 0;
+  const tick = totalTol ? (totalLimit/totalTol)*100 : 0;
+  const barColor = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : 'var(--status-good)';
+
+  const cards = TRIP_DAYS.map(d => {
+    const sC = sumAmount(expensesFor({ dayId:d.id, categoryId:'comida' }));
+    const sT = sumAmount(expensesFor({ dayId:d.id, categoryId:'transporte' }));
+    const lim = d.comida + d.transporte;
+    const tol = lim*(1+MARGIN);
+    const total = sC+sT;
+    const dayStatus = statusFor(total,lim,tol);
+    const pill = lim===0 ? 'empty' : dayStatus==='good'?'good':dayStatus==='warn'?'warn':'over';
+    return `<div class="day-card" data-goto="${d.id}">
+      <div class="dc-top"><div><div class="dc-label">${escapeHtml(d.label)}</div><div class="dc-date">${escapeHtml(d.sub)}</div></div>
+      <span class="pill ${pill}">${formatMoney(total)}${lim>0?' / '+formatMoney(lim):''}</span></div>
+      <div class="dc-bars">${miniBar(sT, d.transporte, 'var(--cat-transporte)')}${miniBar(sC, d.comida, 'var(--cat-comida)')}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="section-title">Resumen del viaje <span class="sub">10 días</span></div>
+    <div class="day-hero"><div class="dh-top"><div><div class="dh-label">${formatMoney(totalSpent)}</div>
+    <div class="dh-date">Límite oficial ${formatMoney(totalLimit)} · Tolerancia ${formatMoney(totalTol)}</div></div></div>
+    <div class="bar-track" style="margin-top:12px;"><div class="bar-fill" style="width:${pct}%; background:${barColor}"></div><div class="bar-tick" style="left:calc(${tick}% - 1px)"></div></div></div>
+    <div class="exp-list-title" style="margin-top:8px;">Día por día</div>${cards}`;
+}
+function miniBar(spent, limit, color){
+  if (limit === 0) return `<div class="bar-track"><div class="bar-fill" style="width:${spent>0?100:0}%; background:${spent>0?'var(--status-warn)':'var(--surface-3)'}"></div></div>`;
+  const tol = limit*(1+MARGIN);
+  const pct = Math.min((spent/tol)*100,100);
+  const st = statusFor(spent, limit, tol);
+  const c = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : color;
+  return `<div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${c}"></div></div>`;
+}
+
+function viewDash(){
+  const totalNicky = sumAmount(expensesFor({ paidBy:'Nicky' }));
+  const totalSteven = sumAmount(expensesFor({ paidBy:'Steven' }));
+  const combined = totalNicky + totalSteven;
+  const diff = Math.abs(totalNicky - totalSteven) / 2;
+  const balanceMsg = diff < 0.005 ? 'Van parejos — nadie le debe nada al otro.' : totalNicky > totalSteven
+    ? `Steven le debe a Nicky ${formatMoney(diff)} para quedar 50/50.`
+    : `Nicky le debe a Steven ${formatMoney(diff)} para quedar 50/50.`;
+
+  const viewer = state.dashViewer;
+  const filterPaidBy = viewer === 'juntos' ? null : viewer;
+  const viewerTotal = viewer === 'juntos' ? combined : sumAmount(expensesFor({ paidBy: viewer }));
+  const totalLimit = tripTotalLimit();
+  const totalTol = tripTotalTolerance();
+  const limitedSpent = viewer === 'juntos' ? tripTotalSpentLimitedCats()
+    : sumAmount(expensesFor({ paidBy: viewer }).filter(e => e.category==='comida' || e.category==='transporte'));
+
+  const catRows = allCategories().map(c => {
+    const spent = sumAmount(expensesFor({ categoryId: c.id, paidBy: filterPaidBy }));
+    const limit = c.hasLimit ? tripTotalLimitForCat(c.id) : 0;
+    const tol = limit * (1+MARGIN);
+    const pct = c.hasLimit && tol>0 ? Math.min((spent/tol)*100,100) : (spent>0?100:0);
+    const st = c.hasLimit ? statusFor(spent, limit, tol) : (spent>0?'info':'empty');
+    const color = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : safeHex(c.hex);
+    return `<div class="cat-card"><div class="cc-top"><div class="cc-name"><span class="cc-dot" style="background:${safeHex(c.hex)}"></span>${safeIcon(c.icon)} ${categoryName(c)}</div>
+      <div class="cc-amounts"><b>${formatMoney(spent)}</b>${c.hasLimit ? ' / '+formatMoney(limit) : ''}</div></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div></div>`;
+  }).join('');
+
+  return `<div class="section-title">Dashboard</div>
+    <div class="segmented"><button data-view="Nicky" class="${viewer==='Nicky'?'active':''}">Nicky</button><button data-view="Steven" class="${viewer==='Steven'?'active':''}">Steven</button><button data-view="juntos" class="${viewer==='juntos'?'active':''}">Juntos</button></div>
+    <div class="balance-card"><span class="bicon">🤝</span><span>${balanceMsg}</span></div>
+    <div class="big-stat"><div class="bs-label">${viewer==='juntos' ? 'Comida + transporte' : 'Pagado por '+viewer+' (todas las categorías)'}</div>
+      <div class="bs-num">${formatMoney(viewer==='juntos' ? limitedSpent : viewerTotal)}</div>
+      <div class="bs-sub">${viewer==='juntos' ? `Total real de todas las categorías: ${formatMoney(combined)} · Límite controlado ${formatMoney(totalLimit)} · Tolerancia ${formatMoney(totalTol)}` : `Total combinado de la pareja: ${formatMoney(combined)}`}</div></div>
+    <div class="exp-list-title">Por categoría</div>${catRows}`;
+}
+
+function viewCats(){
+  const rows = allCategories().map(c => {
+    const total = sumAmount(expensesFor({ categoryId: c.id }));
+    return `<div class="cat-row"><span class="cr-dot" style="background:${safeHex(c.hex)}"></span><span class="cr-name">${safeIcon(c.icon)} ${categoryName(c)}</span>
+      <span class="cr-total">${formatMoney(total)}</span>${c.fixed ? '' : `<button class="cr-del" data-delcat="${c.id}" aria-label="Eliminar categoría">✕</button>`}</div>`;
+  }).join('');
+  return `<div class="section-title">Categorías</div>${rows}<div class="field-label">Nueva categoría</div>
+    <div class="add-cat-form"><input type="text" id="newCatName" maxlength="40" placeholder="ej. Souvenirs"><button class="btn-sm" id="btnAddCat">Agregar</button></div>`;
+}
+
+/* =========================================================
+   7. EVENTS
+   ========================================================= */
+document.querySelectorAll('.navbtn').forEach(btn => {
+  btn.addEventListener('click', () => { state.tab = btn.dataset.tab; render(); });
+});
+
+function bindDynamicEvents(){
+  document.querySelectorAll('.metro-station').forEach(el => el.addEventListener('click', () => {
+    selectedDayId = el.dataset.day; state.tab = 'hoy'; render();
+  }));
+  document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', () => {
+    selectedDayId = el.dataset.goto; state.tab = 'hoy'; render();
+  }));
+  document.querySelectorAll('[data-del]').forEach(el => el.addEventListener('click', ev => {
+    ev.stopPropagation();
+    if (!confirm('¿Eliminar este gasto?')) return;
+    const promise = deleteDoc(doc(db, 'trips', TRIP_ID, 'expenses', el.dataset.del));
+    queueWrite(promise, navigator.onLine ? 'Eliminando…' : 'Eliminación pendiente', 'Gasto eliminado', 'No se pudo eliminar');
+  }));
+  document.querySelectorAll('[data-view]').forEach(el => el.addEventListener('click', () => {
+    state.dashViewer = el.dataset.view; render();
+  }));
+  document.querySelectorAll('[data-delcat]').forEach(el => el.addEventListener('click', () => {
+    const categoryId = el.dataset.delcat;
+    if (expensesFor({ categoryId }).length > 0){ showToast('No se puede borrar: la categoría tiene gastos'); return; }
+    if (!confirm('¿Eliminar esta categoría?')) return;
+    const promise = deleteDoc(doc(db, 'trips', TRIP_ID, 'categories', categoryId));
+    queueWrite(promise, navigator.onLine ? 'Eliminando…' : 'Eliminación pendiente', 'Categoría eliminada', 'No se pudo eliminar');
+  }));
+  const btnAddCat = document.getElementById('btnAddCat');
+  if (btnAddCat){
+    const addCategory = () => {
+      const input = document.getElementById('newCatName');
+      const name = input.value.trim().replace(/\s+/g,' ');
+      if (!name) return;
+      if (allCategories().some(c => c.name.toLocaleLowerCase('es') === name.toLocaleLowerCase('es'))){ showToast('Esa categoría ya existe'); return; }
+      const color = CUSTOM_COLOR_POOL[state.customCategories.length % CUSTOM_COLOR_POOL.length];
+      input.value = '';
+      const promise = addDoc(tripCollection('categories'), {
+        name, hex:color, icon:'🏷️', createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.authUser.uid
+      });
+      queueWrite(promise, navigator.onLine ? 'Guardando categoría…' : 'Categoría pendiente', 'Categoría agregada', 'No se pudo agregar');
+    };
+    btnAddCat.addEventListener('click', addCategory);
+    document.getElementById('newCatName').addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
+  }
+}
+
+/* Add expense */
+const overlayAdd = document.getElementById('overlayAdd');
+const overlayIdentity = document.getElementById('overlayIdentity');
+const overlayLogin = document.getElementById('overlayLogin');
+let selectedCategory = 'comida';
+let selectedWho = null;
+
+function openAddSheet(){
+  if (!state.authUser) return openLoginSheet();
+  selectedCategory = 'comida';
+  selectedWho = state.me;
+  document.getElementById('inAmount').value = '';
+  document.getElementById('inNote').value = '';
+  renderChips(); renderWho(); renderDaySelect();
+  overlayAdd.classList.add('show');
+  setTimeout(() => document.getElementById('inAmount').focus(), 150);
+}
+function closeAddSheet(){ overlayAdd.classList.remove('show'); }
+function renderChips(){
+  const wrap = document.getElementById('chipCategories');
+  wrap.innerHTML = allCategories().map(c => `<button class="chip ${c.id===selectedCategory?'sel':''}" data-chip="${c.id}"><span class="chip-dot" style="background:${safeHex(c.hex)}"></span>${safeIcon(c.icon)} ${categoryName(c)}</button>`).join('');
+  wrap.querySelectorAll('[data-chip]').forEach(el => el.addEventListener('click', () => { selectedCategory = el.dataset.chip; renderChips(); }));
+}
+function renderWho(){
+  document.getElementById('whoNicky').classList.toggle('sel', selectedWho==='Nicky');
+  document.getElementById('whoSteven').classList.toggle('sel', selectedWho==='Steven');
+}
+function renderDaySelect(){
+  const sel = document.getElementById('inDay');
+  sel.innerHTML = TRIP_DAYS.map(d => `<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');
+}
+document.getElementById('whoNicky').addEventListener('click', () => { selectedWho='Nicky'; renderWho(); });
+document.getElementById('whoSteven').addEventListener('click', () => { selectedWho='Steven'; renderWho(); });
+document.getElementById('fabAdd').addEventListener('click', openAddSheet);
+document.getElementById('btnCancelExpense').addEventListener('click', closeAddSheet);
+overlayAdd.addEventListener('click', e => { if (e.target === overlayAdd) closeAddSheet(); });
+
+document.getElementById('btnSaveExpense').addEventListener('click', () => {
+  if (!state.authUser){ showToast('Inicia sesión'); return; }
+  const rawAmount = Number(document.getElementById('inAmount').value);
+  const amount = roundMoney(rawAmount);
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 5000){ showToast('Monto válido: $0.01 a $5,000'); return; }
+  if (!selectedWho){ showToast('Selecciona quién pagó'); return; }
+  if (!getCategory(selectedCategory)){ showToast('Selecciona una categoría válida'); return; }
+  const dayId = document.getElementById('inDay').value;
+  if (!TRIP_DAYS.some(d => d.id === dayId)){ showToast('Selecciona un día válido'); return; }
+  const note = document.getElementById('inNote').value.trim().slice(0,140);
+  const promise = addDoc(tripCollection('expenses'), {
+    amount, category:selectedCategory, paidBy:selectedWho, dayId, note,
+    createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.authUser.uid
+  });
+  closeAddSheet();
+  queueWrite(promise, navigator.onLine ? 'Guardando…' : 'Guardado sin conexión — pendiente', 'Gasto guardado ✓', 'No se pudo guardar');
+});
+
+/* Identity */
+function openIdentitySheet(){ if (state.authUser) overlayIdentity.classList.add('show'); }
+function closeIdentitySheet(){ overlayIdentity.classList.remove('show'); }
+document.getElementById('btnIdentity').addEventListener('click', openIdentitySheet);
+overlayIdentity.addEventListener('click', e => { if (e.target === overlayIdentity && state.me) closeIdentitySheet(); });
+document.querySelectorAll('.identity-opt').forEach(el => el.addEventListener('click', () => {
+  state.me = el.dataset.id;
+  localStorage.setItem('nyc_trip_identity', state.me);
+  closeIdentitySheet(); showToast(`Listo, ${state.me} 👋`);
+}));
+
+/* Login */
+function openLoginSheet(){ overlayLogin.classList.add('show'); }
+function closeLoginSheet(){ overlayLogin.classList.remove('show'); document.getElementById('authError').textContent = ''; }
+function authMessage(code){
+  if (code === 'auth/invalid-credential') return 'Correo o contraseña incorrectos.';
+  if (code === 'auth/too-many-requests') return 'Demasiados intentos. Intenta más tarde.';
+  if (code === 'auth/network-request-failed') return 'No hay conexión a internet.';
+  return 'No se pudo iniciar sesión.';
+}
+document.getElementById('btnLogin').addEventListener('click', async () => {
+  if (!FIREBASE_CONFIGURED){ document.getElementById('authError').textContent = 'Primero configura firebaseConfig en el HTML.'; return; }
+  const email = document.getElementById('inEmail').value.trim();
+  const password = document.getElementById('inPassword').value;
+  const errorBox = document.getElementById('authError');
+  if (!email || !password){ errorBox.textContent = 'Completa correo y contraseña.'; return; }
+  errorBox.textContent = '';
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  try { await signInWithEmailAndPassword(auth, email, password); document.getElementById('inPassword').value = ''; }
+  catch(err){ console.error(err); errorBox.textContent = authMessage(err.code); }
+  finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+});
+document.getElementById('inPassword').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btnLogin').click(); });
+document.getElementById('btnLogout').addEventListener('click', async () => {
+  if (!auth || !confirm('¿Cerrar sesión en este dispositivo?')) return;
+  try { await signOut(auth); showToast('Sesión cerrada'); }
+  catch(err){ console.error(err); showToast('No se pudo cerrar sesión'); }
+});
+
+/* Toast */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* =========================================================
+   8. INIT
+   ========================================================= */
+render();
+updateSyncIndicator();
+if (FIREBASE_CONFIGURED){
+  try { initializeFirebase(); }
+  catch(err){ console.error('Firebase init error', err); state.syncError = true; updateSyncIndicator(); showToast('Error configurando Firebase'); }
+} else {
+  openLoginSheet();
+  document.getElementById('authError').textContent = 'Falta pegar firebaseConfig en el HTML.';
+}
+</script>
+</body>
+</html>
