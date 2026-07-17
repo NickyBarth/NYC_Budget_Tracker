@@ -609,12 +609,31 @@ const FIXED_CATEGORIES = [
 const CUSTOM_COLOR_POOL = ['#B933AD','#00A3A3','#EE4B8A','#8B5CF6','#F2994A','#5DADE2'];
 
 /* =========================================================
-   3. STATE
+   3. STATE / CACHÉ INSTANTÁNEO
+   Guardamos la última copia visible en localStorage para que la interfaz
+   aparezca de inmediato. Firestore la confirma y actualiza en segundo plano.
    ========================================================= */
+const CACHE_KEYS = {
+  expenses: 'nyc_trip_expenses_cache_v1',
+  categories: 'nyc_trip_categories_cache_v1'
+};
+function readCachedList(key){
+  try{
+    const value = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(value) ? value : [];
+  }catch(_){
+    return [];
+  }
+}
+function writeCachedList(key, value){
+  try{ localStorage.setItem(key, JSON.stringify(value)); }
+  catch(err){ console.warn('No se pudo actualizar el caché local', err); }
+}
+
 let state = {
   tab: 'hoy',
-  expenses: [],
-  customCategories: [],
+  expenses: readCachedList(CACHE_KEYS.expenses),
+  customCategories: readCachedList(CACHE_KEYS.categories),
   me: localStorage.getItem('nyc_trip_identity') || null,
   loadedExpenses: false,
   loadedCategories: false,
@@ -671,6 +690,11 @@ function initListeners(){
   const expQ = query(tripCollection('expenses'), orderBy('createdAtMs', 'desc'));
   const unsubExpenses = onSnapshot(expQ, { includeMetadataChanges:true }, snap => {
     state.expenses = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    writeCachedList(CACHE_KEYS.expenses, state.expenses.map(e => ({
+      id:e.id, amount:e.amount, category:e.category, paidBy:e.paidBy,
+      dayId:e.dayId, note:e.note || '', createdAtMs:e.createdAtMs || 0,
+      createdBy:e.createdBy || ''
+    })));
     state.loadedExpenses = true;
     state.pending.expenses = snap.metadata.hasPendingWrites;
     state.syncError = false;
@@ -681,6 +705,11 @@ function initListeners(){
   const catQ = query(tripCollection('categories'), orderBy('createdAtMs', 'asc'));
   const unsubCategories = onSnapshot(catQ, { includeMetadataChanges:true }, snap => {
     state.customCategories = snap.docs.map(d => ({ id:d.id, ...d.data(), fixed:false, hasLimit:false }));
+    writeCachedList(CACHE_KEYS.categories, state.customCategories.map(c => ({
+      id:c.id, name:c.name, hex:c.hex, icon:c.icon || '🏷️',
+      createdAtMs:c.createdAtMs || 0, createdBy:c.createdBy || '',
+      fixed:false, hasLimit:false
+    })));
     state.loadedCategories = true;
     state.pending.categories = snap.metadata.hasPendingWrites;
     state.syncError = false;
@@ -710,11 +739,11 @@ function updateSyncIndicator(){
   } else if (!navigator.onLine){
     dot.classList.add('offline');
     dot.title = 'Sin conexión — los cambios quedan pendientes';
-  } else if (state.pending.expenses || state.pending.categories){
+  } else if (!isLoaded() || state.pending.expenses || state.pending.categories){
     dot.classList.add('pending');
-    dot.title = 'Sincronizando cambios';
+    dot.title = !isLoaded() ? 'Actualizando datos en segundo plano' : 'Sincronizando cambios';
   } else {
-    dot.title = isLoaded() ? 'Sincronizado' : 'Conectando con Firebase';
+    dot.title = 'Sincronizado';
   }
 }
 
@@ -779,7 +808,7 @@ function queueWrite(promise, pendingMessage, successMessage, failureMessage){
 function render(){
   renderMain();
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
-  const canAdd = isLoaded() && state.tab !== 'cats';
+  const canAdd = FIREBASE_CONFIGURED && Boolean(db) && Boolean(state.me) && state.tab !== 'cats';
   document.getElementById('fabAdd').style.display = canAdd ? 'flex' : 'none';
   updateSyncIndicator();
 }
@@ -787,10 +816,6 @@ function renderMain(){
   const main = document.getElementById('main');
   if (!FIREBASE_CONFIGURED){
     main.innerHTML = `<div class="section-title">Configuración pendiente</div><div class="setup-box">Pega el objeto <code>firebaseConfig</code> de tu proyecto en este archivo y vuelve a publicarlo.</div>`;
-    return;
-  }
-  if (!isLoaded()){
-    main.innerHTML = `<div class="empty-state"><div class="es-icon">🚇</div><p>Cargando los datos del viaje…</p></div>`;
     return;
   }
   if (state.tab === 'hoy') main.innerHTML = viewHoy();
