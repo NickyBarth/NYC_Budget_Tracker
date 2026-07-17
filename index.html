@@ -115,6 +115,10 @@
     color:var(--text-dim); cursor:pointer;
   }
   .icon-btn:active{ transform:scale(.94); }
+  .profile-btn{ overflow:hidden; padding:0; border:2px solid var(--border-2); }
+  .profile-btn.has-profile{ border-color:rgba(242,194,48,.65); }
+  .profile-avatar{ width:100%; height:100%; object-fit:cover; display:block; }
+  .profile-fallback{ font-family:var(--display); font-size:18px; line-height:1; color:var(--gold); }
 
   /* ---------- METRO LINE ---------- */
   .metro-wrap{
@@ -454,11 +458,16 @@
   .identity-box p{ color:var(--text-dim); font-size:13.5px; margin:0 0 18px; }
   .identity-options{ display:flex; gap:12px; }
   .identity-opt{
-    flex:1; padding:22px 0; border-radius:var(--radius);
+    flex:1; padding:14px 10px 16px; border-radius:var(--radius);
     border:1.5px solid var(--border-2); background:var(--surface);
     font-family:var(--display); font-size:20px; cursor:pointer; color:var(--text);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
   }
-  .identity-opt:active{ border-color:var(--gold); }
+  .identity-opt img{
+    width:76px; height:76px; border-radius:50%; object-fit:cover;
+    border:3px solid rgba(242,194,48,.45); background:var(--surface-2);
+  }
+  .identity-opt:active{ border-color:var(--gold); transform:scale(.98); }
   .auth-copy{ color:var(--text-dim); font-size:13px; line-height:1.5; margin:-4px 0 14px; }
   .auth-error{ min-height:18px; color:var(--status-over); font-size:12px; margin-top:10px; }
   .setup-box{ background:var(--surface); border:1px solid var(--border-2); border-radius:var(--radius-sm); padding:12px 14px; color:var(--text-dim); font-size:13px; line-height:1.5; }
@@ -489,11 +498,9 @@
     </div>
     <div class="top-actions">
       <div class="sync-dot" id="syncDot" title="Estado de conexión"></div>
-      <button class="icon-btn" id="btnIdentity" title="Cambiar identidad" aria-label="Cambiar identidad">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
-      </button>
-      <button class="icon-btn" id="btnLogout" title="Cerrar sesión" aria-label="Cerrar sesión" style="display:none">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
+      <button class="icon-btn profile-btn" id="btnIdentity" title="Elegir perfil" aria-label="Elegir o cambiar perfil">
+        <img id="profileAvatar" class="profile-avatar" alt="" hidden>
+        <span id="profileFallback" class="profile-fallback">?</span>
       </button>
     </div>
   </header>
@@ -548,32 +555,22 @@
     </div>
   </div>
 
-
-  <!-- Login sheet -->
-  <div class="overlay" id="overlayLogin">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <h2>Acceso al viaje</h2>
-      <p class="auth-copy">Inicia sesión con una de las dos cuentas autorizadas en Firebase.</p>
-      <div class="field-label">Correo</div>
-      <input type="email" id="inEmail" autocomplete="username" placeholder="correo@ejemplo.com">
-      <div class="field-label">Contraseña</div>
-      <input type="password" id="inPassword" autocomplete="current-password" placeholder="Contraseña">
-      <div class="auth-error" id="authError"></div>
-      <button class="btn-main" id="btnLogin">Entrar</button>
-    </div>
-  </div>
-
   <!-- Identity sheet -->
   <div class="overlay" id="overlayIdentity">
     <div class="sheet">
       <div class="sheet-handle"></div>
       <h2>¿Quién eres?</h2>
       <div class="identity-box">
-        <p>Se usa para marcar quién pagó cada gasto en este teléfono.</p>
+        <p>Elige tu perfil. Puedes cambiarlo después tocando la foto de la esquina superior derecha.</p>
         <div class="identity-options">
-          <button class="identity-opt" data-id="Nicky">Nicky</button>
-          <button class="identity-opt" data-id="Steven">Steven</button>
+          <button class="identity-opt" data-id="Nicky">
+            <img src="Nicky.jpg" alt="Foto de Nicky" onerror="this.hidden=true">
+            <span>Nicky</span>
+          </button>
+          <button class="identity-opt" data-id="Steven">
+            <img src="Steven.jpg" alt="Foto de Steven" onerror="this.hidden=true">
+            <span>Steven</span>
+          </button>
         </div>
       </div>
     </div>
@@ -585,10 +582,6 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import {
-  getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged,
-  signInWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
   collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
@@ -598,12 +591,6 @@ import {
    Copia el objeto EXACTO desde:
    Firebase Console > Configuración del proyecto > Tus apps > SDK setup > Config
    ========================================================= */
-const firebaseConfig = {// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDmLt8AoUS69V_f8bRijN6RVf_R8wKMHZ4",
   authDomain: "nyc-budget-tracker.firebaseapp.com",
@@ -613,20 +600,9 @@ const firebaseConfig = {
   appId: "1:622056546325:web:e3c4d0e981377f9b04ee1c"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-  apiKey: "PEGA_AQUI_API_KEY",
-  authDomain: "PEGA_AQUI_AUTH_DOMAIN",
-  projectId: "PEGA_AQUI_PROJECT_ID",
-  storageBucket: "PEGA_AQUI_STORAGE_BUCKET",
-  messagingSenderId: "PEGA_AQUI_MESSAGING_SENDER_ID",
-  appId: "PEGA_AQUI_APP_ID"
-};
-
 const TRIP_ID = 'nyc-2026';
 const FIREBASE_CONFIGURED = !Object.values(firebaseConfig).some(v => String(v).startsWith('PEGA_AQUI'));
 let firebaseApp = null;
-let auth = null;
 let db = null;
 
 /* =========================================================
@@ -663,8 +639,6 @@ let state = {
   customCategories: [],
   dashViewer: 'juntos',
   me: localStorage.getItem('nyc_trip_identity') || null,
-  authUser: null,
-  authReady: false,
   loadedExpenses: false,
   loadedCategories: false,
   pending: { expenses:false, categories:false },
@@ -693,34 +667,14 @@ function todayId(){
 let selectedDayId = todayId();
 
 /* =========================================================
-   4. FIREBASE / AUTH / LISTENERS
+   4. FIREBASE / LISTENERS
    ========================================================= */
 function initializeFirebase(){
   firebaseApp = initializeApp(firebaseConfig);
-  auth = getAuth(firebaseApp);
-  setPersistence(auth, browserLocalPersistence).catch(err => console.warn('Auth persistence', err));
   db = initializeFirestore(firebaseApp, {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
   });
-
-  onAuthStateChanged(auth, user => {
-    state.authReady = true;
-    state.authUser = user;
-    document.getElementById('btnLogout').style.display = user ? 'flex' : 'none';
-    if (user){
-      closeLoginSheet();
-      initListeners();
-      if (!state.me) openIdentitySheet();
-    } else {
-      stopListeners();
-      state.expenses = [];
-      state.customCategories = [];
-      state.loadedExpenses = false;
-      state.loadedCategories = false;
-      openLoginSheet();
-    }
-    render();
-  });
+  initListeners();
 }
 
 function stopListeners(){
@@ -783,7 +737,7 @@ function updateSyncIndicator(){
     dot.classList.add('pending');
     dot.title = 'Sincronizando cambios';
   } else {
-    dot.title = state.authUser ? 'Sincronizado' : 'Sin sesión';
+    dot.title = isLoaded() ? 'Sincronizado' : 'Conectando con Firebase';
   }
 }
 
@@ -848,7 +802,7 @@ function queueWrite(promise, pendingMessage, successMessage, failureMessage){
 function render(){
   renderMain();
   document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
-  const canAdd = Boolean(state.authUser) && isLoaded() && state.tab !== 'cats';
+  const canAdd = isLoaded() && state.tab !== 'cats';
   document.getElementById('fabAdd').style.display = canAdd ? 'flex' : 'none';
   updateSyncIndicator();
 }
@@ -856,10 +810,6 @@ function renderMain(){
   const main = document.getElementById('main');
   if (!FIREBASE_CONFIGURED){
     main.innerHTML = `<div class="section-title">Configuración pendiente</div><div class="setup-box">Pega el objeto <code>firebaseConfig</code> de tu proyecto en este archivo y vuelve a publicarlo.</div>`;
-    return;
-  }
-  if (!state.authReady || !state.authUser){
-    main.innerHTML = `<div class="empty-state"><div class="es-icon">🔒</div><p>Inicia sesión para cargar y sincronizar los gastos.</p></div>`;
     return;
   }
   if (!isLoaded()){
@@ -1086,7 +1036,7 @@ function bindDynamicEvents(){
       const color = CUSTOM_COLOR_POOL[state.customCategories.length % CUSTOM_COLOR_POOL.length];
       input.value = '';
       const promise = addDoc(tripCollection('categories'), {
-        name, hex:color, icon:'🏷️', createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.authUser.uid
+        name, hex:color, icon:'🏷️', createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.me
       });
       queueWrite(promise, navigator.onLine ? 'Guardando categoría…' : 'Categoría pendiente', 'Categoría agregada', 'No se pudo agregar');
     };
@@ -1098,12 +1048,11 @@ function bindDynamicEvents(){
 /* Add expense */
 const overlayAdd = document.getElementById('overlayAdd');
 const overlayIdentity = document.getElementById('overlayIdentity');
-const overlayLogin = document.getElementById('overlayLogin');
 let selectedCategory = 'comida';
 let selectedWho = null;
 
 function openAddSheet(){
-  if (!state.authUser) return openLoginSheet();
+  if (!state.me){ openIdentitySheet(); showToast('Primero elige tu perfil'); return; }
   selectedCategory = 'comida';
   selectedWho = state.me;
   document.getElementById('inAmount').value = '';
@@ -1133,7 +1082,7 @@ document.getElementById('btnCancelExpense').addEventListener('click', closeAddSh
 overlayAdd.addEventListener('click', e => { if (e.target === overlayAdd) closeAddSheet(); });
 
 document.getElementById('btnSaveExpense').addEventListener('click', () => {
-  if (!state.authUser){ showToast('Inicia sesión'); return; }
+  if (!state.me){ showToast('Primero elige tu perfil'); openIdentitySheet(); return; }
   const rawAmount = Number(document.getElementById('inAmount').value);
   const amount = roundMoney(rawAmount);
   if (!Number.isFinite(amount) || amount <= 0 || amount > 5000){ showToast('Monto válido: $0.01 a $5,000'); return; }
@@ -1144,51 +1093,47 @@ document.getElementById('btnSaveExpense').addEventListener('click', () => {
   const note = document.getElementById('inNote').value.trim().slice(0,140);
   const promise = addDoc(tripCollection('expenses'), {
     amount, category:selectedCategory, paidBy:selectedWho, dayId, note,
-    createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.authUser.uid
+    createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.me
   });
   closeAddSheet();
   queueWrite(promise, navigator.onLine ? 'Guardando…' : 'Guardado sin conexión — pendiente', 'Gasto guardado ✓', 'No se pudo guardar');
 });
 
-/* Identity */
-function openIdentitySheet(){ if (state.authUser) overlayIdentity.classList.add('show'); }
+/* Identity / profile */
+const PROFILE_IMAGES = { Nicky:'Nicky.jpg', Steven:'Steven.jpg' };
+function updateProfileAvatar(){
+  const button = document.getElementById('btnIdentity');
+  const image = document.getElementById('profileAvatar');
+  const fallback = document.getElementById('profileFallback');
+  const person = state.me;
+
+  button.classList.toggle('has-profile', Boolean(person));
+  button.title = person ? `Perfil actual: ${person}. Toca para cambiar.` : 'Elegir perfil';
+  fallback.textContent = person ? person.charAt(0) : '?';
+  fallback.hidden = false;
+  image.hidden = true;
+
+  if (!person || !PROFILE_IMAGES[person]){
+    image.removeAttribute('src');
+    image.alt = '';
+    return;
+  }
+  image.alt = `Foto de ${person}`;
+  image.onload = () => { image.hidden = false; fallback.hidden = true; };
+  image.onerror = () => { image.hidden = true; fallback.hidden = false; };
+  image.src = PROFILE_IMAGES[person];
+}
+function openIdentitySheet(){ overlayIdentity.classList.add('show'); }
 function closeIdentitySheet(){ overlayIdentity.classList.remove('show'); }
 document.getElementById('btnIdentity').addEventListener('click', openIdentitySheet);
 overlayIdentity.addEventListener('click', e => { if (e.target === overlayIdentity && state.me) closeIdentitySheet(); });
 document.querySelectorAll('.identity-opt').forEach(el => el.addEventListener('click', () => {
   state.me = el.dataset.id;
   localStorage.setItem('nyc_trip_identity', state.me);
-  closeIdentitySheet(); showToast(`Listo, ${state.me} 👋`);
+  updateProfileAvatar();
+  closeIdentitySheet();
+  showToast(`Perfil activo: ${state.me}`);
 }));
-
-/* Login */
-function openLoginSheet(){ overlayLogin.classList.add('show'); }
-function closeLoginSheet(){ overlayLogin.classList.remove('show'); document.getElementById('authError').textContent = ''; }
-function authMessage(code){
-  if (code === 'auth/invalid-credential') return 'Correo o contraseña incorrectos.';
-  if (code === 'auth/too-many-requests') return 'Demasiados intentos. Intenta más tarde.';
-  if (code === 'auth/network-request-failed') return 'No hay conexión a internet.';
-  return 'No se pudo iniciar sesión.';
-}
-document.getElementById('btnLogin').addEventListener('click', async () => {
-  if (!FIREBASE_CONFIGURED){ document.getElementById('authError').textContent = 'Primero configura firebaseConfig en el HTML.'; return; }
-  const email = document.getElementById('inEmail').value.trim();
-  const password = document.getElementById('inPassword').value;
-  const errorBox = document.getElementById('authError');
-  if (!email || !password){ errorBox.textContent = 'Completa correo y contraseña.'; return; }
-  errorBox.textContent = '';
-  const btn = document.getElementById('btnLogin');
-  btn.disabled = true; btn.textContent = 'Entrando…';
-  try { await signInWithEmailAndPassword(auth, email, password); document.getElementById('inPassword').value = ''; }
-  catch(err){ console.error(err); errorBox.textContent = authMessage(err.code); }
-  finally { btn.disabled = false; btn.textContent = 'Entrar'; }
-});
-document.getElementById('inPassword').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btnLogin').click(); });
-document.getElementById('btnLogout').addEventListener('click', async () => {
-  if (!auth || !confirm('¿Cerrar sesión en este dispositivo?')) return;
-  try { await signOut(auth); showToast('Sesión cerrada'); }
-  catch(err){ console.error(err); showToast('No se pudo cerrar sesión'); }
-});
 
 /* Toast */
 let toastTimer;
@@ -1202,13 +1147,14 @@ function showToast(msg){
    8. INIT
    ========================================================= */
 render();
+updateProfileAvatar();
 updateSyncIndicator();
+if (!state.me) openIdentitySheet();
 if (FIREBASE_CONFIGURED){
   try { initializeFirebase(); }
   catch(err){ console.error('Firebase init error', err); state.syncError = true; updateSyncIndicator(); showToast('Error configurando Firebase'); }
 } else {
-  openLoginSheet();
-  document.getElementById('authError').textContent = 'Falta pegar firebaseConfig en el HTML.';
+  showToast('Falta configurar Firebase');
 }
 </script>
 </body>
