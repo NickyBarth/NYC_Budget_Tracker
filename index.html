@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>NYC 2026 · Gastos</title>
-<meta name="theme-color" content="#0A1428">
+<title>NYC Trip · Budget & Plan</title>
+<meta name="theme-color" content="#0F0F10">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NYC Trip">
@@ -12,566 +12,148 @@
 <link rel="icon" type="image/png" sizes="192x192" href="app-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0A1428;
-    --bg-2:#081020;
-    --surface:#121E36;
-    --surface-2:#1A2A4A;
-    --surface-3:#22345A;
-    --border:rgba(255,255,255,.08);
-    --border-2:rgba(255,255,255,.14);
-    --text:#F5F7FA;
-    --text-dim:#9AA5B8;
-    --text-faint:#6B7690;
-    --gold:#F2C230;
-    --gold-dim:#C89A1F;
-
-    --cat-comida:#FF6B3D;
-    --cat-transporte:#3B7CFF;
-    --cat-entradas:#6CBE45;
-
-    --status-good:#22C55E;
-    --status-warn:#FBBF24;
-    --status-over:#EF4444;
-
-    --display:'Bebas Neue', 'Inter', sans-serif;
-    --body:'Inter', -apple-system, sans-serif;
-    --mono:'IBM Plex Mono', monospace;
-
-    --radius:16px;
-    --radius-sm:10px;
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
-  body{
-    margin:0;
-    background:var(--bg);
-    background-image:
-      radial-gradient(ellipse 600px 300px at 15% -10%, rgba(59,124,255,.16), transparent),
-      radial-gradient(ellipse 500px 260px at 90% 0%, rgba(242,194,48,.09), transparent);
-    color:var(--text);
-    font-family:var(--body);
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-
-  #app{
-    max-width:480px;
-    margin:0 auto;
-    min-height:100vh;
-    position:relative;
-    display:flex;
-    flex-direction:column;
-    background:linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
-    box-shadow:0 0 60px rgba(0,0,0,.5);
-  }
-
-  ::-webkit-scrollbar{ display:none; }
-  *{ scrollbar-width:none; }
-
-  /* ---------- HEADER ---------- */
-  header.top{
-    padding:18px 18px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    position:sticky;
-    top:0;
-    z-index:20;
-    background:linear-gradient(180deg, var(--bg) 70%, transparent);
-    backdrop-filter:blur(6px);
-  }
-  .brand{ display:flex; flex-direction:column; line-height:1; }
-  .brand .eyebrow{
-    font-family:var(--mono);
-    font-size:10.5px;
-    letter-spacing:.14em;
-    color:var(--gold);
-    text-transform:uppercase;
-    margin-bottom:4px;
-  }
-  .brand h1{
-    font-family:var(--display);
-    font-size:30px;
-    letter-spacing:.03em;
-    margin:0;
-    font-weight:400;
-  }
-  .top-actions{ display:flex; align-items:center; gap:10px; }
-  .sync-dot{
-    width:8px; height:8px; border-radius:50%;
-    background:var(--status-good);
-    box-shadow:0 0 8px var(--status-good);
-    transition:background .3s, box-shadow .3s;
-  }
-  .sync-dot.offline{ background:var(--text-faint); box-shadow:none; }
-  .sync-dot.pending{ background:var(--status-warn); box-shadow:0 0 8px var(--status-warn); }
-  .sync-dot.error{ background:var(--status-over); box-shadow:0 0 8px var(--status-over); }
-  .icon-btn{
-    width:36px; height:36px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    background:var(--surface); border:1px solid var(--border);
-    color:var(--text-dim); cursor:pointer;
-  }
-  .icon-btn:active{ transform:scale(.94); }
-  .profile-btn{ overflow:hidden; padding:0; border:2px solid var(--border-2); }
-  .profile-btn.has-profile{ border-color:rgba(242,194,48,.65); }
-  .profile-avatar{ width:100%; height:100%; object-fit:cover; display:block; }
-  .profile-fallback{ font-family:var(--display); font-size:18px; line-height:1; color:var(--gold); }
-
-  /* ---------- METRO LINE ---------- */
-  .metro-wrap{
-    padding:4px 0 16px;
-  }
-  .metro-scroll{
-    display:flex;
-    align-items:flex-start;
-    padding:10px 18px 4px;
-    overflow-x:auto;
-    gap:0;
-  }
-  .metro-station{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    flex:0 0 auto;
-    width:46px;
-    position:relative;
-    cursor:pointer;
-    background:none;
-    border:none;
-    padding:0;
-    color:inherit;
-  }
-  .metro-station .line{
-    position:absolute;
-    top:9px;
-    left:-23px;
-    width:46px;
-    height:3px;
-    background:var(--border-2);
-    z-index:0;
-  }
-  .metro-station:first-child .line{ display:none; }
-  .metro-station .dot{
-    width:20px; height:20px; border-radius:50%;
-    background:var(--surface-2);
-    border:3px solid var(--status-good);
-    z-index:1;
-    transition:transform .2s;
-  }
-  .metro-station.warn .dot{ border-color:var(--status-warn); }
-  .metro-station.over .dot{ border-color:var(--status-over); }
-  .metro-station.empty .dot{ border-color:var(--border-2); background:var(--surface); }
-  .metro-station.current .dot{
-    width:26px; height:26px;
-    background:var(--gold);
-    border-color:var(--gold);
-    box-shadow:0 0 0 4px rgba(242,194,48,.2);
-  }
-  .metro-station .stlabel{
-    margin-top:6px;
-    font-family:var(--mono);
-    font-size:9.5px;
-    color:var(--text-faint);
-    letter-spacing:.02em;
-  }
-  .metro-station.current .stlabel{ color:var(--gold); font-weight:600; }
-
-  /* ---------- TABS CONTENT ---------- */
-  main{
-    flex:1;
-    padding:0 18px calc(96px + var(--safe-bottom));
-  }
-  .section-title{
-    font-family:var(--display);
-    font-size:22px;
-    letter-spacing:.02em;
-    margin:18px 0 12px;
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-  }
-  .section-title span.sub{
-    font-family:var(--body);
-    font-size:12px;
-    color:var(--text-faint);
-    font-weight:500;
-  }
-
-  .day-hero{
-    background:linear-gradient(160deg, var(--surface-2), var(--surface));
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:16px 18px;
-    margin-bottom:16px;
-  }
-  .day-hero .dh-top{ display:flex; justify-content:space-between; align-items:flex-start; }
-  .day-hero .dh-label{ font-family:var(--display); font-size:26px; }
-  .day-hero .dh-date{ font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin-top:2px;}
-  .pill{
-    font-family:var(--mono);
-    font-size:11px;
-    padding:4px 10px;
-    border-radius:100px;
-    font-weight:600;
-    white-space:nowrap;
-  }
-  .pill.good{ background:rgba(34,197,94,.15); color:var(--status-good); }
-  .pill.warn{ background:rgba(251,191,36,.15); color:var(--status-warn); }
-  .pill.over{ background:rgba(239,68,68,.15); color:var(--status-over); }
-  .pill.empty{ background:var(--surface-2); color:var(--text-faint); }
-
-  .cat-card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:14px 16px;
-    margin-bottom:10px;
-  }
-  .cat-card .cc-top{
-    display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;
-  }
-  .cc-name{ display:flex; align-items:center; gap:8px; font-weight:600; font-size:14.5px; }
-  .cc-dot{ width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
-  .cc-amounts{ font-family:var(--mono); font-size:13.5px; color:var(--text-dim); text-align:right; }
-  .cc-amounts b{ color:var(--text); font-size:16px; }
-  .bar-track{
-    position:relative;
-    height:8px;
-    background:var(--surface-3);
-    border-radius:100px;
-    overflow:visible;
-    margin-top:2px;
-  }
-  .bar-fill{
-    position:absolute; left:0; top:0; height:100%;
-    border-radius:100px;
-    transition:width .4s ease;
-  }
-  .bar-tick{
-    position:absolute; top:-3px; width:2px; height:14px;
-    background:rgba(255,255,255,.35);
-    border-radius:2px;
-  }
-  .cc-foot{ display:flex; justify-content:space-between; margin-top:6px; font-size:10.5px; font-family:var(--mono); color:var(--text-faint); }
-  .cc-nolimit{ font-size:11px; color:var(--text-faint); font-style:italic; margin-top:2px;}
-
-  .exp-list-title{ font-size:12.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); margin:20px 2px 8px; font-weight:600;}
-  .exp-item{
-    display:flex; align-items:center; gap:12px;
-    padding:11px 4px;
-    border-bottom:1px solid var(--border);
-  }
-  .exp-item:last-child{ border-bottom:none; }
-  .exp-cat-dot{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
-  .exp-info{ flex:1; min-width:0; }
-  .exp-note{ font-size:13.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .exp-meta{ font-size:11px; color:var(--text-faint); margin-top:1px; }
-  .exp-amount{ font-family:var(--mono); font-weight:600; font-size:14.5px; }
-  .exp-del{ color:var(--text-faint); font-size:18px; padding:4px 2px; cursor:pointer; background:none; border:none; font-family:var(--body); }
-
-  .empty-state{
-    text-align:center; padding:34px 10px; color:var(--text-faint);
-  }
-  .empty-state .es-icon{ font-size:30px; margin-bottom:8px; }
-  .empty-state p{ font-size:13.5px; margin:0; line-height:1.5; }
-
-  .day-card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:14px 16px;
-    margin-bottom:10px;
-    cursor:pointer;
-  }
-  .day-card .dc-top{ display:flex; justify-content:space-between; align-items:center; }
-  .day-card .dc-label{ font-weight:700; font-size:14.5px; }
-  .day-card .dc-date{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); margin-top:2px;}
-  .dc-bars{ display:flex; gap:6px; margin-top:10px; }
-  .dc-bars .bar-track{ flex:1; height:6px; }
-  .dc-total{ font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:8px; }
-
-  /* ---------- Dashboard ---------- */
-
-  .big-stat{
-    background:linear-gradient(160deg, var(--surface-2), var(--surface));
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:20px 18px;
-    margin-bottom:16px;
-    text-align:center;
-  }
-  .big-stat .bs-label{ font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
-  .big-stat .bs-num{ font-family:var(--mono); font-size:34px; font-weight:600; }
-  .big-stat .bs-sub{ font-size:12px; color:var(--text-faint); margin-top:4px; }
-
-
-  /* ---------- Categorías tab ---------- */
-  .cat-row{
-    display:flex; align-items:center; gap:12px;
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px;
-  }
-  .cat-row .cr-dot{ width:14px; height:14px; border-radius:50%; flex:0 0 auto; }
-  .cat-row .cr-name{ flex:1; font-weight:600; font-size:14px; }
-  .cat-row .cr-total{ font-family:var(--mono); font-size:13px; color:var(--text-dim); }
-  .cat-row .cr-del{ color:var(--text-faint); cursor:pointer; font-size:16px; padding:2px 6px; background:none; border:none; font-family:var(--body); }
-
-  .add-cat-form{
-    display:flex; gap:8px; margin-top:14px;
-  }
-  .add-cat-form input{ flex:1; }
-  .btn-sm{
-    background:var(--gold); color:#1A1200; border:none; border-radius:var(--radius-sm);
-    padding:0 16px; font-weight:700; font-size:13.5px; cursor:pointer;
-  }
-
-  /* ---------- Bottom nav ---------- */
-  nav.bottom{
-    position:fixed;
-    bottom:0; left:50%; transform:translateX(-50%);
-    width:100%; max-width:480px;
-    background:rgba(18,30,54,.92);
-    backdrop-filter:blur(14px);
-    border-top:1px solid var(--border);
-    display:flex;
-    padding:8px 6px calc(8px + var(--safe-bottom));
-    z-index:30;
-  }
-  nav.bottom button{
-    flex:1; background:none; border:none; color:var(--text-faint);
-    display:flex; flex-direction:column; align-items:center; gap:3px;
-    font-family:var(--body); font-size:10px; font-weight:600;
-    padding:6px 0; cursor:pointer;
-  }
-  nav.bottom button svg{ width:20px; height:20px; }
-  nav.bottom button.active{ color:var(--gold); }
-
-  .fab{
-    position:fixed;
-    bottom:calc(78px + var(--safe-bottom));
-    left:50%;
-    transform:translateX(calc(-50% + 190px));
-    width:56px; height:56px; border-radius:50%;
-    background:var(--gold);
-    color:#1A1200;
-    border:none;
-    font-size:28px;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 6px 20px rgba(242,194,48,.4);
-    cursor:pointer;
-    z-index:31;
-  }
-  .fab:active{ transform:translateX(calc(-50% + 190px)) scale(.93); }
-
-  /* ---------- Sheet / Modal ---------- */
-  .overlay{
-    position:fixed; inset:0; background:rgba(4,8,18,.7);
-    backdrop-filter:blur(2px);
-    z-index:40; display:none;
-    align-items:flex-end;
-    justify-content:center;
-  }
-  .overlay.show{ display:flex; }
-  .sheet{
-    width:100%; max-width:480px;
-    background:var(--bg-2);
-    border-top:1px solid var(--border-2);
-    border-radius:22px 22px 0 0;
-    padding:10px 20px calc(24px + var(--safe-bottom));
-    max-height:88vh;
-    overflow-y:auto;
-    animation:slideUp .25s ease;
-  }
-  @keyframes slideUp{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
-  .sheet-handle{ width:40px; height:4px; background:var(--border-2); border-radius:4px; margin:6px auto 14px; }
-  .sheet h2{ font-family:var(--display); font-size:22px; margin:0 0 16px; letter-spacing:.02em; }
-  .field-label{ font-size:12px; color:var(--text-dim); font-weight:600; margin:14px 0 6px; text-transform:uppercase; letter-spacing:.06em; }
-  .amount-input{
-    width:100%; background:var(--surface); border:1px solid var(--border-2);
-    border-radius:var(--radius-sm); color:var(--text); font-family:var(--mono);
-    font-size:28px; font-weight:600; padding:14px 16px; text-align:center;
-  }
-  .amount-input:focus{ outline:none; border-color:var(--gold); }
-  input[type=text], input[type=email], input[type=password], select{
-    width:100%; background:var(--surface); border:1px solid var(--border-2);
-    border-radius:var(--radius-sm); color:var(--text); font-family:var(--body);
-    font-size:14.5px; padding:11px 13px;
-  }
-  input:focus, select:focus{ outline:none; border-color:var(--gold); }
-  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
-  .chip{
-    display:flex; align-items:center; gap:6px;
-    background:var(--surface); border:1.5px solid var(--border-2);
-    border-radius:100px; padding:8px 13px; font-size:13px; font-weight:600;
-    cursor:pointer; color:var(--text-dim); font-family:var(--body);
-  }
-  .chip .chip-dot{ width:8px; height:8px; border-radius:50%; }
-  .chip.sel{ border-color:var(--gold); color:var(--text); background:rgba(242,194,48,.1); }
-  .chip.add-chip{ border-style:dashed; color:var(--text-faint); }
-  .who-row{ display:flex; gap:10px; }
-  .who-btn{
-    flex:1; padding:14px 0; text-align:center; border-radius:var(--radius-sm);
-    border:1.5px solid var(--border-2); background:var(--surface);
-    font-weight:700; font-size:14px; color:var(--text-dim); cursor:pointer;
-  }
-  .who-btn.sel{ border-color:var(--gold); background:rgba(242,194,48,.12); color:var(--text); }
-  .btn-main{
-    width:100%; margin-top:20px;
-    background:var(--gold); color:#1A1200; border:none;
-    border-radius:var(--radius-sm); padding:15px 0;
-    font-weight:800; font-size:15px; cursor:pointer;
-    font-family:var(--body);
-  }
-  .btn-main:active{ transform:scale(.98); }
-  .btn-ghost{
-    width:100%; margin-top:8px; background:none; border:none;
-    color:var(--text-faint); padding:10px 0; font-size:13px; cursor:pointer;
-  }
-
-  /* identity modal */
-  .identity-box{ text-align:center; padding-top:6px; }
-  .identity-box p{ color:var(--text-dim); font-size:13.5px; margin:0 0 18px; }
-  .identity-options{ display:flex; gap:12px; }
-  .identity-opt{
-    flex:1; padding:14px 10px 16px; border-radius:var(--radius);
-    border:1.5px solid var(--border-2); background:var(--surface);
-    font-family:var(--display); font-size:20px; cursor:pointer; color:var(--text);
-    display:flex; flex-direction:column; align-items:center; gap:10px;
-  }
-  .identity-opt img{
-    width:76px; height:76px; border-radius:50%; object-fit:cover;
-    border:3px solid rgba(242,194,48,.45); background:var(--surface-2);
-  }
-  .identity-opt:active{ border-color:var(--gold); transform:scale(.98); }
-  .auth-copy{ color:var(--text-dim); font-size:13px; line-height:1.5; margin:-4px 0 14px; }
-  .auth-error{ min-height:18px; color:var(--status-over); font-size:12px; margin-top:10px; }
-  .setup-box{ background:var(--surface); border:1px solid var(--border-2); border-radius:var(--radius-sm); padding:12px 14px; color:var(--text-dim); font-size:13px; line-height:1.5; }
-  .setup-box code{ color:var(--gold); font-family:var(--mono); }
-
-  .toast{
-    position:fixed; bottom:calc(96px + var(--safe-bottom)); left:50%;
-    transform:translateX(-50%) translateY(20px);
-    background:var(--surface-3); border:1px solid var(--border-2);
-    color:var(--text); padding:10px 18px; border-radius:100px;
-    font-size:13px; font-weight:600; opacity:0; pointer-events:none;
-    transition:all .3s ease; z-index:50; white-space:nowrap;
-  }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
-  }
+:root{
+  --bg:#0F0F10;
+  --bg-2:#151214;
+  --surface:#141113;
+  --surface-2:#1B1517;
+  --surface-3:#24191C;
+  --surface-soft:rgba(74,51,45,.18);
+  --border:rgba(242,222,210,.10);
+  --border-strong:rgba(242,222,210,.18);
+  --text:#F2DED2;
+  --text-dim:#C9B0A4;
+  --text-faint:#9D8279;
+  --amber:#DFA98C;
+  --amber-soft:#C88F73;
+  --mauve:#5B0F1F;
+  --lavender:#4A332D;
+  --stone:#F2DED2;
+  --success:#56C89B;
+  --warning:#F6C15D;
+  --danger:#F26D78;
+  --food:#DFA98C;
+  --transport:#4A332D;
+  --tickets:#7E3040;
+  --display:'Cormorant Garamond', Georgia, serif;
+  --body:'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:'Space Mono', monospace;
+  --radius:20px;
+  --radius-sm:13px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;margin:0}
+body{
+  color:var(--text);font-family:var(--body);background:var(--bg);overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 520px 300px at 82% -5%,rgba(223,169,140,.15),transparent 68%),
+    radial-gradient(ellipse 620px 380px at -10% 12%,rgba(91,15,31,.22),transparent 72%),
+    linear-gradient(180deg,#0F0F10 0%,#140F11 100%);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit}
+button{color:inherit}
+::-webkit-scrollbar{display:none}*{scrollbar-width:none}
+#app{max-width:500px;margin:0 auto;min-height:100vh;position:relative;background:linear-gradient(180deg,rgba(20,16,17,.97),rgba(15,15,16,.995));box-shadow:0 0 80px rgba(0,0,0,.65);transition:background-image .35s ease, background-color .35s ease}
+#app.home-hero-bg{background-image:linear-gradient(180deg,rgba(10,10,11,.10) 0%,rgba(10,10,11,.28) 18%,rgba(10,10,11,.62) 42%,rgba(10,10,11,.86) 60%,rgba(10,10,11,.97) 76%,rgba(10,10,11,.995) 100%),url("hero-nyc.png");background-size:cover;background-position:center top;background-repeat:no-repeat;background-color:#0F0F10}
+#app:before{content:"";position:fixed;inset:0;max-width:500px;margin:auto;pointer-events:none;opacity:.13;background-image:linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.02) 50%,transparent 50.2%);background-size:80px 100%}
+header.top{position:sticky;top:0;z-index:25;padding:17px 18px 12px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(15,15,16,.98) 70%,rgba(15,15,16,.72) 90%,transparent);backdrop-filter:blur(16px)}
+#app.home-hero-bg header.top{background:linear-gradient(180deg,rgba(10,10,11,.58) 0%,rgba(10,10,11,.20) 65%,rgba(10,10,11,0) 100%)}
+#app.home-mode header.top{justify-content:flex-end}
+#app.home-mode header.top .brand{display:none}
+.brand .eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}.brand h1{font-family:var(--display);font-size:31px;line-height:.95;margin:4px 0 0;font-weight:600;letter-spacing:.035em}.top-actions{display:flex;align-items:center;gap:10px}.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 10px var(--success)}.sync-dot.offline{background:var(--text-faint);box-shadow:none}.sync-dot.pending{background:var(--warning);box-shadow:0 0 10px var(--warning)}.sync-dot.error{background:var(--danger);box-shadow:0 0 10px var(--danger)}
+.profile-btn{width:48px;height:48px;border-radius:50%;padding:2px;border:1px solid rgba(223,169,140,.78);background:linear-gradient(145deg,rgba(91,15,31,.18),rgba(15,15,16,.78));box-shadow:0 0 0 1px rgba(223,169,140,.08),0 10px 20px rgba(0,0,0,.24);position:relative;overflow:hidden;cursor:pointer}.profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}.profile-btn .profile-placeholder{display:grid;place-items:center;width:100%;height:100%;color:var(--amber)}
+main{padding:0 17px calc(108px + var(--safe-bottom));position:relative;z-index:1}.section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 1px 12px}.section-title h2{margin:0;font-family:var(--display);font-size:27px;font-weight:600;letter-spacing:.02em}.section-title .sub{font-size:11px;color:var(--text-faint)}
+.home-intro{padding:12px 2px 6px;position:relative}.home-intro .intro-date{font-size:14px;color:var(--stone);font-family:var(--display);opacity:.95}.home-intro .intro-line{width:34px;height:2px;background:linear-gradient(90deg,var(--amber),transparent);border-radius:99px;margin:6px 0 12px}.home-intro .intro-title{font-family:var(--display);font-size:72px;line-height:.86;letter-spacing:-.03em;color:var(--stone);text-shadow:0 8px 30px rgba(0,0,0,.32)}.home-intro .intro-badge{position:absolute;right:0;top:6px;width:58px;height:58px;border-radius:50%;border:1px solid rgba(223,169,140,.75);display:grid;place-items:center;background:rgba(15,15,16,.24);backdrop-filter:blur(8px);box-shadow:0 10px 18px rgba(0,0,0,.18)}
+.icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}.icon svg{display:block}
+.day-strip-wrap{padding:8px;border-radius:24px;background:linear-gradient(180deg,rgba(27,19,22,.78),rgba(19,16,17,.88));border:1px solid rgba(223,169,140,.18);box-shadow:0 16px 30px rgba(0,0,0,.20);backdrop-filter:blur(14px);margin-bottom:14px}.day-strip{display:flex;gap:8px;overflow:auto;padding:0;scroll-snap-type:x proximity}.day-chip{min-width:63px;border:1px solid transparent;background:none;border-radius:18px;padding:11px 8px;color:var(--text-faint);cursor:pointer;scroll-snap-align:center}.day-chip .weekday{font-size:8px;letter-spacing:.16em;text-transform:uppercase}.day-chip .num{font-family:var(--display);font-size:27px;line-height:1.05;margin-top:2px}.day-chip.active{color:#2A1617;background:linear-gradient(160deg,#7D2537,#5B0F1F);border-color:rgba(223,169,140,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 10px 18px rgba(0,0,0,.24)}.day-chip.active .weekday,.day-chip.active .num{color:var(--stone)}.day-chip.has-plan:not(.active){border-color:rgba(223,169,140,.22);color:var(--stone)}
+.card{background:linear-gradient(180deg,rgba(24,18,20,.84),rgba(14,13,14,.92));border:1px solid rgba(223,169,140,.14);border-radius:24px;box-shadow:0 16px 34px rgba(0,0,0,.24);backdrop-filter:blur(14px)}
+.hero{padding:18px 18px 16px;margin-bottom:14px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;inset:0;opacity:.18;background-image:radial-gradient(circle at 20% 30%,rgba(223,169,140,.08),transparent 32%),linear-gradient(135deg,transparent 0 35%,rgba(223,169,140,.02) 35% 36%,transparent 36% 100%);pointer-events:none}.hero.nyc-photo{background:linear-gradient(180deg,rgba(63,10,21,.28),rgba(17,14,15,.86) 55%,rgba(14,13,14,.94) 100%);border-color:rgba(223,169,140,.18);backdrop-filter:blur(10px)}.hero.nyc-photo:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(0,0,0,.08) 32%,rgba(0,0,0,.22) 100%);pointer-events:none}.hero.nyc-photo .hero-label,.hero.nyc-photo .hero-date,.hero.nyc-photo .metric-label,.hero.nyc-photo .metric-sub,.hero.nyc-photo .progress-foot{color:rgba(242,222,210,.84)}.hero.nyc-photo .hero-title{color:#F7E8E0;text-shadow:0 2px 20px rgba(0,0,0,.3)}.hero.nyc-photo .ring:after{background:rgba(16,14,15,.88)}.hero > *{position:relative;z-index:1}.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.hero-label{font-size:10px;color:var(--amber);letter-spacing:.16em;text-transform:uppercase}.hero-title{font-family:var(--display);font-size:29px;margin-top:4px}.hero-date{font-family:var(--body);font-size:11px;color:var(--text-dim);margin-top:4px}.hero-grid{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-top:18px}.metric-label{font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:var(--text-faint)}.metric-main{font-family:var(--display);font-size:46px;color:var(--stone);line-height:1}.metric-main strong{color:var(--stone);font-weight:600}.metric-sub{font-size:12px;color:var(--text-dim);margin-top:7px}.ring{--pct:0;--ring-color:var(--amber);width:90px;height:90px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--ring-color) calc(var(--pct)*1%),rgba(255,255,255,.10) 0);position:relative}.ring:after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--surface)}.ring-content{position:relative;z-index:2;text-align:center}.ring-num{font-family:var(--display);font-size:29px}.ring-text{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-faint)}
+.progress{height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#C88977,var(--amber),#F2DED2);transition:width .35s}.progress-foot{display:flex;justify-content:space-between;margin-top:9px;font-family:var(--body);font-size:10px;color:var(--text-faint)}
+.pill{font-size:9px;font-weight:700;padding:5px 9px;border-radius:99px;white-space:nowrap}.pill.good{color:var(--success);background:rgba(86,200,155,.12)}.pill.warn{color:var(--warning);background:rgba(246,193,93,.12)}.pill.over{color:var(--danger);background:rgba(242,109,120,.12)}.pill.neutral{color:var(--lavender);background:rgba(156,114,101,.12)}
+.category-card{padding:16px 16px;margin-bottom:11px;display:grid;grid-template-columns:62px 1fr auto;gap:14px;align-items:center}.category-icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,rgba(223,169,140,.16),rgba(91,15,31,.16));border:1px solid rgba(223,169,140,.28);color:var(--amber);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}.category-icon.transport{color:var(--amber);border-color:rgba(223,169,140,.26);background:radial-gradient(circle at 30% 30%,rgba(74,51,45,.30),rgba(91,15,31,.10))}.category-icon.ticket{color:var(--amber);border-color:rgba(223,169,140,.26);background:radial-gradient(circle at 30% 30%,rgba(91,15,31,.24),rgba(15,15,16,.08))}.category-name{font-family:var(--display);font-size:20px;line-height:1}.category-meta{font-size:12px;color:var(--text-dim);margin-top:4px}.category-amount{text-align:right;font-family:var(--display);font-size:22px;color:var(--stone)}.category-amount small{display:block;color:var(--text-faint);font-size:10px;margin-top:3px;font-family:var(--body)}.mini-progress{height:4px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:10px;overflow:hidden}.mini-progress span{display:block;height:100%;background:linear-gradient(90deg,#C88977,var(--amber));border-radius:99px}.category-content .mini-progress.transport span{background:linear-gradient(90deg,#7A544B,#D7AB92)}.category-content .mini-progress.ticket span{background:linear-gradient(90deg,#5B0F1F,#DFA98C)}
+.list-title{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-faint);margin:20px 2px 8px}.expense-row,.activity-row,.packing-row{display:flex;align-items:center;gap:11px;padding:12px 4px;border-bottom:1px solid var(--border)}.expense-row:last-child,.activity-row:last-child,.packing-row:last-child{border-bottom:none}.row-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--surface-soft);color:var(--lavender);flex:0 0 auto}.row-main{min-width:0;flex:1}.row-title{font-size:13px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-meta{font-size:10px;color:var(--text-faint);margin-top:3px;line-height:1.4}.row-amount{font-family:var(--mono);font-size:13px}.row-action{border:none;background:none;color:var(--text-faint);padding:6px;cursor:pointer}.row-action.danger{color:var(--danger)}
+.empty{padding:36px 16px;text-align:center;color:var(--text-faint)}.empty .empty-icon{width:54px;height:54px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;color:var(--lavender);background:rgba(156,114,101,.08);border:1px dashed rgba(156,114,101,.25)}.empty p{font-size:12px;line-height:1.6;margin:0}
+.budget-compare{padding:15px;margin:10px 0}.compare-head{display:flex;align-items:start;justify-content:space-between;gap:10px}.compare-title{font-weight:700;font-size:13px}.compare-source{font-size:9px;color:var(--text-faint);margin-top:3px}.compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:13px}.compare-box{padding:10px 8px;border-radius:12px;background:rgba(0,0,0,.14);border:1px solid var(--border)}.compare-box .label{font-size:8px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em}.compare-box .value{font-family:var(--mono);font-size:14px;margin-top:4px}.compare-box .value.up{color:var(--warning)}.compare-box .value.down{color:var(--success)}.compare-notes{margin-top:11px;font-size:10px;line-height:1.55;color:var(--text-dim)}.button-row{display:flex;gap:8px;margin-top:12px}.btn{border:none;border-radius:12px;padding:11px 13px;font-weight:750;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn-primary{background:linear-gradient(140deg,#E7B198,#C88F73);color:#26122B;box-shadow:0 8px 22px rgba(223,169,140,.18)}.btn-secondary{background:rgba(156,114,101,.10);border:1px solid rgba(156,114,101,.20);color:var(--stone)}.btn-danger{background:rgba(242,109,120,.10);border:1px solid rgba(242,109,120,.22);color:var(--danger)}.btn:disabled{opacity:.4;cursor:not-allowed}.btn.full{width:100%}.btn.small{padding:8px 10px;font-size:9px}
+.excel-plan{padding:13px 14px;margin-bottom:10px;border-left:3px solid var(--mauve)}.excel-plan .label{font-size:8px;color:var(--lavender);text-transform:uppercase;letter-spacing:.13em}.excel-plan p{font-size:11px;line-height:1.55;color:var(--text-dim);margin:7px 0 0}
+.activity-row{align-items:flex-start}.activity-time{font-family:var(--mono);font-size:9px;color:var(--amber);width:42px;padding-top:4px}.activity-row .row-icon{color:var(--amber)}
+.tabs-inline{display:flex;padding:4px;background:rgba(0,0,0,.16);border:1px solid var(--border);border-radius:99px;margin-bottom:13px}.tabs-inline button{flex:1;border:0;background:none;color:var(--text-faint);padding:8px;border-radius:99px;font-size:10px;font-weight:700;cursor:pointer}.tabs-inline button.active{background:var(--surface-3);color:var(--stone)}
+.packing-summary{padding:15px;margin-bottom:10px}.packing-top{display:flex;align-items:center;justify-content:space-between}.packing-number{font-family:var(--display);font-size:36px}.packing-number span{color:var(--amber)}.packing-row{align-items:flex-start}.check-btn{width:28px;height:28px;border-radius:9px;border:1px solid rgba(156,114,101,.35);background:none;color:transparent;display:grid;place-items:center;cursor:pointer;flex:0 0 auto}.packing-row.done .check-btn{background:var(--success);border-color:var(--success);color:#13281F}.packing-row.done .row-title{text-decoration:line-through;color:var(--text-faint)}.owner-badge{display:inline-flex;padding:2px 6px;border-radius:99px;background:rgba(223,169,140,.10);color:var(--amber);font-size:8px;margin-left:4px}
+.day-card{padding:14px;margin-bottom:9px;cursor:pointer}.day-card-top{display:flex;justify-content:space-between;align-items:center}.day-card-title{font-family:var(--display);font-size:21px}.day-card-date{font-size:9px;color:var(--text-faint);margin-top:2px}.day-card-budget{font-family:var(--mono);font-size:11px;text-align:right}.day-card .dual-bars{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.day-card .dual-bars .progress{height:5px}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.more-card{padding:16px;min-height:130px;border:none;text-align:left;color:var(--text);cursor:pointer}.more-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(223,169,140,.09);border:1px solid rgba(223,169,140,.22);color:var(--amber);margin-bottom:18px}.more-title{font-family:var(--display);font-size:22px}.more-sub{font-size:10px;color:var(--text-faint);margin-top:3px;line-height:1.45}.back-link{border:none;background:none;color:var(--amber);display:inline-flex;align-items:center;gap:5px;padding:5px 0;cursor:pointer;font-size:10px}
+.dashboard-stat{padding:18px;text-align:center;margin-bottom:10px}.dashboard-stat .label{font-size:9px;text-transform:uppercase;color:var(--text-faint);letter-spacing:.11em}.dashboard-stat .value{font-family:var(--display);font-size:44px;color:var(--stone);margin-top:3px}.dashboard-stat .sub{font-size:10px;color:var(--text-faint)}
+.cat-manage-row{display:flex;align-items:center;gap:12px;padding:12px 13px;margin-bottom:8px}.cat-manage-row .cat-name{flex:1;font-size:12px;font-weight:700}.cat-manage-row .cat-total{font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.profile-panel{padding:20px;text-align:center}.profile-large{width:86px;height:86px;border-radius:50%;object-fit:cover;border:2px solid var(--amber);margin:0 auto 11px}.profile-panel h3{font-family:var(--display);font-size:28px;margin:0}.profile-panel p{font-size:10px;color:var(--text-faint)}
+nav.bottom{position:fixed;z-index:35;left:50%;bottom:0;transform:translateX(-50%);max-width:500px;width:100%;display:flex;padding:10px 8px calc(10px + var(--safe-bottom));background:linear-gradient(180deg,rgba(17,14,15,.86),rgba(10,10,11,.96));border-top:1px solid rgba(223,169,140,.12);backdrop-filter:blur(20px);box-shadow:0 -10px 30px rgba(0,0,0,.18)}nav.bottom button{flex:1;border:0;background:none;color:var(--text-faint);display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;font-size:9px;font-weight:700;cursor:pointer}nav.bottom button.active{color:var(--amber)}nav.bottom button .nav-icon{height:22px;display:grid;place-items:center}
+.fab{position:fixed;z-index:36;bottom:calc(84px + var(--safe-bottom));left:50%;transform:translateX(calc(-50% + 205px));width:62px;height:62px;border:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F2DED2,#DFA98C 52%,#B97766 100%);color:#2A1718;display:grid;place-items:center;box-shadow:0 18px 36px rgba(0,0,0,.34),0 0 0 1px rgba(255,255,255,.06) inset;cursor:pointer}.fab:active{transform:translateX(calc(-50% + 205px)) scale(.94)}
+.overlay{position:fixed;z-index:60;inset:0;background:rgba(10,10,11,.76);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}.overlay.show{display:flex}.sheet{width:100%;max-width:500px;background:linear-gradient(180deg,#181314,#100F10);border-top:1px solid var(--border-strong);border-radius:28px 28px 0 0;padding:9px 19px calc(24px + var(--safe-bottom));max-height:91vh;overflow:auto;animation:sheetUp .22s ease}.sheet-handle{width:42px;height:4px;border-radius:99px;background:rgba(242,222,210,.18);margin:5px auto 15px}@keyframes sheetUp{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}.sheet h2{font-family:var(--display);font-size:30px;margin:0 0 14px}.field-label{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--text-faint);font-weight:700;margin:13px 0 6px}.input,select,textarea{width:100%;border:1px solid var(--border-strong);background:rgba(29,20,23,.62);color:var(--text);border-radius:16px;padding:11px 12px;font-size:12px;outline:none}.input:focus,select:focus,textarea:focus{border-color:rgba(223,169,140,.65)}textarea{resize:vertical;min-height:70px}.amount-input{font-family:var(--display);font-size:34px;text-align:center;padding:14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice-row{display:flex;gap:8px;flex-wrap:wrap}.choice{border:1px solid var(--border-strong);background:rgba(29,20,23,.50);color:var(--text-dim);padding:9px 12px;border-radius:99px;font-size:10px;font-weight:700;cursor:pointer}.choice.selected{border-color:var(--amber);color:var(--stone);background:rgba(223,169,140,.08)}.identity-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.identity-opt{border:1px solid var(--border-strong);background:var(--surface);border-radius:18px;padding:14px;cursor:pointer}.identity-opt img{width:76px;height:76px;object-fit:cover;border-radius:50%;border:2px solid var(--amber);display:block;margin:0 auto 8px}.identity-opt span{font-family:var(--display);font-size:22px}.toast{position:fixed;z-index:80;bottom:calc(104px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(18px);opacity:0;pointer-events:none;background:rgba(20,16,18,.96);border:1px solid var(--border-strong);padding:11px 16px;border-radius:99px;font-size:10px;font-weight:700;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;transition:.25s}.toast.show{opacity:1;transform:translateX(-50%)}
+.setup-box{padding:14px;border:1px solid var(--border-strong);border-radius:14px;background:var(--surface);font-size:11px;color:var(--text-dim);line-height:1.5}.setup-box code{color:var(--amber)}
+@media(max-width:390px){.fab{transform:translateX(calc(-50% + 165px))}.fab:active{transform:translateX(calc(-50% + 165px)) scale(.94)}.metric-main{font-size:37px}.compare-grid{gap:5px}.compare-box{padding:9px 5px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
 <div id="app">
+<header class="top">
+  <div class="brand"><div class="eyebrow">Jul 29 — Ago 7, 2026</div><h1>NYC TRIP</h1></div>
+  <div class="top-actions"><div class="sync-dot" id="syncDot" title="Estado de sincronización"></div><button class="profile-btn" id="btnProfile" aria-label="Cambiar perfil"><span class="profile-placeholder" id="profilePlaceholder"></span><img id="profileImage" alt="Perfil" hidden></button></div>
+</header>
+<main id="main"></main>
+<button class="fab" id="fabAdd" aria-label="Agregar"></button>
+<nav class="bottom">
+  <button class="nav-btn active" data-tab="hoy"><span class="nav-icon" data-icon="home"></span><span>Hoy</span></button>
+  <button class="nav-btn" data-tab="plan"><span class="nav-icon" data-icon="map"></span><span>Plan</span></button>
+  <button class="nav-btn" data-tab="dias"><span class="nav-icon" data-icon="calendar"></span><span>Días</span></button>
+  <button class="nav-btn" data-tab="lista"><span class="nav-icon" data-icon="suitcase"></span><span>Lista</span></button>
+  <button class="nav-btn" data-tab="more"><span class="nav-icon" data-icon="more"></span><span>Más</span></button>
+</nav>
 
-  <header class="top">
-    <div class="brand">
-      <span class="eyebrow">Jul 29 &ndash; Ago 7, 2026</span>
-      <h1>NYC TRIP</h1>
-    </div>
-    <div class="top-actions">
-      <div class="sync-dot" id="syncDot" title="Estado de conexión"></div>
-      <button class="icon-btn profile-btn" id="btnIdentity" title="Elegir perfil" aria-label="Elegir o cambiar perfil">
-        <img id="profileAvatar" class="profile-avatar" alt="" hidden>
-        <span id="profileFallback" class="profile-fallback">?</span>
-      </button>
-    </div>
-  </header>
+<div class="overlay" id="overlayExpense"><div class="sheet"><div class="sheet-handle"></div><h2>Agregar gasto</h2>
+  <input class="input amount-input" id="expenseAmount" type="number" inputmode="decimal" placeholder="$0" min="0" step="0.01">
+  <div class="field-label">Categoría</div><div class="choice-row" id="expenseCategories"></div>
+  <div class="field-label">¿Quién lo registró/pagó?</div><div class="choice-row" id="expenseWho"></div>
+  <div class="field-label">Día</div><select id="expenseDay"></select>
+  <div class="field-label">Nota opcional</div><input class="input" id="expenseNote" maxlength="140" placeholder="Ej. Pizza en Chelsea Market">
+  <button class="btn btn-primary full" id="saveExpense" style="margin-top:18px">Guardar gasto</button><button class="btn btn-secondary full" data-close="overlayExpense" style="margin-top:8px">Cancelar</button>
+</div></div>
 
-  <main id="main"></main>
-
-  <button class="fab" id="fabAdd">+</button>
-
-  <nav class="bottom">
-    <button data-tab="hoy" class="navbtn active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
-      Hoy
-    </button>
-    <button data-tab="dias" class="navbtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-      Días
-    </button>
-    <button data-tab="dash" class="navbtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
-      Dashboard
-    </button>
-    <button data-tab="cats" class="navbtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.9L12.9 20.6a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8L10.8 3h6.8a3 3 0 0 1 3 3v6.8z"/><circle cx="15" cy="8" r="1.5"/></svg>
-      Categorías
-    </button>
-  </nav>
-
-  <!-- Add expense sheet -->
-  <div class="overlay" id="overlayAdd">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <h2>Agregar gasto</h2>
-      <input class="amount-input" id="inAmount" type="number" inputmode="decimal" placeholder="$0" min="0" step="0.01">
-
-      <div class="field-label">Categoría</div>
-      <div class="chip-row" id="chipCategories"></div>
-
-      <div class="field-label">¿Quién pagó?</div>
-      <div class="who-row">
-        <button class="who-btn" id="whoNicky">Nicky</button>
-        <button class="who-btn" id="whoSteven">Steven</button>
-      </div>
-
-      <div class="field-label">Día</div>
-      <select id="inDay"></select>
-
-      <div class="field-label">Nota (opcional)</div>
-      <input type="text" id="inNote" placeholder="ej. Ramen en Ichiran">
-
-      <button class="btn-main" id="btnSaveExpense">Guardar gasto</button>
-      <button class="btn-ghost" id="btnCancelExpense">Cancelar</button>
-    </div>
+<div class="overlay" id="overlayPlan"><div class="sheet"><div class="sheet-handle"></div><h2>Añadir al plan</h2>
+  <div class="field-label">Día</div><select id="planDay"></select>
+  <div class="field-label">Destino o actividad</div><select id="planDestination"></select>
+  <div id="customPlanFields" hidden>
+    <div class="field-label">Nombre del lugar</div><input class="input" id="planCustomTitle" maxlength="80" placeholder="Ej. MoMA">
+    <div class="field-label">Dirección</div><input class="input" id="planCustomAddress" maxlength="120" placeholder="Dirección exacta">
+    <div class="field-label">Zona para estimar transporte</div><select id="planCustomZone"><option value="walk-midtown">Midtown / caminable</option><option value="walk-central">Central Park / caminable</option><option value="walk-chelsea">Chelsea / High Line caminable</option><option value="metro-brooklyn-lower">Brooklyn o Lower Manhattan — $12 par</option><option value="metro-uptown">Upper Manhattan — $12 par</option><option value="metro-queens">Queens — $12 par</option><option value="metlife">MetLife — $83 par</option><option value="airport-lga">LGA — $65 par</option></select>
   </div>
+  <div class="form-grid"><div><div class="field-label">Hora aproximada</div><input class="input" id="planTime" type="time"></div><div><div class="field-label">Transporte previsto</div><select id="planMode"><option>Automático</option><option>Caminando</option><option>Metro</option><option>Bus</option><option>Uber/Lyft</option></select></div></div>
+  <div class="field-label">Nota opcional</div><textarea id="planNotes" maxlength="180" placeholder="Reserva, hora de salida, entrada, etc."></textarea>
+  <div class="setup-box" id="planEstimatePreview" style="margin-top:12px"></div>
+  <button class="btn btn-primary full" id="savePlan" style="margin-top:18px">Añadir al día</button><button class="btn btn-secondary full" data-close="overlayPlan" style="margin-top:8px">Cancelar</button>
+</div></div>
 
-  <!-- Identity sheet -->
-  <div class="overlay" id="overlayIdentity">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <h2>¿Quién eres?</h2>
-      <div class="identity-box">
-        <p>Elige tu perfil. Puedes cambiarlo después tocando la foto de la esquina superior derecha.</p>
-        <div class="identity-options">
-          <button class="identity-opt" data-id="Nicky">
-            <img src="Nicky.jpg" alt="Foto de Nicky" onerror="this.hidden=true">
-            <span>Nicky</span>
-          </button>
-          <button class="identity-opt" data-id="Steven">
-            <img src="Steven.jpg" alt="Foto de Steven" onerror="this.hidden=true">
-            <span>Steven</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="overlay" id="overlayPacking"><div class="sheet"><div class="sheet-handle"></div><h2>Añadir a la lista</h2>
+  <div class="field-label">Artículo</div><input class="input" id="packName" maxlength="70" placeholder="Ej. Cargador del iPhone">
+  <div class="form-grid"><div><div class="field-label">Categoría</div><select id="packCategory"><option>Documentos</option><option>Ropa</option><option>Higiene</option><option>Tecnología</option><option>Medicinas</option><option>Concierto</option><option>Otro</option></select></div><div><div class="field-label">Cantidad</div><input class="input" id="packQty" type="number" min="1" max="99" value="1"></div></div>
+  <div class="field-label">Responsable</div><div class="choice-row" id="packOwner"></div>
+  <div class="field-label">Nota opcional</div><input class="input" id="packNote" maxlength="120" placeholder="Ej. Guardar en equipaje de mano">
+  <button class="btn btn-primary full" id="savePacking" style="margin-top:18px">Añadir artículo</button><button class="btn btn-secondary full" data-close="overlayPacking" style="margin-top:8px">Cancelar</button>
+</div></div>
 
-  <div class="toast" id="toast"></div>
+<div class="overlay" id="overlayIdentity"><div class="sheet"><div class="sheet-handle"></div><h2>¿Quién está usando la app?</h2><p style="font-size:11px;color:var(--text-dim);margin:-5px 0 15px">Esto identifica quién añadió cada gasto, plan o artículo. No divide cuentas.</p><div class="identity-options"><button class="identity-opt" data-identity="Nicky"><img src="Nicky.jpg" alt="Nicky"><span>Nicky</span></button><button class="identity-opt" data-identity="Steven"><img src="Steven.jpg" alt="Steven"><span>Steven</span></button></div></div></div>
+<div class="toast" id="toast"></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp
+  collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy,
+  serverTimestamp, updateDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
-/* =========================================================
-   1. CONFIGURA FIREBASE AQUÍ
-   Copia el objeto EXACTO desde:
-   Firebase Console > Configuración del proyecto > Tus apps > SDK setup > Config
-   ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDmLt8AoUS69V_f8bRijN6RVf_R8wKMHZ4",
   authDomain: "nyc-budget-tracker.firebaseapp.com",
@@ -580,584 +162,190 @@ const firebaseConfig = {
   messagingSenderId: "622056546325",
   appId: "1:622056546325:web:e3c4d0e981377f9b04ee1c"
 };
+const TRIP_ID='nyc-2026';
+const FIREBASE_CONFIGURED=!Object.values(firebaseConfig).some(v=>String(v).startsWith('PEGA_AQUI'));
+const MARGIN=.10;
+const ICHIRAN_SOURCE_DAY='2026-07-30';
+const ICHIRAN_BUDGET=40;
 
-const TRIP_ID = 'nyc-2026';
-const FIREBASE_CONFIGURED = !Object.values(firebaseConfig).some(v => String(v).startsWith('PEGA_AQUI'));
-let firebaseApp = null;
-let db = null;
-
-/* =========================================================
-   2. DATOS DEL VIAJE (The Shoreham — límites del Excel)
-   ========================================================= */
-const MARGIN = 0.10; // tolerancia visual; no aumenta el presupuesto oficial
-
-const TRIP_DAYS = [
-  { id:'2026-07-29', short:'Lle', label:'Llegada',          sub:'Mié 29 Jul', transporte:65, comida:10 },
-  { id:'2026-07-30', short:'1',   label:'Día 1',            sub:'Jue 30 Jul', transporte:0,  comida:64 },
-  { id:'2026-07-31', short:'2',   label:'Día 2',            sub:'Vie 31 Jul', transporte:0,  comida:52 },
-  { id:'2026-08-01', short:'3',   label:'Día 3',            sub:'Sáb 1 Ago',  transporte:12, comida:52 },
-  { id:'2026-08-02', short:'4',   label:'Día 4 · BTS 🎵',    sub:'Dom 2 Ago',  transporte:83, comida:55 },
-  { id:'2026-08-03', short:'5',   label:'Día 5',            sub:'Lun 3 Ago',  transporte:0,  comida:46 },
-  { id:'2026-08-04', short:'6',   label:'Día 6',            sub:'Mar 4 Ago',  transporte:0,  comida:52 },
-  { id:'2026-08-05', short:'7',   label:'Día 7',            sub:'Mié 5 Ago',  transporte:12, comida:52 },
-  { id:'2026-08-06', short:'8',   label:'Día 8',            sub:'Jue 6 Ago',  transporte:0,  comida:52 },
-  { id:'2026-08-07', short:'Sal', label:'Salida',           sub:'Vie 7 Ago',  transporte:65, comida:12 },
+const TRIP_DAYS=[
+ {id:'2026-07-29',short:'Lle',weekday:'Mié',num:'29',label:'Llegada',sub:'Mié 29 Jul',transporte:65,comida:10,excelPlan:'Llegada 11:55 PM a LGA · Uber/Lyft directo al Shoreham · Solo dormir.'},
+ {id:'2026-07-30',short:'1',weekday:'Jue',num:'30',label:'Día 1',sub:'Jue 30 Jul',transporte:0,comida:64,excelPlan:'Bryant Park · NY Public Library · Times Square · Cena en Ichiran Times Square.'},
+ {id:'2026-07-31',short:'2',weekday:'Vie',num:'31',label:'Día 2',sub:'Vie 31 Jul',transporte:0,comida:52,excelPlan:'Central Park Oeste · Belvedere Castle · The Ramble · Bow Bridge · Bethesda Terrace.'},
+ {id:'2026-08-01',short:'3',weekday:'Sáb',num:'1',label:'Día 3',sub:'Sáb 1 Ago',transporte:12,comida:52,excelPlan:'DUMBO · Brooklyn Bridge Park · Heights Promenade · Brooklyn Bridge · Battery Park · Staten Island Ferry.'},
+ {id:'2026-08-02',short:'4',weekday:'Dom',num:'2',label:'Día 4 · BTS',sub:'Dom 2 Ago',transporte:83,comida:55,excelPlan:'BTS en MetLife Stadium · Subway/Port Authority · Coach USA 351 · Show 8:00 PM.'},
+ {id:'2026-08-03',short:'5',weekday:'Lun',num:'3',label:'Día 5',sub:'Lun 3 Ago',transporte:0,comida:46,excelPlan:'Día suave · Brunch · Grand Central · Rockefeller Center · St. Patrick’s · Fifth Avenue.'},
+ {id:'2026-08-04',short:'6',weekday:'Mar',num:'4',label:'Día 6',sub:'Mar 4 Ago',transporte:0,comida:52,excelPlan:'Central Park Este · Conservatory Water · The Mall · Bethesda Terrace · The Met opcional.'},
+ {id:'2026-08-05',short:'7',weekday:'Mié',num:'5',label:'Día 7',sub:'Mié 5 Ago',transporte:12,comida:52,excelPlan:'Wall Street · Charging Bull · Battery Park · Oculus/WTC · SoHo · Washington Square Park.'},
+ {id:'2026-08-06',short:'8',weekday:'Jue',num:'6',label:'Día 8',sub:'Jue 6 Ago',transporte:0,comida:52,excelPlan:'Hudson Yards · High Line · Chelsea Market · Little Island.'},
+ {id:'2026-08-07',short:'Sal',weekday:'Vie',num:'7',label:'Salida',sub:'Vie 7 Ago',transporte:65,comida:12,excelPlan:'Checkout · Uber/Lyft a LGA · Llegar cerca de las 8:00 AM.'}
 ];
 
-const FIXED_CATEGORIES = [
-  { id:'comida',      name:'Comida',              color:'var(--cat-comida)',      hex:'#FF6B3D', icon:'🍔', fixed:true, hasLimit:true },
-  { id:'transporte',  name:'Transporte',          color:'var(--cat-transporte)',  hex:'#3B7CFF', icon:'🚇', fixed:true, hasLimit:true },
-  { id:'entradas',    name:'Entradas turísticas', color:'var(--cat-entradas)',    hex:'#6CBE45', icon:'🎟️', fixed:true, hasLimit:false },
+const DESTINATIONS=[
+ {id:'bryant',name:'Bryant Park / NY Public Library',address:'Bryant Park, Manhattan',group:'walk-midtown',cost:0,mode:'Caminando',icon:'landmark',route:'Desde Shoreham: aproximadamente 10 minutos caminando.'},
+ {id:'times-square',name:'Times Square',address:'Times Square, Manhattan',group:'walk-midtown',cost:0,mode:'Caminando',icon:'skyline',route:'Desde Shoreham: aproximadamente 12 minutos caminando.'},
+ {id:'ichiran',name:'Ichiran Ramen Times Square',address:'152 W 49th St, New York, NY',group:'walk-midtown',cost:0,mode:'Caminando',icon:'food',route:'Caminable desde Shoreham. Traslada $40 del presupuesto de comida del Día 1 al día elegido.',mealTransfer:40,sourceMealDay:ICHIRAN_SOURCE_DAY},
+ {id:'central-west',name:'Central Park Oeste / AMNH',address:'Central Park West, Manhattan',group:'walk-central',cost:0,mode:'Caminando',icon:'park',route:'Central Park está a unos 8 minutos caminando desde Shoreham.'},
+ {id:'central-east',name:'Central Park Este / The Met',address:'1000 5th Ave, New York, NY',group:'walk-central',cost:0,mode:'Caminando',icon:'museum',route:'El Excel lo contempla caminando desde Shoreham.'},
+ {id:'dumbo',name:'DUMBO / Brooklyn Bridge',address:'DUMBO, Brooklyn, NY',group:'metro-brooklyn-lower',cost:12,mode:'Metro',icon:'bridge',route:'57 St–7 Av hacia Brooklyn/DUMBO. $12 por la pareja ida y vuelta.'},
+ {id:'staten',name:'Battery Park / Staten Island Ferry',address:'Whitehall Terminal, Manhattan',group:'metro-brooklyn-lower',cost:12,mode:'Metro',icon:'ferry',route:'Se agrupa con la ruta Brooklyn/Lower Manhattan del Excel: $12 por la pareja.'},
+ {id:'metlife',name:'MetLife Stadium · BTS',address:'1 MetLife Stadium Dr, East Rutherford, NJ',group:'metlife',cost:83,mode:'Metro + Coach USA',icon:'music',route:'Excel: caminar a Port Authority + Coach USA 351, $18 RT por persona y extras estimados; total $83.'},
+ {id:'grand-central',name:'Grand Central / Rockefeller / Fifth Ave',address:'Midtown Manhattan',group:'walk-midtown',cost:0,mode:'Caminando',icon:'landmark',route:'Shoreham permite llegar caminando; presupuesto de transporte $0.'},
+ {id:'wall-street',name:'Wall Street / WTC / SoHo',address:'Lower Manhattan, NY',group:'metro-brooklyn-lower',cost:12,mode:'Metro',icon:'skyline',route:'Desde 59 St/Columbus Circle hacia Lower Manhattan. $12 por la pareja ida y vuelta.'},
+ {id:'chelsea',name:'Hudson Yards / High Line / Chelsea',address:'Chelsea, Manhattan',group:'walk-chelsea',cost:0,mode:'Caminando',icon:'walk',route:'Excel: High Line aproximadamente 25 minutos caminando desde Shoreham.'},
+ {id:'lga',name:'Aeropuerto LaGuardia (LGA)',address:'LaGuardia Airport, Queens, NY',group:'airport-lga',cost:65,mode:'Uber/Lyft',icon:'plane',route:'Excel: Uber/Lyft Shoreham ↔ LGA, estimado $65 para la pareja.'},
+ {id:'custom',name:'Otro lugar / actividad personalizada',address:'',group:'custom',cost:0,mode:'Automático',icon:'pin',route:'Selecciona la zona para estimar usando la misma lógica del Excel.'}
 ];
-const CUSTOM_COLOR_POOL = ['#B933AD','#00A3A3','#EE4B8A','#8B5CF6','#F2994A','#5DADE2'];
+const GROUP_COSTS={'walk-midtown':0,'walk-central':0,'walk-chelsea':0,'metro-brooklyn-lower':12,'metro-uptown':12,'metro-queens':12,'metlife':83,'airport-lga':65};
+const GROUP_MODES={'walk-midtown':'Caminando','walk-central':'Caminando','walk-chelsea':'Caminando','metro-brooklyn-lower':'Metro','metro-uptown':'Metro','metro-queens':'Metro','metlife':'Metro + Coach USA','airport-lga':'Uber/Lyft'};
+const FIXED_CATEGORIES=[
+ {id:'comida',name:'Comida',icon:'food',hex:'#FF9A3C',fixed:true,hasLimit:true},
+ {id:'transporte',name:'Transporte',icon:'train',hex:'#A89BB5',fixed:true,hasLimit:true},
+ {id:'entradas',name:'Entradas',icon:'ticket',hex:'#D9A6C2',fixed:true,hasLimit:false}
+];
+const CUSTOM_COLORS=['#D07A9D','#8D7DB4','#CC8A5F','#7596A5','#9E8577','#6F9B88'];
 
-/* =========================================================
-   3. STATE / CACHÉ INSTANTÁNEO
-   Guardamos la última copia visible en localStorage para que la interfaz
-   aparezca de inmediato. Firestore la confirma y actualiza en segundo plano.
-   ========================================================= */
-const CACHE_KEYS = {
-  expenses: 'nyc_trip_expenses_cache_v1',
-  categories: 'nyc_trip_categories_cache_v1'
+const ICON_PATHS={
+ home:'<path d="M3 11.5 12 4l9 7.5V21h-6v-6H9v6H3z"/>',
+ calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+ chart:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>',
+ more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ food:'<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3c-2 3-2 7 0 10h3V3zM18 13v8"/>',
+ train:'<rect x="5" y="3" width="14" height="16" rx="3"/><path d="M8 7h8M8 12h.01M16 12h.01M8 19l-2 2M16 19l2 2"/>',
+ ticket:'<path d="M3 9a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 0 0-6V5H3z"/><path d="M13 7v2M13 13v4"/>',
+ suitcase:'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4h6v3M8 11v6M16 11v6"/>',
+ map:'<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 4-7 8-7s8 2 8 7"/>',
+ pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ walk:'<circle cx="13" cy="4" r="2"/><path d="m10 9 3-2 2 3 3 1M12 8l-2 5-4 3M10 13l4 2 2 5"/>',
+ plane:'<path d="M22 2 9 15M22 2l-7 20-4-9-9-4z"/>',
+ bridge:'<path d="M3 19h18M5 19V9M19 19V9M5 11c4 0 4-5 7-5s3 5 7 5M8 19v-6M16 19v-6"/>',
+ ferry:'<path d="M4 17h16l-2 4H6zM7 17V7h10v10M9 7V3h6v4M3 22c2 0 2-1 4-1s2 1 4 1 2-1 4-1 2 1 4 1 2-1 4-1"/>',
+ landmark:'<path d="M3 9h18M5 9v10M9 9v10M15 9v10M19 9v10M2 21h20M12 3l9 4H3z"/>',
+ museum:'<path d="M3 9h18M5 9v10M9 9v10M15 9v10M19 9v10M2 21h20M12 3l9 4H3z"/>',
+ park:'<path d="M12 22v-7M8 15h8M5 12l3-4 2 2 2-7 3 6 2-1 3 4z"/>',
+ skyline:'<path d="M3 21V11h4v10M7 21V7h4v14M11 21V3h4v18M15 21V9h3v12M18 21v-6h3v6"/>',
+ music:'<path d="M9 18V5l10-2v13M9 9l10-2M6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM16 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>',
+ list:'<path d="M9 6h12M9 12h12M9 18h12M3 6h.01M3 12h.01M3 18h.01"/>',
+ tag:'<path d="M20 13 13 20a2 2 0 0 1-3 0l-7-7a2 2 0 0 1 0-3l7-7h7a3 3 0 0 1 3 3z"/><circle cx="15" cy="8" r="1"/>',
+ back:'<path d="m15 18-6-6 6-6"/>',
+ trash:'<path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"/>',
+ check:'<path d="m5 12 4 4L19 6"/>',
+ reset:'<path d="M3 12a9 9 0 1 0 3-7M3 4v6h6"/>',
+ wallet:'<path d="M4 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6z"/><path d="M16 11h6v5h-6a2 2 0 0 1 0-5zM4 6l11-3"/>'
 };
-function readCachedList(key){
-  try{
-    const value = JSON.parse(localStorage.getItem(key) || '[]');
-    return Array.isArray(value) ? value : [];
-  }catch(_){
-    return [];
-  }
-}
-function writeCachedList(key, value){
-  try{ localStorage.setItem(key, JSON.stringify(value)); }
-  catch(err){ console.warn('No se pudo actualizar el caché local', err); }
-}
+function icon(name,size=20){return `<span class="icon"><svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name]||ICON_PATHS.tag}</svg></span>`}
+document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon,20));
+document.getElementById('fabAdd').innerHTML=icon('plus',25);
+document.getElementById('profilePlaceholder').innerHTML=icon('user',18);
 
-let state = {
-  tab: 'hoy',
-  expenses: readCachedList(CACHE_KEYS.expenses),
-  customCategories: readCachedList(CACHE_KEYS.categories),
-  me: localStorage.getItem('nyc_trip_identity') || null,
-  loadedExpenses: false,
-  loadedCategories: false,
-  pending: { expenses:false, categories:false },
-  syncError: false,
-};
-let unsubscribers = [];
+const CACHE={expenses:'nyc_expenses_v3',categories:'nyc_categories_v3',plans:'nyc_plans_v1',packing:'nyc_packing_v1',budgets:'nyc_budgets_v1'};
+function readCache(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch(_){return[]}}
+function writeCache(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){console.warn(e)}}
+let state={tab:'hoy',moreView:'menu',expenses:readCache(CACHE.expenses),customCategories:readCache(CACHE.categories),plans:readCache(CACHE.plans),packing:readCache(CACHE.packing),budgets:readCache(CACHE.budgets),me:localStorage.getItem('nyc_trip_identity')||null,packingFilter:'all',pending:{expenses:false,categories:false,plans:false,packing:false,budgets:false},syncError:false};
+let db=null,unsubs=[];
+let selectedDayId=todayId();
+let expenseCategory='comida',expenseWho=null,packOwner='Ambos';
 
-function allCategories(){ return [...FIXED_CATEGORIES, ...state.customCategories]; }
-function getCategory(id){ return allCategories().find(c => c.id === id); }
-function tripCollection(name){ return collection(db, 'trips', TRIP_ID, name); }
-function isLoaded(){ return state.loadedExpenses && state.loadedCategories; }
+function localISODate(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function todayId(){const iso=localISODate();if(TRIP_DAYS.some(d=>d.id===iso))return iso;return iso<TRIP_DAYS[0].id?TRIP_DAYS[0].id:TRIP_DAYS.at(-1).id}
+function tripCollection(name){return collection(db,'trips',TRIP_ID,name)}
+function allCategories(){return [...FIXED_CATEGORIES,...state.customCategories]}
+function getCategory(id){return allCategories().find(c=>c.id===id)}
+function formatMoney(n){n=Number(n)||0;return '$'+n.toLocaleString('en-US',{minimumFractionDigits:Number.isInteger(n)?0:2,maximumFractionDigits:2})}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function safeHex(v){return /^#[0-9a-fA-F]{6}$/.test(String(v))?v:'#A89BB5'}
+function sum(list){return list.reduce((s,e)=>s+(Number(e.amount)||0),0)}
+function expensesFor({dayId,categoryId}={}){return state.expenses.filter(e=>(!dayId||e.dayId===dayId)&&(!categoryId||e.category===categoryId))}
+function plansFor(dayId){return state.plans.filter(p=>p.dayId===dayId).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')||(a.createdAtMs||0)-(b.createdAtMs||0))}
+function originalBudget(dayId,type){const d=TRIP_DAYS.find(x=>x.id===dayId);return d?(type==='comida'?d.comida:d.transporte):0}
+function budgetDoc(dayId){return state.budgets.find(b=>b.dayId===dayId)}
+function effectiveBudget(dayId,type){const b=budgetDoc(dayId);return Number(b?.[type]??originalBudget(dayId,type))}
+function statusFor(spent,limit){if(limit<=0)return spent>0?'over':'neutral';if(spent<=limit)return'good';if(spent<=limit*(1+MARGIN))return'warn';return'over'}
+function statusLabel(st){return st==='good'?'Dentro del plan':st==='warn'?'Margen +10%':st==='over'?'Sobre el plan':'Sin límite'}
+function pct(spent,limit){return limit>0?Math.min(100,(spent/limit)*100):(spent>0?100:0)}
+function tripOriginalTotal(){return TRIP_DAYS.reduce((s,d)=>s+d.comida+d.transporte,0)}
+function tripEffectiveTotal(){return TRIP_DAYS.reduce((s,d)=>s+effectiveBudget(d.id,'comida')+effectiveBudget(d.id,'transporte'),0)}
+function controlledSpent(){return sum(state.expenses.filter(e=>e.category==='comida'||e.category==='transporte'))}
+function getIchiranPlan(){return state.plans.find(p=>p.activityId==='ichiran')||null}
+function foodRecommendation(dayId){let value=originalBudget(dayId,'comida');const ich=getIchiranPlan();if(!ich)return{value,reason:'El presupuesto de comida permanece igual al Excel.'};if(ich.dayId!==ICHIRAN_SOURCE_DAY){if(dayId===ICHIRAN_SOURCE_DAY)value=Math.max(0,value-ICHIRAN_BUDGET);if(dayId===ich.dayId)value+=ICHIRAN_BUDGET;return{value,reason:`Ichiran ($${ICHIRAN_BUDGET}) se mueve del Día 1 a ${TRIP_DAYS.find(d=>d.id===ich.dayId)?.label||ich.dayId}.`}}return{value,reason:'Ichiran permanece en el Día 1, igual que en el Excel.'}}
+function transportRecommendation(dayId){const list=plansFor(dayId);if(!list.length)return{value:originalBudget(dayId,'transporte'),reason:'Sin plan personalizado: se conserva el presupuesto original del Excel.'};const groups=new Map();for(const p of list){const g=p.routeGroup||'walk-midtown';const c=Number(p.transportCost)||0;groups.set(g,Math.max(groups.get(g)||0,c))}const value=[...groups.values()].reduce((a,b)=>a+b,0);const paid=[...groups.entries()].filter(([,c])=>c>0);const reason=paid.length?paid.map(([g,c])=>`${groupLabel(g)}: ${formatMoney(c)}`).join(' · '):'Todas las actividades añadidas son caminables desde The Shoreham.';return{value,reason}}
+function groupLabel(g){return({'metro-brooklyn-lower':'Brooklyn / Lower Manhattan','metro-uptown':'Upper Manhattan','metro-queens':'Queens','metlife':'MetLife','airport-lga':'LGA','walk-midtown':'Midtown','walk-central':'Central Park','walk-chelsea':'Chelsea'})[g]||'Ruta'}
+function recommendation(dayId){const t=transportRecommendation(dayId),f=foodRecommendation(dayId);return{transporte:t.value,comida:f.value,reason:`Transporte: ${t.reason} Comida: ${f.reason}`}}
 
-function localISODate(date = new Date()){
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,'0');
-  const d = String(date.getDate()).padStart(2,'0');
-  return `${y}-${m}-${d}`;
-}
-function todayId(){
-  const iso = localISODate();
-  const found = TRIP_DAYS.find(t => t.id === iso);
-  if (found) return found.id;
-  if (iso < TRIP_DAYS[0].id) return TRIP_DAYS[0].id;
-  return TRIP_DAYS[TRIP_DAYS.length - 1].id;
-}
-let selectedDayId = todayId();
+function setProfileUI(){const img=document.getElementById('profileImage'),ph=document.getElementById('profilePlaceholder');if(state.me){img.src=`${state.me}.jpg`;img.alt=state.me;img.hidden=false;ph.hidden=true}else{img.hidden=true;ph.hidden=false}}
+function queueWrite(promise,pending,success,failure){showToast(pending);promise.then(()=>showToast(success)).catch(e=>{console.error(e);showToast(failure)})}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2500)}
+function updateSync(){const d=document.getElementById('syncDot');d.className='sync-dot';if(state.syncError){d.classList.add('error');d.title='Error de sincronización'}else if(!navigator.onLine){d.classList.add('offline');d.title='Sin conexión'}else if(Object.values(state.pending).some(Boolean)){d.classList.add('pending');d.title='Sincronizando'}else d.title='Sincronizado'}
+window.addEventListener('online',updateSync);window.addEventListener('offline',updateSync);
 
-/* =========================================================
-   4. FIREBASE / LISTENERS
-   ========================================================= */
-function initializeFirebase(){
-  firebaseApp = initializeApp(firebaseConfig);
-  db = initializeFirestore(firebaseApp, {
-    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-  });
-  initListeners();
-}
+function initializeFirebase(){const app=initializeApp(firebaseConfig);db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});listenCollection('expenses','createdAtMs',CACHE.expenses);listenCollection('categories','createdAtMs',CACHE.categories);listenCollection('plans','createdAtMs',CACHE.plans);listenCollection('packing','createdAtMs',CACHE.packing);listenCollection('budgets','updatedAtMs',CACHE.budgets)}
+function listenCollection(name,orderField,cacheKey){const q=query(tripCollection(name),orderBy(orderField,'asc'));const unsub=onSnapshot(q,{includeMetadataChanges:true},snap=>{let data=snap.docs.map(d=>({id:d.id,...d.data()}));if(name==='categories')data=data.map(c=>({...c,fixed:false,hasLimit:false}));state[name==='categories'?'customCategories':name]=data;writeCache(cacheKey,data.map(cleanForCache));state.pending[name]=snap.metadata.hasPendingWrites;state.syncError=false;updateSync();render()},err=>{console.error(name,err);state.syncError=true;updateSync();showToast(`Error cargando ${name}`)});unsubs.push(unsub)}
+function cleanForCache(o){const x={};for(const[k,v]of Object.entries(o)){if(k!=='createdAt'&&k!=='updatedAt')x[k]=v}return x}
 
-function stopListeners(){
-  unsubscribers.forEach(unsub => { try { unsub(); } catch(_){} });
-  unsubscribers = [];
-  state.pending = { expenses:false, categories:false };
-  updateSyncIndicator();
-}
+function dayStrip(active=selectedDayId){return `<div class="day-strip">${TRIP_DAYS.map(d=>`<button class="day-chip ${d.id===active?'active':''} ${plansFor(d.id).length?'has-plan':''}" data-day="${d.id}"><div class="weekday">${d.weekday}</div><div class="num">${d.num}</div></button>`).join('')}</div>`}
+function categoryCard(dayId,c){const spent=sum(expensesFor({dayId,categoryId:c.id})),limit=c.hasLimit?effectiveBudget(dayId,c.id):0,st=statusFor(spent,limit),className=c.id==='transporte'?'transport':c.id==='entradas'?'ticket':'';return `<div class="card category-card"><div class="category-icon ${className}">${icon(c.icon||'tag',23)}</div><div class="category-content"><div class="category-name">${escapeHtml(c.name)}</div><div class="category-meta">${c.hasLimit?`${formatMoney(spent)} de ${formatMoney(limit)}`:`${formatMoney(spent)} registrado`}</div><div class="mini-progress ${className}"><span style="width:${pct(spent,limit)}%"></span></div></div><div class="category-amount">${formatMoney(spent)}<small>${c.hasLimit?statusLabel(st):'Informativo'}</small></div></div>`}
+function expenseList(dayId){const list=[...expensesFor({dayId})].sort((a,b)=>(b.createdAtMs||0)-(a.createdAtMs||0));if(!list.length)return emptyState('wallet','Todavía no hay gastos registrados para este día.');return list.map(e=>{const c=getCategory(e.category)||{name:'Categoría eliminada',icon:'tag'};return `<div class="expense-row"><div class="row-icon">${icon(c.icon||'tag',19)}</div><div class="row-main"><div class="row-title">${escapeHtml(e.note||c.name)}</div><div class="row-meta">${escapeHtml(c.name)} · ${escapeHtml(e.paidBy||'?')}</div></div><div class="row-amount">${formatMoney(e.amount)}</div><button class="row-action danger" data-delete-expense="${e.id}" aria-label="Eliminar">${icon('trash',17)}</button></div>`}).join('')}
+function emptyState(ic,text){return `<div class="empty"><div class="empty-icon">${icon(ic,25)}</div><p>${text}</p></div>`}
 
-function initListeners(){
-  stopListeners();
-  state.loadedExpenses = false;
-  state.loadedCategories = false;
-  state.syncError = false;
-  render();
+function viewHoy(){const d=TRIP_DAYS.find(x=>x.id===selectedDayId);const foodSpent=sum(expensesFor({dayId:d.id,categoryId:'comida'})),transportSpent=sum(expensesFor({dayId:d.id,categoryId:'transporte'})),spent=foodSpent+transportSpent,limit=effectiveBudget(d.id,'comida')+effectiveBudget(d.id,'transporte'),st=statusFor(spent,limit),rec=recommendation(d.id),budget=budgetDoc(d.id),hasPendingRec=rec.comida!==effectiveBudget(d.id,'comida')||rec.transporte!==effectiveBudget(d.id,'transporte');return `<div class="home-intro"><div class="intro-date">${escapeHtml(d.sub.replace('Jul','de julio').replace('Ago','de agosto'))}</div><div class="intro-line"></div><div class="intro-title">NYC TRIP</div><div class="intro-badge">${icon('landmark',28)}</div></div>${dayStrip(d.id)}<div class="card hero nyc-photo"><div class="hero-top"><div><div class="hero-label">${escapeHtml(d.label)}</div><div class="hero-title">Presupuesto del día</div><div class="hero-date">${escapeHtml(d.sub)} · The Shoreham</div></div><span class="pill ${st}">${statusLabel(st)}</span></div><div class="hero-grid"><div><div class="metric-label">Gastado / plan aplicado</div><div class="metric-main"><strong>${formatMoney(spent)}</strong></div><div class="metric-sub">de ${formatMoney(limit)} · restante ${formatMoney(Math.max(0,limit-spent))}</div></div><div class="ring" style="--pct:${pct(spent,limit)}"><div class="ring-content"><div class="ring-num">${Math.round(pct(spent,limit))}%</div><div class="ring-text">utilizado</div></div></div></div><div class="progress" style="margin-top:16px"><div class="progress-fill" style="width:${pct(spent,limit)}%"></div></div><div class="progress-foot"><span>Original ${formatMoney(originalBudget(d.id,'comida')+originalBudget(d.id,'transporte'))}</span><span>${budget?'Plan aplicado':'Excel activo'}</span></div></div>${hasPendingRec?`<div class="card budget-compare"><div class="compare-head"><div><div class="compare-title">El plan tiene una recomendación nueva</div><div class="compare-source">Revísala en Plan your Day antes de aplicarla.</div></div>${icon('map',20)}</div><button class="btn btn-secondary full" data-go-plan style="margin-top:11px">Ver recomendación</button></div>`:''}${allCategories().map(c=>categoryCard(d.id,c)).join('')}<div class="list-title">Gastos del día</div>${expenseList(d.id)}`}
 
-  const expQ = query(tripCollection('expenses'), orderBy('createdAtMs', 'desc'));
-  const unsubExpenses = onSnapshot(expQ, { includeMetadataChanges:true }, snap => {
-    state.expenses = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-    writeCachedList(CACHE_KEYS.expenses, state.expenses.map(e => ({
-      id:e.id, amount:e.amount, category:e.category, paidBy:e.paidBy,
-      dayId:e.dayId, note:e.note || '', createdAtMs:e.createdAtMs || 0,
-      createdBy:e.createdBy || ''
-    })));
-    state.loadedExpenses = true;
-    state.pending.expenses = snap.metadata.hasPendingWrites;
-    state.syncError = false;
-    updateSyncIndicator();
-    render();
-  }, err => handleListenerError('gastos', err));
+function viewPlan(){const d=TRIP_DAYS.find(x=>x.id===selectedDayId),list=plansFor(d.id),rec=recommendation(d.id),origT=originalBudget(d.id,'transporte'),origF=originalBudget(d.id,'comida'),appliedT=effectiveBudget(d.id,'transporte'),appliedF=effectiveBudget(d.id,'comida'),diff=(rec.transporte+rec.comida)-(origT+origF),canApply=rec.transporte!==appliedT||rec.comida!==appliedF,ich=getIchiranPlan();const rows=list.length?list.map(p=>`<div class="activity-row"><div class="activity-time">${escapeHtml(p.time||'—')}</div><div class="row-icon">${icon(p.icon||'pin',19)}</div><div class="row-main"><div class="row-title">${escapeHtml(p.title)}</div><div class="row-meta">${escapeHtml(p.address||'')}<br>${escapeHtml(p.transportMode||'')} · ${formatMoney(p.transportCost||0)} estimados${p.createdBy?` · por ${escapeHtml(p.createdBy)}`:''}</div>${p.notes?`<div class="row-meta">${escapeHtml(p.notes)}</div>`:''}</div><button class="row-action danger" data-delete-plan="${p.id}">${icon('trash',17)}</button></div>`).join(''):emptyState('map','Añadan destinos y actividades para construir el plan compartido del día.');return `${dayStrip(d.id)}<div class="section-title"><h2>Plan your Day</h2><span class="sub">Compartido</span></div><div class="card excel-plan"><div class="label">Plan original del Excel</div><p>${escapeHtml(d.excelPlan)}</p></div><div class="card budget-compare"><div class="compare-head"><div><div class="compare-title">Recomendación del presupuesto</div><div class="compare-source">The Shoreham · 2 personas · matriz del Excel</div></div>${icon('wallet',20)}</div><div class="compare-grid"><div class="compare-box"><div class="label">Original</div><div class="value">${formatMoney(origT+origF)}</div></div><div class="compare-box"><div class="label">Recomendado</div><div class="value">${formatMoney(rec.transporte+rec.comida)}</div></div><div class="compare-box"><div class="label">Diferencia</div><div class="value ${diff>0?'up':diff<0?'down':''}">${diff>0?'+':''}${formatMoney(diff)}</div></div></div><div class="compare-notes"><strong>Transporte:</strong> ${formatMoney(origT)} → ${formatMoney(rec.transporte)}<br><strong>Comida:</strong> ${formatMoney(origF)} → ${formatMoney(rec.comida)}<br>${escapeHtml(rec.reason)}</div><div class="button-row"><button class="btn btn-primary" data-apply-budget="${d.id}" ${canApply?'':'disabled'}>${icon('check',15)} Aplicar al día</button><button class="btn btn-secondary" data-reset-budget="${d.id}" ${budgetDoc(d.id)?'':'disabled'}>${icon('reset',15)} Restaurar Excel</button></div>${ich&&ich.dayId!==ICHIRAN_SOURCE_DAY&&(d.id===ich.dayId||d.id===ICHIRAN_SOURCE_DAY)?`<button class="btn btn-secondary full" data-apply-ichiran style="margin-top:8px">Aplicar ambos días afectados por Ichiran</button>`:''}</div><div class="list-title">Plan compartido · ${escapeHtml(d.label)}</div>${rows}`}
 
-  const catQ = query(tripCollection('categories'), orderBy('createdAtMs', 'asc'));
-  const unsubCategories = onSnapshot(catQ, { includeMetadataChanges:true }, snap => {
-    state.customCategories = snap.docs.map(d => ({ id:d.id, ...d.data(), fixed:false, hasLimit:false }));
-    writeCachedList(CACHE_KEYS.categories, state.customCategories.map(c => ({
-      id:c.id, name:c.name, hex:c.hex, icon:c.icon || '🏷️',
-      createdAtMs:c.createdAtMs || 0, createdBy:c.createdBy || '',
-      fixed:false, hasLimit:false
-    })));
-    state.loadedCategories = true;
-    state.pending.categories = snap.metadata.hasPendingWrites;
-    state.syncError = false;
-    updateSyncIndicator();
-    render();
-  }, err => handleListenerError('categorías', err));
+function viewDias(){const totalSpent=controlledSpent(),limit=tripEffectiveTotal();return `<div class="section-title"><h2>Resumen del viaje</h2><span class="sub">10 días</span></div><div class="card hero"><div class="hero-grid" style="margin-top:0"><div><div class="metric-label">Comida + transporte</div><div class="metric-main"><strong>${formatMoney(totalSpent)}</strong></div><div class="metric-sub">Plan aplicado ${formatMoney(limit)} · original ${formatMoney(tripOriginalTotal())}</div></div><div class="ring" style="--pct:${pct(totalSpent,limit)}"><div class="ring-content"><div class="ring-num">${Math.round(pct(totalSpent,limit))}%</div><div class="ring-text">viaje</div></div></div></div></div>${TRIP_DAYS.map(d=>{const spent=sum(expensesFor({dayId:d.id}).filter(e=>e.category==='comida'||e.category==='transporte')),lim=effectiveBudget(d.id,'comida')+effectiveBudget(d.id,'transporte'),f=sum(expensesFor({dayId:d.id,categoryId:'comida'})),t=sum(expensesFor({dayId:d.id,categoryId:'transporte'}));return `<div class="card day-card" data-open-day="${d.id}"><div class="day-card-top"><div><div class="day-card-title">${escapeHtml(d.label)}</div><div class="day-card-date">${escapeHtml(d.sub)} · ${plansFor(d.id).length} actividades</div></div><div class="day-card-budget">${formatMoney(spent)}<br><span style="color:var(--text-faint)">de ${formatMoney(lim)}</span></div></div><div class="dual-bars"><div class="progress"><div class="progress-fill" style="width:${pct(f,effectiveBudget(d.id,'comida'))}%"></div></div><div class="progress"><div class="progress-fill" style="width:${pct(t,effectiveBudget(d.id,'transporte'))}%;background:var(--lavender)"></div></div></div></div>`}).join('')}`}
 
-  unsubscribers.push(unsubExpenses, unsubCategories);
-}
+function viewPacking(){const total=state.packing.length,done=state.packing.filter(x=>x.done).length;let list=state.packing;if(state.packingFilter==='pending')list=list.filter(x=>!x.done);if(state.packingFilter==='done')list=list.filter(x=>x.done);list=[...list].sort((a,b)=>Number(a.done)-Number(b.done)||(a.category||'').localeCompare(b.category||'')||(a.createdAtMs||0)-(b.createdAtMs||0));const rows=list.length?list.map(x=>`<div class="packing-row ${x.done?'done':''}"><button class="check-btn" data-toggle-pack="${x.id}" data-done="${x.done?'1':'0'}">${icon('check',16)}</button><div class="row-icon">${icon(packIcon(x.category),19)}</div><div class="row-main"><div class="row-title">${escapeHtml(x.name)}${Number(x.qty)>1?` × ${x.qty}`:''}<span class="owner-badge">${escapeHtml(x.owner)}</span></div><div class="row-meta">${escapeHtml(x.category)}${x.note?` · ${escapeHtml(x.note)}`:''}${x.createdBy?` · por ${escapeHtml(x.createdBy)}`:''}</div></div><button class="row-action danger" data-delete-pack="${x.id}">${icon('trash',17)}</button></div>`).join(''):emptyState('suitcase','La lista está vacía. Añadan todo lo que deben empacar o preparar.');return `<div class="section-title"><h2>Lista de viaje</h2><span class="sub">Compartida</span></div><div class="card packing-summary"><div class="packing-top"><div><div class="metric-label">Preparado</div><div class="packing-number"><span>${done}</span> / ${total}</div></div><div class="ring" style="--pct:${total?done/total*100:0};--ring-color:var(--success)"><div class="ring-content"><div class="ring-num">${total?Math.round(done/total*100):0}%</div><div class="ring-text">listo</div></div></div></div><div class="progress" style="margin-top:13px"><div class="progress-fill" style="width:${total?done/total*100:0}%;background:var(--success)"></div></div></div><div class="tabs-inline"><button data-pack-filter="all" class="${state.packingFilter==='all'?'active':''}">Todo</button><button data-pack-filter="pending" class="${state.packingFilter==='pending'?'active':''}">Pendiente</button><button data-pack-filter="done" class="${state.packingFilter==='done'?'active':''}">Listo</button></div>${rows}`}
+function packIcon(cat){return cat==='Documentos'?'ticket':cat==='Ropa'?'suitcase':cat==='Tecnología'?'more':cat==='Medicinas'?'plus':cat==='Concierto'?'music':'list'}
 
-function handleListenerError(area, err){
-  console.error(`${area} snapshot error`, err);
-  state.syncError = true;
-  updateSyncIndicator();
-  showToast(`Error cargando ${area}`);
-}
+function viewMore(){if(state.moreView==='dash')return viewDashboard();if(state.moreView==='cats')return viewCategories();return `<div class="section-title"><h2>Más</h2><span class="sub">Resumen y control</span></div><div class="more-grid"><button class="card more-card" data-more="dash"><div class="more-icon">${icon('chart',22)}</div><div class="more-title">Dashboard</div><div class="more-sub">Totales del viaje y presupuesto por categoría.</div></button><button class="card more-card" data-more="cats"><div class="more-icon">${icon('tag',22)}</div><div class="more-title">Categorías</div><div class="more-sub">Añadir gastos informativos como souvenirs.</div></button></div>`}
+function moreBack(title){return `<button class="back-link" data-more="menu">${icon('back',15)} Volver a Más</button><div class="section-title" style="margin-top:4px"><h2>${title}</h2></div>`}
+function viewDashboard(){const spent=controlledSpent(),limit=tripEffectiveTotal(),food=sum(state.expenses.filter(e=>e.category==='comida')),transport=sum(state.expenses.filter(e=>e.category==='transporte'));return `${moreBack('Dashboard')}<div class="card dashboard-stat"><div class="label">Comida + transporte gastados</div><div class="value">${formatMoney(spent)}</div><div class="sub">Plan aplicado ${formatMoney(limit)} · restante ${formatMoney(Math.max(0,limit-spent))}</div></div>${categoryCardTrip('comida',food)}${categoryCardTrip('transporte',transport)}${allCategories().filter(c=>!c.hasLimit).map(c=>categoryCardTrip(c.id,sum(expensesFor({categoryId:c.id})))).join('')}`}
+function categoryCardTrip(id,spent){const c=getCategory(id),limit=c?.hasLimit?TRIP_DAYS.reduce((s,d)=>s+effectiveBudget(d.id,id),0):0,className=id==='transporte'?'transport':id==='entradas'?'ticket':'';return `<div class="card category-card"><div class="category-icon ${className}">${icon(c?.icon||'tag',23)}</div><div class="category-content"><div class="category-name">${escapeHtml(c?.name||'Gasto')}</div><div class="category-meta">${limit?`${formatMoney(spent)} de ${formatMoney(limit)}`:`${formatMoney(spent)} total`}</div><div class="mini-progress ${className}"><span style="width:${pct(spent,limit)}%"></span></div></div><div class="category-amount">${formatMoney(spent)}<small>${limit?`${Math.round(pct(spent,limit))}%`:'Informativo'}</small></div></div>`}
+function viewCategories(){return `${moreBack('Categorías')}${allCategories().map(c=>`<div class="card cat-manage-row"><div class="category-icon ${c.id==='transporte'?'transport':c.id==='entradas'?'ticket':''}" style="width:38px;height:38px;border-radius:12px">${icon(c.icon||'tag',18)}</div><div class="cat-name">${escapeHtml(c.name)}</div><div class="cat-total">${formatMoney(sum(expensesFor({categoryId:c.id})))}</div>${c.fixed?'':`<button class="row-action danger" data-delete-category="${c.id}">${icon('trash',16)}</button>`}</div>`).join('')}<div class="card" style="padding:14px;margin-top:12px"><div class="field-label" style="margin-top:0">Nueva categoría</div><div style="display:flex;gap:8px"><input class="input" id="newCategory" maxlength="40" placeholder="Ej. Souvenirs"><button class="btn btn-primary" id="addCategory">Añadir</button></div></div>`}
+function viewProfile(){return `${moreBack('Perfil')}<div class="card profile-panel"><img class="profile-large" src="${state.me||'Nicky'}.jpg" alt="${escapeHtml(state.me||'Perfil')}"><h3>${escapeHtml(state.me||'Sin seleccionar')}</h3><p>El perfil identifica quién añadió información. No calcula deudas ni divide gastos.</p><button class="btn btn-primary full" data-change-profile style="margin-top:12px">Cambiar perfil</button></div>`}
 
-window.addEventListener('online', updateSyncIndicator);
-window.addEventListener('offline', updateSyncIndicator);
-function updateSyncIndicator(){
-  const dot = document.getElementById('syncDot');
-  if (!dot) return;
-  dot.classList.remove('offline','pending','error');
-  if (state.syncError){
-    dot.classList.add('error');
-    dot.title = 'Error de sincronización';
-  } else if (!navigator.onLine){
-    dot.classList.add('offline');
-    dot.title = 'Sin conexión — los cambios quedan pendientes';
-  } else if (!isLoaded() || state.pending.expenses || state.pending.categories){
-    dot.classList.add('pending');
-    dot.title = !isLoaded() ? 'Actualizando datos en segundo plano' : 'Sincronizando cambios';
-  } else {
-    dot.title = 'Sincronizado';
-  }
-}
+function render(){const main=document.getElementById('main');const app=document.getElementById('app');if(!FIREBASE_CONFIGURED){main.innerHTML='<div class="section-title"><h2>Configuración pendiente</h2></div><div class="setup-box">Falta configurar <code>firebaseConfig</code>.</div>';return}main.innerHTML=state.tab==='hoy'?viewHoy():state.tab==='plan'?viewPlan():state.tab==='dias'?viewDias():state.tab==='lista'?viewPacking():viewMore();app.classList.toggle('home-hero-bg',state.tab==='hoy');app.classList.toggle('home-mode',state.tab==='hoy');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));const fab=document.getElementById('fabAdd');fab.style.display=['hoy','plan','lista'].includes(state.tab)?'grid':'none';fab.title=state.tab==='hoy'?'Agregar gasto':state.tab==='plan'?'Añadir actividad':'Añadir artículo';bindDynamic();setProfileUI();updateSync()}
+function bindDynamic(){document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{selectedDayId=b.dataset.day;render()});document.querySelectorAll('[data-open-day]').forEach(b=>b.onclick=()=>{selectedDayId=b.dataset.openDay;state.tab='hoy';render()});document.querySelectorAll('[data-go-plan]').forEach(b=>b.onclick=()=>{state.tab='plan';render()});document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{state.moreView=b.dataset.more;render()});document.querySelectorAll('[data-change-profile]').forEach(b=>b.onclick=openIdentity);document.querySelectorAll('[data-pack-filter]').forEach(b=>b.onclick=()=>{state.packingFilter=b.dataset.packFilter;render()});
+ document.querySelectorAll('[data-delete-expense]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este gasto?'))queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'expenses',b.dataset.deleteExpense)),'Eliminando…','Gasto eliminado','No se pudo eliminar')});
+ document.querySelectorAll('[data-delete-plan]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar esta actividad del plan?'))queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'plans',b.dataset.deletePlan)),'Actualizando plan…','Actividad eliminada','No se pudo eliminar')});
+ document.querySelectorAll('[data-toggle-pack]').forEach(b=>b.onclick=()=>queueWrite(updateDoc(doc(db,'trips',TRIP_ID,'packing',b.dataset.togglePack),{done:b.dataset.done!=='1',updatedAt:serverTimestamp(),updatedAtMs:Date.now(),updatedBy:state.me||'Sin perfil'}),'Actualizando…','Lista actualizada','No se pudo actualizar'));
+ document.querySelectorAll('[data-delete-pack]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este artículo?'))queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'packing',b.dataset.deletePack)),'Eliminando…','Artículo eliminado','No se pudo eliminar')});
+ document.querySelectorAll('[data-apply-budget]').forEach(b=>b.onclick=()=>applyBudget(b.dataset.applyBudget));document.querySelectorAll('[data-reset-budget]').forEach(b=>b.onclick=()=>resetBudget(b.dataset.resetBudget));document.querySelectorAll('[data-apply-ichiran]').forEach(b=>b.onclick=applyIchiranBudgets);
+ document.querySelectorAll('[data-delete-category]').forEach(b=>b.onclick=()=>{const id=b.dataset.deleteCategory;if(expensesFor({categoryId:id}).length)return showToast('No se puede borrar: tiene gastos');if(confirm('¿Eliminar esta categoría?'))queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'categories',id)),'Eliminando…','Categoría eliminada','No se pudo eliminar')});const add=document.getElementById('addCategory');if(add)add.onclick=addCategory}
 
-/* =========================================================
-   5. HELPERS
-   ========================================================= */
-function formatMoney(n){
-  n = Number(n) || 0;
-  const isInt = Math.round(n*100) % 100 === 0;
-  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: isInt ? 0 : 2, maximumFractionDigits: 2 });
-}
-function roundMoney(n){ return Math.round((Number(n) + Number.EPSILON) * 100) / 100; }
-function expensesFor({ dayId, categoryId, paidBy } = {}){
-  return state.expenses.filter(e =>
-    (dayId ? e.dayId === dayId : true) &&
-    (categoryId ? e.category === categoryId : true) &&
-    (paidBy ? e.paidBy === paidBy : true)
-  );
-}
-function sumAmount(list){ return list.reduce((s,e) => s + (Number(e.amount)||0), 0); }
-function limitFor(dayId, categoryId){
-  const day = TRIP_DAYS.find(d => d.id === dayId);
-  if (!day) return 0;
-  if (categoryId === 'comida') return day.comida;
-  if (categoryId === 'transporte') return day.transporte;
-  return 0;
-}
-function toleranceFor(dayId, categoryId){ return limitFor(dayId, categoryId) * (1 + MARGIN); }
-function statusFor(spent, limit, tolerance){
-  if (limit === 0 && tolerance === 0) return spent > 0 ? 'info' : 'empty';
-  if (spent <= limit) return 'good';
-  if (spent <= tolerance) return 'warn';
-  return 'over';
-}
-function tripTotalLimit(){ return TRIP_DAYS.reduce((s,d) => s + d.comida + d.transporte, 0); }
-function tripTotalTolerance(){ return tripTotalLimit() * (1 + MARGIN); }
-function tripTotalSpentLimitedCats(){
-  return sumAmount(state.expenses.filter(e => e.category === 'comida' || e.category === 'transporte'));
-}
-function tripTotalLimitForCat(catId){
-  if (catId === 'comida') return TRIP_DAYS.reduce((s,d)=>s+d.comida,0);
-  if (catId === 'transporte') return TRIP_DAYS.reduce((s,d)=>s+d.transporte,0);
-  return 0;
-}
-function escapeHtml(s){
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function safeHex(value){ return /^#[0-9A-Fa-f]{6}$/.test(String(value)) ? value : '#888888'; }
-function safeIcon(value){ return escapeHtml(String(value || '').slice(0, 8)); }
-function categoryName(cat){ return escapeHtml(cat?.name || 'Gasto'); }
-function queueWrite(promise, pendingMessage, successMessage, failureMessage){
-  showToast(pendingMessage);
-  promise.then(() => showToast(successMessage)).catch(err => {
-    console.error(err);
-    showToast(failureMessage);
-  });
-}
+async function applyBudget(dayId){const r=recommendation(dayId);const reason=r.reason;queueWrite(setDoc(doc(db,'trips',TRIP_ID,'budgets',dayId),{dayId,transporte:r.transporte,comida:r.comida,reason,updatedBy:state.me||'Sin perfil',updatedAt:serverTimestamp(),updatedAtMs:Date.now()}),'Aplicando presupuesto…','Presupuesto aplicado','No se pudo aplicar')}
+function resetBudget(dayId){queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'budgets',dayId)),'Restaurando…','Presupuesto original restaurado','No se pudo restaurar')}
+async function applyIchiranBudgets(){const ich=getIchiranPlan();if(!ich||ich.dayId===ICHIRAN_SOURCE_DAY)return;try{await Promise.all([applyBudgetDirect(ICHIRAN_SOURCE_DAY),applyBudgetDirect(ich.dayId)]);showToast('Presupuestos de Ichiran aplicados en ambos días')}catch(e){console.error(e);showToast('No se pudieron aplicar ambos días')}}
+function applyBudgetDirect(dayId){const r=recommendation(dayId);return setDoc(doc(db,'trips',TRIP_ID,'budgets',dayId),{dayId,transporte:r.transporte,comida:r.comida,reason:r.reason,updatedBy:state.me||'Sin perfil',updatedAt:serverTimestamp(),updatedAtMs:Date.now()})}
+function addCategory(){const input=document.getElementById('newCategory'),name=input.value.trim().replace(/\s+/g,' ');if(!name)return;if(allCategories().some(c=>c.name.toLowerCase()===name.toLowerCase()))return showToast('La categoría ya existe');input.value='';const hex=CUSTOM_COLORS[state.customCategories.length%CUSTOM_COLORS.length];queueWrite(addDoc(tripCollection('categories'),{name,hex,icon:'tag',createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil'}),'Guardando…','Categoría añadida','No se pudo añadir')}
 
-/* =========================================================
-   6. RENDER
-   ========================================================= */
-function render(){
-  renderMain();
-  document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === state.tab));
-  const canAdd = FIREBASE_CONFIGURED && Boolean(db) && Boolean(state.me) && state.tab !== 'cats';
-  document.getElementById('fabAdd').style.display = canAdd ? 'flex' : 'none';
-  updateSyncIndicator();
-}
-function renderMain(){
-  const main = document.getElementById('main');
-  if (!FIREBASE_CONFIGURED){
-    main.innerHTML = `<div class="section-title">Configuración pendiente</div><div class="setup-box">Pega el objeto <code>firebaseConfig</code> de tu proyecto en este archivo y vuelve a publicarlo.</div>`;
-    return;
-  }
-  if (state.tab === 'hoy') main.innerHTML = viewHoy();
-  else if (state.tab === 'dias') main.innerHTML = viewDias();
-  else if (state.tab === 'dash') main.innerHTML = viewDash();
-  else if (state.tab === 'cats') main.innerHTML = viewCats();
-  bindDynamicEvents();
-}
+function openOverlay(id){document.getElementById(id).classList.add('show')}
+function closeOverlay(id){document.getElementById(id).classList.remove('show')}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeOverlay(b.dataset.close));document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&o.id!=='overlayIdentity')closeOverlay(o.id)}));
+document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;if(state.tab!=='more')state.moreView='menu';render()});
+document.getElementById('fabAdd').onclick=()=>{if(!state.me)return openIdentity();if(state.tab==='hoy')openExpense();else if(state.tab==='plan')openPlan();else if(state.tab==='lista')openPacking()};
+document.getElementById('btnProfile').onclick=openIdentity;
+function openIdentity(){openOverlay('overlayIdentity')}
+document.querySelectorAll('[data-identity]').forEach(b=>b.onclick=()=>{state.me=b.dataset.identity;localStorage.setItem('nyc_trip_identity',state.me);closeOverlay('overlayIdentity');setProfileUI();showToast(`Perfil: ${state.me}`);render()});
 
-function metroLine(activeId){
-  const stations = TRIP_DAYS.map(d => {
-    const spentC = sumAmount(expensesFor({ dayId:d.id, categoryId:'comida' }));
-    const spentT = sumAmount(expensesFor({ dayId:d.id, categoryId:'transporte' }));
-    const stC = statusFor(spentC, d.comida, d.comida*(1+MARGIN));
-    const stT = statusFor(spentT, d.transporte, d.transporte*(1+MARGIN));
-    const order = { over:3, warn:2, good:1, empty:0, info:1 };
-    let cls = order[stC] >= order[stT] ? stC : stT;
-    if (cls === 'info') cls = 'good';
-    const isCurrent = d.id === activeId;
-    return `<button class="metro-station ${cls} ${isCurrent?'current':''}" data-day="${d.id}" aria-label="${escapeHtml(d.label)} ${escapeHtml(d.sub)}">
-      <span class="line"></span><span class="dot"></span><span class="stlabel">${d.short}</span>
-    </button>`;
-  }).join('');
-  return `<div class="metro-wrap"><div class="metro-scroll">${stations}</div></div>`;
-}
+function openExpense(){expenseCategory='comida';expenseWho=state.me;document.getElementById('expenseAmount').value='';document.getElementById('expenseNote').value='';document.getElementById('expenseDay').innerHTML=TRIP_DAYS.map(d=>`<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');renderExpenseChoices();openOverlay('overlayExpense');setTimeout(()=>document.getElementById('expenseAmount').focus(),120)}
+function renderExpenseChoices(){const cats=document.getElementById('expenseCategories');cats.innerHTML=allCategories().map(c=>`<button class="choice ${expenseCategory===c.id?'selected':''}" data-exp-cat="${c.id}">${icon(c.icon||'tag',15)} ${escapeHtml(c.name)}</button>`).join('');cats.querySelectorAll('[data-exp-cat]').forEach(b=>b.onclick=()=>{expenseCategory=b.dataset.expCat;renderExpenseChoices()});const who=document.getElementById('expenseWho');who.innerHTML=['Nicky','Steven'].map(n=>`<button class="choice ${expenseWho===n?'selected':''}" data-exp-who="${n}">${n}</button>`).join('');who.querySelectorAll('[data-exp-who]').forEach(b=>b.onclick=()=>{expenseWho=b.dataset.expWho;renderExpenseChoices()})}
+document.getElementById('saveExpense').onclick=()=>{const amount=Math.round(Number(document.getElementById('expenseAmount').value)*100)/100,dayId=document.getElementById('expenseDay').value,note=document.getElementById('expenseNote').value.trim().slice(0,140);if(!amount||amount<=0||amount>5000)return showToast('Ingresa un monto válido');if(!expenseWho)return showToast('Selecciona quién lo registró');closeOverlay('overlayExpense');queueWrite(addDoc(tripCollection('expenses'),{amount,category:expenseCategory,paidBy:expenseWho,dayId,note,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||expenseWho}),'Guardando…','Gasto guardado','No se pudo guardar')};
 
-function catCard(dayId, cat){
-  const spent = sumAmount(expensesFor({ dayId, categoryId: cat.id }));
-  const limit = cat.hasLimit ? limitFor(dayId, cat.id) : 0;
-  const tolerance = cat.hasLimit ? toleranceFor(dayId, cat.id) : 0;
-  const status = cat.hasLimit ? statusFor(spent, limit, tolerance) : (spent>0 ? 'info' : 'empty');
-  const pct = cat.hasLimit && tolerance>0 ? Math.min((spent/tolerance)*100, 100) : (spent>0?100:0);
-  const tickPct = cat.hasLimit && tolerance>0 ? (limit/tolerance)*100 : 0;
-  const barColor = status==='over' ? 'var(--status-over)' : status==='warn' ? 'var(--status-warn)' : status==='good' ? 'var(--status-good)' : 'var(--text-faint)';
-  const hex = safeHex(cat.hex);
+function openPlan(){document.getElementById('planDay').innerHTML=TRIP_DAYS.map(d=>`<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');document.getElementById('planDestination').innerHTML=DESTINATIONS.map(d=>`<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('');document.getElementById('planTime').value='';document.getElementById('planNotes').value='';document.getElementById('planMode').value='Automático';document.getElementById('planCustomTitle').value='';document.getElementById('planCustomAddress').value='';updatePlanPreview();openOverlay('overlayPlan')}
+document.getElementById('planDestination').onchange=updatePlanPreview;document.getElementById('planCustomZone').onchange=updatePlanPreview;document.getElementById('planMode').onchange=updatePlanPreview;
+function currentPlanSelection(){const id=document.getElementById('planDestination').value,base=DESTINATIONS.find(d=>d.id===id);if(id!=='custom')return{...base};const group=document.getElementById('planCustomZone').value;return{id:'custom',name:document.getElementById('planCustomTitle').value.trim()||'Lugar personalizado',address:document.getElementById('planCustomAddress').value.trim(),group,cost:GROUP_COSTS[group]||0,mode:GROUP_MODES[group]||'Automático',icon:'pin',route:`Estimación por zona: ${groupLabel(group)}.`}}
+function updatePlanPreview(){const custom=document.getElementById('planDestination').value==='custom';document.getElementById('customPlanFields').hidden=!custom;const d=currentPlanSelection();document.getElementById('planEstimatePreview').innerHTML=`<strong style="color:var(--amber)">${escapeHtml(d.mode)}</strong> · ${formatMoney(d.cost)} para 2 personas<br>${escapeHtml(d.route)}${d.mealTransfer?`<br><strong>Comida:</strong> moverá ${formatMoney(d.mealTransfer)} de Ichiran al día elegido.`:''}`}
+document.getElementById('planCustomTitle').addEventListener('input',updatePlanPreview);document.getElementById('planCustomAddress').addEventListener('input',updatePlanPreview);
+document.getElementById('savePlan').onclick=async()=>{const d=currentPlanSelection(),dayId=document.getElementById('planDay').value,time=document.getElementById('planTime').value,notes=document.getElementById('planNotes').value.trim().slice(0,180),manualMode=document.getElementById('planMode').value,mode=manualMode==='Automático'?d.mode:manualMode;if(d.id==='custom'&&!document.getElementById('planCustomTitle').value.trim())return showToast('Escribe el nombre del lugar');if(d.id==='ichiran'){const existing=getIchiranPlan();if(existing){if(existing.dayId===dayId)return showToast('Ichiran ya está añadido en este día');if(!confirm(`Ichiran ya está en ${TRIP_DAYS.find(x=>x.id===existing.dayId)?.label}. ¿Moverlo al día seleccionado?`))return;await deleteDoc(doc(db,'trips',TRIP_ID,'plans',existing.id))}}closeOverlay('overlayPlan');queueWrite(addDoc(tripCollection('plans'),{dayId,activityId:d.id,title:d.name,address:d.address||'',time,transportMode:mode,routeGroup:d.group,transportCost:Number(d.cost)||0,mealTransfer:Number(d.mealTransfer)||0,sourceMealDay:d.sourceMealDay||'',icon:d.icon||'pin',notes,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil'}),'Actualizando plan…','Actividad añadida','No se pudo añadir')};
 
-  return `<div class="cat-card">
-    <div class="cc-top">
-      <div class="cc-name"><span class="cc-dot" style="background:${hex}"></span>${safeIcon(cat.icon)} ${categoryName(cat)}</div>
-      <div class="cc-amounts"><b>${formatMoney(spent)}</b>${cat.hasLimit ? ' / '+formatMoney(limit) : ''}</div>
-    </div>
-    ${cat.hasLimit ? `
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${pct}%; background:${barColor}"></div>
-        <div class="bar-tick" style="left:calc(${tickPct}% - 1px)" title="Límite oficial"></div>
-      </div>
-      <div class="cc-foot"><span>Límite Excel: ${formatMoney(limit)}</span><span>Tolerancia +10%: ${formatMoney(tolerance)}</span></div>
-    ` : `<div class="cc-nolimit">Sin límite fijo — informativo</div>`}
-  </div>`;
-}
+function openPacking(){document.getElementById('packName').value='';document.getElementById('packQty').value='1';document.getElementById('packNote').value='';packOwner='Ambos';renderPackOwners();openOverlay('overlayPacking');setTimeout(()=>document.getElementById('packName').focus(),120)}
+function renderPackOwners(){const w=document.getElementById('packOwner');w.innerHTML=['Nicky','Steven','Ambos'].map(n=>`<button class="choice ${packOwner===n?'selected':''}" data-owner="${n}">${n}</button>`).join('');w.querySelectorAll('[data-owner]').forEach(b=>b.onclick=()=>{packOwner=b.dataset.owner;renderPackOwners()})}
+document.getElementById('savePacking').onclick=()=>{const name=document.getElementById('packName').value.trim().replace(/\s+/g,' '),category=document.getElementById('packCategory').value,qty=Math.max(1,Math.min(99,Number(document.getElementById('packQty').value)||1)),note=document.getElementById('packNote').value.trim().slice(0,120);if(!name)return showToast('Escribe el artículo');closeOverlay('overlayPacking');queueWrite(addDoc(tripCollection('packing'),{name,category,owner:packOwner,qty,note,done:false,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil',updatedAt:serverTimestamp(),updatedAtMs:Date.now(),updatedBy:state.me||'Sin perfil'}),'Añadiendo…','Artículo añadido','No se pudo añadir')};
 
-function expenseListHTML(dayId){
-  const list = [...expensesFor({ dayId })].sort((a,b) => (Number(b.createdAtMs)||0) - (Number(a.createdAtMs)||0));
-  if (list.length === 0){
-    return `<div class="empty-state"><div class="es-icon">🧾</div><p>Sin gastos registrados este día.<br>Toca + para agregar el primero.</p></div>`;
-  }
-  return list.map(e => {
-    const cat = getCategory(e.category) || { name:'Categoría eliminada', icon:'💵', hex:'#888888' };
-    const hex = safeHex(cat.hex);
-    return `<div class="exp-item">
-      <div class="exp-cat-dot" style="background:${hex}22; color:${hex}">${safeIcon(cat.icon)||'💵'}</div>
-      <div class="exp-info">
-        <div class="exp-note">${e.note ? escapeHtml(e.note) : categoryName(cat)}</div>
-        <div class="exp-meta">${categoryName(cat)} · ${escapeHtml(e.paidBy||'?')}</div>
-      </div>
-      <div class="exp-amount">${formatMoney(e.amount)}</div>
-      <button class="exp-del" data-del="${e.id}" aria-label="Eliminar gasto">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function viewHoy(){
-  const day = TRIP_DAYS.find(d => d.id === selectedDayId) || TRIP_DAYS.find(d=>d.id===todayId());
-  const spentC = sumAmount(expensesFor({ dayId: day.id, categoryId:'comida' }));
-  const spentT = sumAmount(expensesFor({ dayId: day.id, categoryId:'transporte' }));
-  const allSpent = sumAmount(expensesFor({ dayId:day.id }));
-  const limit = day.comida + day.transporte;
-  const tolerance = limit * (1+MARGIN);
-  const budgetedSpent = spentC + spentT;
-  const status = statusFor(budgetedSpent, limit, tolerance);
-  const pillClass = limit===0 ? (budgetedSpent>0?'good':'empty') : status;
-  const pillText = limit===0 ? (budgetedSpent>0? 'sin límite fijo':'sin gastos') : status==='good' ? 'dentro del límite' : status==='warn' ? 'dentro del margen' : 'se pasaron';
-
-  return `
-    ${metroLine(day.id)}
-    <div class="day-hero"><div class="dh-top"><div>
-      <div class="dh-label">${escapeHtml(day.label)}</div>
-      <div class="dh-date">${escapeHtml(day.sub)} · Controlado ${formatMoney(budgetedSpent)} de ${formatMoney(limit)} · Total día ${formatMoney(allSpent)}</div>
-    </div><span class="pill ${pillClass}">${pillText}</span></div></div>
-    ${allCategories().map(c => catCard(day.id, c)).join('')}
-    <div class="exp-list-title">Gastos de este día</div>
-    ${expenseListHTML(day.id)}
-  `;
-}
-
-function viewDias(){
-  const totalSpent = tripTotalSpentLimitedCats();
-  const totalLimit = tripTotalLimit();
-  const totalTol = tripTotalTolerance();
-  const st = statusFor(totalSpent, totalLimit, totalTol);
-  const pct = totalTol ? Math.min((totalSpent/totalTol)*100, 100) : 0;
-  const tick = totalTol ? (totalLimit/totalTol)*100 : 0;
-  const barColor = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : 'var(--status-good)';
-
-  const cards = TRIP_DAYS.map(d => {
-    const sC = sumAmount(expensesFor({ dayId:d.id, categoryId:'comida' }));
-    const sT = sumAmount(expensesFor({ dayId:d.id, categoryId:'transporte' }));
-    const lim = d.comida + d.transporte;
-    const tol = lim*(1+MARGIN);
-    const total = sC+sT;
-    const dayStatus = statusFor(total,lim,tol);
-    const pill = lim===0 ? 'empty' : dayStatus==='good'?'good':dayStatus==='warn'?'warn':'over';
-    return `<div class="day-card" data-goto="${d.id}">
-      <div class="dc-top"><div><div class="dc-label">${escapeHtml(d.label)}</div><div class="dc-date">${escapeHtml(d.sub)}</div></div>
-      <span class="pill ${pill}">${formatMoney(total)}${lim>0?' / '+formatMoney(lim):''}</span></div>
-      <div class="dc-bars">${miniBar(sT, d.transporte, 'var(--cat-transporte)')}${miniBar(sC, d.comida, 'var(--cat-comida)')}</div>
-    </div>`;
-  }).join('');
-
-  return `<div class="section-title">Resumen del viaje <span class="sub">10 días</span></div>
-    <div class="day-hero"><div class="dh-top"><div><div class="dh-label">${formatMoney(totalSpent)}</div>
-    <div class="dh-date">Límite oficial ${formatMoney(totalLimit)} · Tolerancia ${formatMoney(totalTol)}</div></div></div>
-    <div class="bar-track" style="margin-top:12px;"><div class="bar-fill" style="width:${pct}%; background:${barColor}"></div><div class="bar-tick" style="left:calc(${tick}% - 1px)"></div></div></div>
-    <div class="exp-list-title" style="margin-top:8px;">Día por día</div>${cards}`;
-}
-function miniBar(spent, limit, color){
-  if (limit === 0) return `<div class="bar-track"><div class="bar-fill" style="width:${spent>0?100:0}%; background:${spent>0?'var(--status-warn)':'var(--surface-3)'}"></div></div>`;
-  const tol = limit*(1+MARGIN);
-  const pct = Math.min((spent/tol)*100,100);
-  const st = statusFor(spent, limit, tol);
-  const c = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : color;
-  return `<div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${c}"></div></div>`;
-}
-
-function viewDash(){
-  const totalSpent = tripTotalSpentLimitedCats();
-  const totalLimit = tripTotalLimit();
-  const totalTol = tripTotalTolerance();
-  const remaining = Math.max(totalLimit - totalSpent, 0);
-  const totalAllCategories = sumAmount(state.expenses);
-  const overallStatus = statusFor(totalSpent, totalLimit, totalTol);
-  const statusText = overallStatus === 'good'
-    ? `Disponible dentro del plan: ${formatMoney(remaining)}`
-    : overallStatus === 'warn'
-      ? `Exceso sobre el plan: ${formatMoney(totalSpent - totalLimit)} · aún dentro de la tolerancia`
-      : `Exceso sobre el plan: ${formatMoney(totalSpent - totalLimit)}`;
-
-  const catRows = allCategories().map(c => {
-    const spent = sumAmount(expensesFor({ categoryId: c.id }));
-    const limit = c.hasLimit ? tripTotalLimitForCat(c.id) : 0;
-    const tol = limit * (1+MARGIN);
-    const pct = c.hasLimit && tol>0 ? Math.min((spent/tol)*100,100) : (spent>0?100:0);
-    const st = c.hasLimit ? statusFor(spent, limit, tol) : (spent>0?'info':'empty');
-    const color = st==='over' ? 'var(--status-over)' : st==='warn' ? 'var(--status-warn)' : safeHex(c.hex);
-    return `<div class="cat-card"><div class="cc-top"><div class="cc-name"><span class="cc-dot" style="background:${safeHex(c.hex)}"></span>${safeIcon(c.icon)} ${categoryName(c)}</div>
-      <div class="cc-amounts"><b>${formatMoney(spent)}</b>${c.hasLimit ? ' / '+formatMoney(limit) : ''}</div></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
-      ${c.hasLimit ? `<div class="cc-foot"><span>Plan ${formatMoney(limit)}</span><span>Tolerancia ${formatMoney(tol)}</span></div>` : `<div class="cc-nolimit">Sin límite fijo — informativo</div>`}
-    </div>`;
-  }).join('');
-
-  return `<div class="section-title">Dashboard</div>
-    <div class="big-stat"><div class="bs-label">Gastado en comida + transporte</div>
-      <div class="bs-num">${formatMoney(totalSpent)}</div>
-      <div class="bs-sub">Plan ${formatMoney(totalLimit)} · Tolerancia ${formatMoney(totalTol)}<br>${statusText}</div></div>
-    <div class="day-hero"><div class="dh-top"><div>
-      <div class="dh-label">${formatMoney(totalAllCategories)}</div>
-      <div class="dh-date">Total registrado incluyendo entradas y categorías adicionales</div>
-    </div></div></div>
-    <div class="exp-list-title">Resumen por categoría</div>${catRows}`;
-}
-
-function viewCats(){
-  const rows = allCategories().map(c => {
-    const total = sumAmount(expensesFor({ categoryId: c.id }));
-    return `<div class="cat-row"><span class="cr-dot" style="background:${safeHex(c.hex)}"></span><span class="cr-name">${safeIcon(c.icon)} ${categoryName(c)}</span>
-      <span class="cr-total">${formatMoney(total)}</span>${c.fixed ? '' : `<button class="cr-del" data-delcat="${c.id}" aria-label="Eliminar categoría">✕</button>`}</div>`;
-  }).join('');
-  return `<div class="section-title">Categorías</div>${rows}<div class="field-label">Nueva categoría</div>
-    <div class="add-cat-form"><input type="text" id="newCatName" maxlength="40" placeholder="ej. Souvenirs"><button class="btn-sm" id="btnAddCat">Agregar</button></div>`;
-}
-
-/* =========================================================
-   7. EVENTS
-   ========================================================= */
-document.querySelectorAll('.navbtn').forEach(btn => {
-  btn.addEventListener('click', () => { state.tab = btn.dataset.tab; render(); });
-});
-
-function bindDynamicEvents(){
-  document.querySelectorAll('.metro-station').forEach(el => el.addEventListener('click', () => {
-    selectedDayId = el.dataset.day; state.tab = 'hoy'; render();
-  }));
-  document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', () => {
-    selectedDayId = el.dataset.goto; state.tab = 'hoy'; render();
-  }));
-  document.querySelectorAll('[data-del]').forEach(el => el.addEventListener('click', ev => {
-    ev.stopPropagation();
-    if (!confirm('¿Eliminar este gasto?')) return;
-    const promise = deleteDoc(doc(db, 'trips', TRIP_ID, 'expenses', el.dataset.del));
-    queueWrite(promise, navigator.onLine ? 'Eliminando…' : 'Eliminación pendiente', 'Gasto eliminado', 'No se pudo eliminar');
-  }));
-  document.querySelectorAll('[data-delcat]').forEach(el => el.addEventListener('click', () => {
-    const categoryId = el.dataset.delcat;
-    if (expensesFor({ categoryId }).length > 0){ showToast('No se puede borrar: la categoría tiene gastos'); return; }
-    if (!confirm('¿Eliminar esta categoría?')) return;
-    const promise = deleteDoc(doc(db, 'trips', TRIP_ID, 'categories', categoryId));
-    queueWrite(promise, navigator.onLine ? 'Eliminando…' : 'Eliminación pendiente', 'Categoría eliminada', 'No se pudo eliminar');
-  }));
-  const btnAddCat = document.getElementById('btnAddCat');
-  if (btnAddCat){
-    const addCategory = () => {
-      const input = document.getElementById('newCatName');
-      const name = input.value.trim().replace(/\s+/g,' ');
-      if (!name) return;
-      if (allCategories().some(c => c.name.toLocaleLowerCase('es') === name.toLocaleLowerCase('es'))){ showToast('Esa categoría ya existe'); return; }
-      const color = CUSTOM_COLOR_POOL[state.customCategories.length % CUSTOM_COLOR_POOL.length];
-      input.value = '';
-      const promise = addDoc(tripCollection('categories'), {
-        name, hex:color, icon:'🏷️', createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.me
-      });
-      queueWrite(promise, navigator.onLine ? 'Guardando categoría…' : 'Categoría pendiente', 'Categoría agregada', 'No se pudo agregar');
-    };
-    btnAddCat.addEventListener('click', addCategory);
-    document.getElementById('newCatName').addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
-  }
-}
-
-/* Add expense */
-const overlayAdd = document.getElementById('overlayAdd');
-const overlayIdentity = document.getElementById('overlayIdentity');
-let selectedCategory = 'comida';
-let selectedWho = null;
-
-function openAddSheet(){
-  if (!state.me){ openIdentitySheet(); showToast('Primero elige tu perfil'); return; }
-  selectedCategory = 'comida';
-  selectedWho = state.me;
-  document.getElementById('inAmount').value = '';
-  document.getElementById('inNote').value = '';
-  renderChips(); renderWho(); renderDaySelect();
-  overlayAdd.classList.add('show');
-  setTimeout(() => document.getElementById('inAmount').focus(), 150);
-}
-function closeAddSheet(){ overlayAdd.classList.remove('show'); }
-function renderChips(){
-  const wrap = document.getElementById('chipCategories');
-  wrap.innerHTML = allCategories().map(c => `<button class="chip ${c.id===selectedCategory?'sel':''}" data-chip="${c.id}"><span class="chip-dot" style="background:${safeHex(c.hex)}"></span>${safeIcon(c.icon)} ${categoryName(c)}</button>`).join('');
-  wrap.querySelectorAll('[data-chip]').forEach(el => el.addEventListener('click', () => { selectedCategory = el.dataset.chip; renderChips(); }));
-}
-function renderWho(){
-  document.getElementById('whoNicky').classList.toggle('sel', selectedWho==='Nicky');
-  document.getElementById('whoSteven').classList.toggle('sel', selectedWho==='Steven');
-}
-function renderDaySelect(){
-  const sel = document.getElementById('inDay');
-  sel.innerHTML = TRIP_DAYS.map(d => `<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');
-}
-document.getElementById('whoNicky').addEventListener('click', () => { selectedWho='Nicky'; renderWho(); });
-document.getElementById('whoSteven').addEventListener('click', () => { selectedWho='Steven'; renderWho(); });
-document.getElementById('fabAdd').addEventListener('click', openAddSheet);
-document.getElementById('btnCancelExpense').addEventListener('click', closeAddSheet);
-overlayAdd.addEventListener('click', e => { if (e.target === overlayAdd) closeAddSheet(); });
-
-document.getElementById('btnSaveExpense').addEventListener('click', () => {
-  if (!state.me){ showToast('Primero elige tu perfil'); openIdentitySheet(); return; }
-  const rawAmount = Number(document.getElementById('inAmount').value);
-  const amount = roundMoney(rawAmount);
-  if (!Number.isFinite(amount) || amount <= 0 || amount > 5000){ showToast('Monto válido: $0.01 a $5,000'); return; }
-  if (!selectedWho){ showToast('Selecciona quién pagó'); return; }
-  if (!getCategory(selectedCategory)){ showToast('Selecciona una categoría válida'); return; }
-  const dayId = document.getElementById('inDay').value;
-  if (!TRIP_DAYS.some(d => d.id === dayId)){ showToast('Selecciona un día válido'); return; }
-  const note = document.getElementById('inNote').value.trim().slice(0,140);
-  const promise = addDoc(tripCollection('expenses'), {
-    amount, category:selectedCategory, paidBy:selectedWho, dayId, note,
-    createdAt:serverTimestamp(), createdAtMs:Date.now(), createdBy:state.me
-  });
-  closeAddSheet();
-  queueWrite(promise, navigator.onLine ? 'Guardando…' : 'Guardado sin conexión — pendiente', 'Gasto guardado ✓', 'No se pudo guardar');
-});
-
-/* Identity / profile */
-const PROFILE_IMAGES = { Nicky:'Nicky.jpg', Steven:'Steven.jpg' };
-function updateProfileAvatar(){
-  const button = document.getElementById('btnIdentity');
-  const image = document.getElementById('profileAvatar');
-  const fallback = document.getElementById('profileFallback');
-  const person = state.me;
-
-  button.classList.toggle('has-profile', Boolean(person));
-  button.title = person ? `Perfil actual: ${person}. Toca para cambiar.` : 'Elegir perfil';
-  fallback.textContent = person ? person.charAt(0) : '?';
-  fallback.hidden = false;
-  image.hidden = true;
-
-  if (!person || !PROFILE_IMAGES[person]){
-    image.removeAttribute('src');
-    image.alt = '';
-    return;
-  }
-  image.alt = `Foto de ${person}`;
-  image.onload = () => { image.hidden = false; fallback.hidden = true; };
-  image.onerror = () => { image.hidden = true; fallback.hidden = false; };
-  image.src = PROFILE_IMAGES[person];
-}
-function openIdentitySheet(){ overlayIdentity.classList.add('show'); }
-function closeIdentitySheet(){ overlayIdentity.classList.remove('show'); }
-document.getElementById('btnIdentity').addEventListener('click', openIdentitySheet);
-overlayIdentity.addEventListener('click', e => { if (e.target === overlayIdentity && state.me) closeIdentitySheet(); });
-document.querySelectorAll('.identity-opt').forEach(el => el.addEventListener('click', () => {
-  state.me = el.dataset.id;
-  localStorage.setItem('nyc_trip_identity', state.me);
-  updateProfileAvatar();
-  closeIdentitySheet();
-  showToast(`Perfil activo: ${state.me}`);
-}));
-
-/* Toast */
-let toastTimer;
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
-}
-
-/* =========================================================
-   8. INIT
-   ========================================================= */
-render();
-updateProfileAvatar();
-updateSyncIndicator();
-if (!state.me) openIdentitySheet();
-if (FIREBASE_CONFIGURED){
-  try { initializeFirebase(); }
-  catch(err){ console.error('Firebase init error', err); state.syncError = true; updateSyncIndicator(); showToast('Error configurando Firebase'); }
-} else {
-  showToast('Falta configurar Firebase');
-}
+setProfileUI();render();updateSync();if(FIREBASE_CONFIGURED){try{initializeFirebase()}catch(e){console.error(e);state.syncError=true;updateSync();showToast('Error iniciando Firebase')}}if(!state.me)openIdentity();
 </script>
 </body>
 </html>
