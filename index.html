@@ -404,6 +404,7 @@ html[data-theme="dark"] .setup-box{background:#151D17;color:#B9C5BB;border-color
 .route-point-content{min-width:0}
 .route-connector{width:1px;height:17px;margin:-1px 0 -1px 13px;background:repeating-linear-gradient(to bottom,var(--border-strong) 0 3px,transparent 3px 6px)}
 .route-origin-note{font-size:9.5px;line-height:1.4;margin:6px 2px 0;color:var(--text-faint)}
+.place-field{position:relative}.place-suggestions{position:absolute;z-index:80;left:0;right:0;top:calc(100% + 6px);display:none;background:var(--surface);border:1px solid var(--border-strong);border-radius:15px;box-shadow:0 18px 36px rgba(0,0,0,.16);overflow:hidden;max-height:230px;overflow-y:auto}.place-suggestions.show{display:block}.place-suggestion{width:100%;border:0;border-bottom:1px solid var(--border);background:transparent;color:var(--text);padding:12px 13px;text-align:left;display:flex;gap:10px;align-items:flex-start;cursor:pointer}.place-suggestion:last-child{border-bottom:0}.place-suggestion:active{background:rgba(27,67,50,.08)}.place-suggestion-icon{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(27,67,50,.08);color:var(--amber);flex:0 0 auto}.place-suggestion-text{font-size:11px;line-height:1.4}.place-helper{font-size:9px;color:var(--text-faint);margin:6px 2px 0;line-height:1.4}.route-error{padding:13px 14px;border-radius:16px;border:1px solid rgba(176,74,74,.18);background:rgba(176,74,74,.06);font-size:10.5px;line-height:1.55;color:var(--text-dim)}.route-error strong{display:block;color:var(--text);font-size:12px;margin-bottom:3px}.route-error-code{margin-top:7px;font-family:var(--mono);font-size:8px;color:var(--text-faint)}
 .travelers-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:10px 11px;margin-top:13px}
 .travelers-title{display:block;font-size:11px;font-weight:750;color:var(--text)}
 .travelers-sub{display:block;font-size:8.5px;line-height:1.35;color:var(--text-faint);margin-top:2px}
@@ -505,8 +506,7 @@ html[data-theme="dark"] .plan-actions{background:linear-gradient(180deg,rgba(11,
           </select>
           <div id="planOriginAddressWrap" hidden>
             <label class="plan-label" for="planOriginAddress">Dirección exacta de salida</label>
-            <input class="input" id="planOriginAddress" maxlength="160" list="planOriginSuggestions" autocomplete="street-address" placeholder="Ej. 75 9th Ave, New York, NY">
-            <datalist id="planOriginSuggestions"></datalist>
+            <div class="place-field"><input class="input" id="planOriginAddress" maxlength="160" autocomplete="off" placeholder="Ej. 75 9th Ave, New York, NY"><div class="place-suggestions" id="planOriginSuggestions" role="listbox"></div></div>
           </div>
           <div class="route-origin-note" id="planOriginHint"></div>
         </div>
@@ -516,8 +516,7 @@ html[data-theme="dark"] .plan-actions{background:linear-gradient(180deg,rgba(11,
         <span class="route-point-dot destination">B</span>
         <div class="route-point-content">
           <label class="plan-label" for="planDestinationAddress">Llegan a</label>
-          <input class="input" id="planDestinationAddress" maxlength="160" list="planDestinationSuggestions" autocomplete="street-address" placeholder="Dirección, lugar o atracción">
-          <datalist id="planDestinationSuggestions"></datalist>
+          <div class="place-field"><input class="input" id="planDestinationAddress" maxlength="160" autocomplete="off" placeholder="Dirección, lugar o atracción"><div class="place-suggestions" id="planDestinationSuggestions" role="listbox"></div></div><div class="place-helper">Escribe al menos 3 letras y selecciona una sugerencia para mejorar la precisión.</div>
         </div>
       </div>
 
@@ -826,6 +825,7 @@ document.getElementById('planOriginType').onchange=()=>{selectedRouteOption=null
 document.getElementById('planCustomTitle').addEventListener('input',updatePlanPreview);
 document.getElementById('planDestinationAddress').addEventListener('input',()=>{selectedRouteOption=null;debouncedPlaceAutocomplete('destination')});
 document.getElementById('planOriginAddress').addEventListener('input',()=>{selectedRouteOption=null;debouncedPlaceAutocomplete('origin')});
+document.addEventListener('click',e=>{if(!e.target.closest('.place-field')){closePlaceSuggestions('origin');closePlaceSuggestions('destination')}});
 
 function currentPlanSelection(){
   const id=document.getElementById('planDestination').value,base=DESTINATIONS.find(d=>d.id===id);
@@ -886,6 +886,17 @@ function renderTransportOptions(options){
   box.querySelectorAll('[data-route-option]').forEach(b=>b.onclick=()=>{selectedRouteOption=currentRouteOptions.find(o=>o.id===b.dataset.routeOption)||null;renderTransportOptions(currentRouteOptions);updatePlanPreview()});
 }
 
+function routeErrorMessage(error,fallback='No se pudo completar la consulta'){
+  const code=String(error?.code||'').replace('functions/','');
+  const raw=String(error?.message||'').trim();
+  if(code==='internal'||raw.toLowerCase()==='internal')return 'El servidor de rutas tuvo un error. Revisa que Routes API y Places API (New) estén activadas, que la facturación esté habilitada y que el secreto GOOGLE_MAPS_API_KEY exista en Firebase.';
+  if(code==='not-found')return 'No se encontró la función o no hubo rutas. Confirma que desplegaste las Firebase Functions en us-central1.';
+  if(code==='permission-denied')return 'Este dominio no tiene permiso para usar el servicio de rutas. Revisa ALLOWED_ORIGINS.';
+  if(code==='unavailable')return 'El servicio de rutas no está disponible temporalmente. Intenta de nuevo.';
+  return raw&&raw!==code?raw:fallback;
+}
+function routeErrorCode(error){return String(error?.code||'functions/unknown').replace('functions/','')}
+
 async function calculatePlanTransport(){
   const button=document.getElementById('calculateTransport'),box=document.getElementById('transportResults'),d=currentPlanSelection(),travelers=Math.max(1,Math.min(6,Number(document.getElementById('planTravelers').value)||2));
   if(d.id==='custom'&&!document.getElementById('planCustomTitle').value.trim())return showToast('Escribe el nombre del lugar');
@@ -896,7 +907,7 @@ async function calculatePlanTransport(){
     const origin=await resolvePlanOrigin(),fallbackTransitCost=d.group==='metlife'?83:d.group==='airport-lga'?65:NYC_TRANSIT_FALLBACK_PER_PERSON*travelers;
     const response=await calculateTransportCallable({origin,destination:{address:d.address},departureTime:tripDepartureISO(document.getElementById('planDay').value,document.getElementById('planTime').value),travelers,fallbackTransitCost});
     const options=response.data?.options||[];selectedRouteOption=options.find(o=>o.recommended)||options[0]||null;renderTransportOptions(options);updatePlanPreview();
-  }catch(error){console.error(error);selectedRouteOption=null;box.innerHTML=`<div class="setup-box"><strong>No se pudo calcular todavía.</strong><br>${escapeHtml(error?.message||'Revisa las direcciones y la configuración de Firebase Functions.')}</div>`;updatePlanPreview()}
+  }catch(error){console.error('Error calculando transporte',error);selectedRouteOption=null;const message=routeErrorMessage(error,'Revisa las direcciones y la configuración de Firebase Functions.');box.innerHTML=`<div class="route-error"><strong>No se pudo calcular la ruta</strong>${escapeHtml(message)}<div class="route-error-code">Código: ${escapeHtml(routeErrorCode(error))}</div></div>`;updatePlanPreview()}
   finally{button.disabled=false;button.textContent='Calcular transporte'}
 }
 document.getElementById('calculateTransport').onclick=calculatePlanTransport;
@@ -904,10 +915,19 @@ document.getElementById('calculateTransport').onclick=calculatePlanTransport;
 function debouncedPlaceAutocomplete(kind){
   clearTimeout(routeAutocompleteTimers[kind]);routeAutocompleteTimers[kind]=setTimeout(()=>loadPlaceSuggestions(kind),320)
 }
+function closePlaceSuggestions(kind){const list=document.getElementById(kind==='origin'?'planOriginSuggestions':'planDestinationSuggestions');if(list){list.classList.remove('show');list.innerHTML=''}}
+function renderPlaceSuggestions(kind,suggestions){
+  const input=document.getElementById(kind==='origin'?'planOriginAddress':'planDestinationAddress'),list=document.getElementById(kind==='origin'?'planOriginSuggestions':'planDestinationSuggestions');
+  const rows=(suggestions||[]).slice(0,6);if(!rows.length){closePlaceSuggestions(kind);return}
+  list.innerHTML=rows.map((item,i)=>`<button type="button" class="place-suggestion" data-place-index="${i}" role="option"><span class="place-suggestion-icon">${icon('pin',15)}</span><span class="place-suggestion-text">${escapeHtml(item.text)}</span></button>`).join('');
+  list.classList.add('show');
+  list.querySelectorAll('[data-place-index]').forEach(btn=>btn.onclick=()=>{const item=rows[Number(btn.dataset.placeIndex)];if(!item)return;input.value=item.text;input.dataset.placeId=item.placeId||'';closePlaceSuggestions(kind);selectedRouteOption=null;updatePlanPreview()});
+}
 async function loadPlaceSuggestions(kind){
-  const input=document.getElementById(kind==='origin'?'planOriginAddress':'planDestinationAddress'),list=document.getElementById(kind==='origin'?'planOriginSuggestions':'planDestinationSuggestions'),value=input.value.trim();
-  if(value.length<3||!autocompletePlacesCallable){list.innerHTML='';return}
-  try{const response=await autocompletePlacesCallable({input:value});list.innerHTML=(response.data?.suggestions||[]).slice(0,6).map(s=>`<option value="${escapeHtml(s.text)}"></option>`).join('')}catch(e){console.debug('Autocomplete no disponible',e);list.innerHTML=''}
+  const input=document.getElementById(kind==='origin'?'planOriginAddress':'planDestinationAddress'),value=input.value.trim();
+  input.dataset.placeId='';
+  if(value.length<3||!autocompletePlacesCallable){closePlaceSuggestions(kind);return}
+  try{const response=await autocompletePlacesCallable({input:value});renderPlaceSuggestions(kind,response.data?.suggestions||[])}catch(e){console.error('Autocomplete no disponible',e);closePlaceSuggestions(kind);showToast(routeErrorMessage(e,'No se pudo buscar direcciones'))}
 }
 
 document.getElementById('savePlan').onclick=async()=>{
