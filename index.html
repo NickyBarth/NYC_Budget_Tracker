@@ -105,6 +105,9 @@ nav.bottom{position:fixed;z-index:35;left:50%;bottom:0;transform:translateX(-50%
 
 .overlay{position:fixed;z-index:60;inset:0;background:rgba(10,10,11,.76);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}.overlay.show{display:flex}.sheet{width:100%;max-width:500px;background:linear-gradient(180deg,#181314,#100F10);border-top:1px solid var(--border-strong);border-radius:28px 28px 0 0;padding:9px 19px calc(24px + var(--safe-bottom));max-height:91vh;overflow:auto;animation:sheetUp .22s ease}.sheet-handle{width:42px;height:4px;border-radius:99px;background:rgba(242,222,210,.18);margin:5px auto 15px}@keyframes sheetUp{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}.sheet h2{font-family:var(--display);font-size:30px;margin:0 0 14px}.field-label{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--text-faint);font-weight:700;margin:13px 0 6px}.input,select,textarea{width:100%;border:1px solid var(--border-strong);background:rgba(29,20,23,.62);color:var(--text);border-radius:16px;padding:11px 12px;font-size:12px;outline:none}.input:focus,select:focus,textarea:focus{border-color:rgba(223,169,140,.65)}textarea{resize:vertical;min-height:70px}.amount-input{font-family:var(--display);font-size:34px;text-align:center;padding:14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice-row{display:flex;gap:8px;flex-wrap:wrap}.choice{border:1px solid var(--border-strong);background:rgba(29,20,23,.50);color:var(--text-dim);padding:9px 12px;border-radius:99px;font-size:10px;font-weight:700;cursor:pointer}.choice.selected{border-color:var(--amber);color:var(--stone);background:rgba(223,169,140,.08)}.identity-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.identity-opt{border:1px solid var(--border-strong);background:var(--surface);border-radius:18px;padding:14px;cursor:pointer}.identity-opt img{width:76px;height:76px;object-fit:cover;border-radius:50%;border:2px solid var(--amber);display:block;margin:0 auto 8px}.identity-opt span{font-family:var(--display);font-size:22px}.toast{position:fixed;z-index:80;bottom:calc(104px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(18px);opacity:0;pointer-events:none;background:rgba(20,16,18,.96);border:1px solid var(--border-strong);padding:11px 16px;border-radius:99px;font-size:10px;font-weight:700;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;transition:.25s}.toast.show{opacity:1;transform:translateX(-50%)}
 .setup-box{padding:14px;border:1px solid var(--border-strong);border-radius:14px;background:var(--surface);font-size:11px;color:var(--text-dim);line-height:1.5}.setup-box code{color:var(--amber)}
+.route-section{margin-top:14px;padding-top:2px}.route-origin-note{font-size:10px;color:var(--text-faint);line-height:1.45;margin-top:6px}.route-calc-btn{margin-top:14px}.transport-results{margin-top:13px;display:grid;gap:9px}.transport-option{width:100%;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:17px;padding:13px 14px;text-align:left;cursor:pointer;display:grid;grid-template-columns:42px 1fr auto;gap:11px;align-items:center;transition:.18s}.transport-option:hover{border-color:var(--border-strong)}.transport-option.selected{border-color:var(--amber);box-shadow:0 0 0 2px rgba(27,67,50,.09)}.transport-option.recommended:after{content:'Recomendado';grid-column:2/4;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);font-weight:800;margin-top:-4px}.transport-option-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(27,67,50,.08);color:var(--amber)}.transport-option-title{font-family:var(--display);font-size:19px;line-height:1}.transport-option-meta{font-size:10px;color:var(--text-faint);margin-top:4px;line-height:1.4}.transport-option-price{text-align:right;font-family:var(--display);font-size:19px;color:var(--text)}.transport-option-price small{display:block;font-family:var(--body);font-size:8px;color:var(--text-faint);margin-top:3px}.route-link{display:inline-flex;align-items:center;gap:4px;color:var(--amber);font-size:9px;font-weight:750;text-decoration:none;margin-top:4px}.route-loading{display:flex;align-items:center;gap:9px;padding:12px;color:var(--text-dim);font-size:11px}.route-spinner{width:18px;height:18px;border-radius:50%;border:2px solid rgba(27,67,50,.16);border-top-color:var(--amber);animation:routeSpin .75s linear infinite}@keyframes routeSpin{to{transform:rotate(360deg)}}
+html[data-theme="dark"] .transport-option{background:rgba(17,23,19,.94);border-color:rgba(227,235,225,.09)}html[data-theme="dark"] .transport-option.selected{border-color:var(--amber);box-shadow:0 0 0 2px rgba(163,177,138,.08)}html[data-theme="dark"] .transport-option-icon{background:rgba(163,177,138,.09)}
+
 @media(max-width:390px){.home-stage{min-height:410px;padding-bottom:142px}.home-intro .intro-title{font-size:44px}.day-chip{min-width:47px;padding:7px 5px}.day-chip .num{font-size:20px}.metric-main{font-size:36px}.ring{width:74px;height:74px}.category-card{grid-template-columns:48px 1fr auto;padding:12px}.category-icon{width:44px;height:44px}.category-name{font-size:17px}.category-amount{font-size:17px}.compare-grid{gap:5px}.compare-box{padding:9px 5px}.fab{right:14px;width:52px;height:52px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 
@@ -407,11 +410,33 @@ html[data-theme="dark"] .setup-box{background:#151D17;color:#B9C5BB;border-color
   <div class="field-label">Destino o actividad</div><select id="planDestination"></select>
   <div id="customPlanFields" hidden>
     <div class="field-label">Nombre del lugar</div><input class="input" id="planCustomTitle" maxlength="80" placeholder="Ej. MoMA">
-    <div class="field-label">Dirección</div><input class="input" id="planCustomAddress" maxlength="120" placeholder="Dirección exacta">
-    <div class="field-label">Zona para estimar transporte</div><select id="planCustomZone"><option value="walk-midtown">Midtown / caminable</option><option value="walk-central">Central Park / caminable</option><option value="walk-chelsea">Chelsea / High Line caminable</option><option value="metro-brooklyn-lower">Brooklyn o Lower Manhattan — $12 par</option><option value="metro-uptown">Upper Manhattan — $12 par</option><option value="metro-queens">Queens — $12 par</option><option value="metlife">MetLife — $83 par</option><option value="airport-lga">LGA — $65 par</option></select>
   </div>
-  <div class="form-grid"><div><div class="field-label">Hora aproximada</div><input class="input" id="planTime" type="time"></div><div><div class="field-label">Transporte previsto</div><select id="planMode"><option>Automático</option><option>Caminando</option><option>Metro</option><option>Bus</option><option>Uber/Lyft</option></select></div></div>
+
+  <div class="route-section">
+    <div class="field-label">Lugar de salida</div>
+    <select id="planOriginType">
+      <option value="shoreham">The Shoreham</option>
+      <option value="previous">Actividad anterior del día</option>
+      <option value="custom">Otra dirección</option>
+      <option value="current">Mi ubicación actual</option>
+    </select>
+    <div id="planOriginAddressWrap" hidden>
+      <div class="field-label">Dirección exacta de salida</div>
+      <input class="input" id="planOriginAddress" maxlength="160" list="planOriginSuggestions" autocomplete="street-address" placeholder="Ej. 75 9th Ave, New York, NY">
+      <datalist id="planOriginSuggestions"></datalist>
+    </div>
+    <div class="route-origin-note" id="planOriginHint"></div>
+
+    <div class="field-label">Dirección exacta de llegada</div>
+    <input class="input" id="planDestinationAddress" maxlength="160" list="planDestinationSuggestions" autocomplete="street-address" placeholder="Escribe una dirección, lugar o atracción">
+    <datalist id="planDestinationSuggestions"></datalist>
+  </div>
+
+  <div class="form-grid"><div><div class="field-label">Hora aproximada</div><input class="input" id="planTime" type="time"></div><div><div class="field-label">Personas</div><input class="input" id="planTravelers" type="number" min="1" max="6" value="2"></div></div></div>
   <div class="field-label">Nota opcional</div><textarea id="planNotes" maxlength="180" placeholder="Reserva, hora de salida, entrada, etc."></textarea>
+
+  <button class="btn btn-secondary full route-calc-btn" id="calculateTransport">Calcular transporte</button>
+  <div class="transport-results" id="transportResults" hidden></div>
   <div class="setup-box" id="planEstimatePreview" style="margin-top:12px"></div>
   <button class="btn btn-primary full" id="savePlan" style="margin-top:18px">Añadir al día</button><button class="btn btn-secondary full" data-close="overlayPlan" style="margin-top:8px">Cancelar</button>
 </div></div>
@@ -435,6 +460,7 @@ import {
   collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy,
   serverTimestamp, updateDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-functions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDmLt8AoUS69V_f8bRijN6RVf_R8wKMHZ4",
@@ -449,6 +475,9 @@ const FIREBASE_CONFIGURED=!Object.values(firebaseConfig).some(v=>String(v).start
 const MARGIN=.10;
 const ICHIRAN_SOURCE_DAY='2026-07-30';
 const ICHIRAN_BUDGET=40;
+const SHOREHAM_ADDRESS='33 W 55th St, New York, NY 10019';
+const ROUTING_REGION='us-central1';
+const NYC_TRANSIT_FALLBACK_PER_PERSON=3;
 
 const TRIP_DAYS=[
  {id:'2026-07-29',short:'Lle',weekday:'Mié',num:'29',label:'Llegada',sub:'Mié 29 Jul',transporte:65,comida:10,excelPlan:'Llegada 11:55 PM a LGA · Uber/Lyft directo al Shoreham · Solo dormir.'},
@@ -497,6 +526,7 @@ const ICON_PATHS={
  plus:'<path d="M12 5v14M5 12h14"/>',
  food:'<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3c-2 3-2 7 0 10h3V3zM18 13v8"/>',
  train:'<rect x="5" y="3" width="14" height="16" rx="3"/><path d="M8 7h8M8 12h.01M16 12h.01M8 19l-2 2M16 19l2 2"/>',
+ car:'<path d="M5 17h14l1-5-2-5H6l-2 5z"/><path d="M7 17v2M17 17v2M6 12h12"/><circle cx="7" cy="14" r="1"/><circle cx="17" cy="14" r="1"/>',
  ticket:'<path d="M3 9a3 3 0 0 0 0 6v4h18v-4a3 3 0 0 0 0-6V5H3z"/><path d="M13 7v2M13 13v4"/>',
  suitcase:'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4h6v3M8 11v6M16 11v6"/>',
  map:'<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/>',
@@ -551,7 +581,8 @@ function writeCache(key,value){try{localStorage.setItem(key,JSON.stringify(value
 const PROFILE_IMAGES={Nicky:'Nicky.jpg',Steven:'Steven.jpg'};
 function normalizeIdentity(value){const match=Object.keys(PROFILE_IMAGES).find(name=>name.toLowerCase()===String(value||'').toLowerCase());return match||null}
 let state={tab:'hoy',moreView:'menu',expenses:readCache(CACHE.expenses),customCategories:readCache(CACHE.categories),plans:readCache(CACHE.plans),packing:readCache(CACHE.packing),budgets:readCache(CACHE.budgets),me:normalizeIdentity(localStorage.getItem('nyc_trip_identity')),packingFilter:'all',packingMineOnly:false,pending:{expenses:false,categories:false,plans:false,packing:false,budgets:false},syncError:false};
-let db=null,unsubs=[];
+let selectedRouteOption=null,currentRouteOptions=[],routeAutocompleteTimers={origin:null,destination:null};
+let db=null,functions=null,calculateTransportCallable=null,autocompletePlacesCallable=null,unsubs=[];
 let selectedDayId=todayId();
 let expenseCategory='comida',expenseWho=null,packOwner='Ambos';
 
@@ -603,7 +634,7 @@ function setProfileUI(){
 function updateSync(){const d=document.getElementById('syncDot');d.className='sync-dot';if(state.syncError){d.classList.add('error');d.title='Error de sincronización'}else if(!navigator.onLine){d.classList.add('offline');d.title='Sin conexión'}else if(Object.values(state.pending).some(Boolean)){d.classList.add('pending');d.title='Sincronizando'}else d.title='Sincronizado'}
 window.addEventListener('online',updateSync);window.addEventListener('offline',updateSync);
 
-function initializeFirebase(){const app=initializeApp(firebaseConfig);db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});listenCollection('expenses','createdAtMs',CACHE.expenses);listenCollection('categories','createdAtMs',CACHE.categories);listenCollection('plans','createdAtMs',CACHE.plans);listenCollection('packing','createdAtMs',CACHE.packing);listenCollection('budgets','updatedAtMs',CACHE.budgets)}
+function initializeFirebase(){const app=initializeApp(firebaseConfig);db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});functions=getFunctions(app,ROUTING_REGION);calculateTransportCallable=httpsCallable(functions,'calculateTransport');autocompletePlacesCallable=httpsCallable(functions,'autocompletePlaces');listenCollection('expenses','createdAtMs',CACHE.expenses);listenCollection('categories','createdAtMs',CACHE.categories);listenCollection('plans','createdAtMs',CACHE.plans);listenCollection('packing','createdAtMs',CACHE.packing);listenCollection('budgets','updatedAtMs',CACHE.budgets)}
 function listenCollection(name,orderField,cacheKey){const q=query(tripCollection(name),orderBy(orderField,'asc'));const unsub=onSnapshot(q,{includeMetadataChanges:true},snap=>{let data=snap.docs.map(d=>({id:d.id,...d.data()}));if(name==='categories')data=data.map(c=>({...c,fixed:false,hasLimit:false}));state[name==='categories'?'customCategories':name]=data;writeCache(cacheKey,data.map(cleanForCache));state.pending[name]=snap.metadata.hasPendingWrites;state.syncError=false;updateSync();render()},err=>{console.error(name,err);state.syncError=true;updateSync();showToast(`Error cargando ${name}`)});unsubs.push(unsub)}
 function cleanForCache(o){const x={};for(const[k,v]of Object.entries(o)){if(k!=='createdAt'&&k!=='updatedAt')x[k]=v}return x}
 
@@ -614,7 +645,7 @@ function emptyState(ic,text){return `<div class="empty"><div class="empty-icon">
 
 function viewHoy(){const d=TRIP_DAYS.find(x=>x.id===selectedDayId);const foodSpent=sum(expensesFor({dayId:d.id,categoryId:'comida'})),transportSpent=sum(expensesFor({dayId:d.id,categoryId:'transporte'})),spent=foodSpent+transportSpent,limit=effectiveBudget(d.id,'comida')+effectiveBudget(d.id,'transporte'),st=statusFor(spent,limit),rec=recommendation(d.id),budget=budgetDoc(d.id),hasPendingRec=rec.comida!==effectiveBudget(d.id,'comida')||rec.transporte!==effectiveBudget(d.id,'transporte');return `<div class="home-stage"><div class="home-intro"><div class="intro-date">${escapeHtml(d.sub.replace('Jul','de julio').replace('Ago','de agosto'))}</div><div class="intro-line"></div><div class="intro-title">NYC TRIP</div></div>${dayStrip(d.id)}</div><div class="card hero nyc-photo"><div class="hero-top"><div><div class="hero-label">${escapeHtml(d.label)}</div><div class="hero-title">Presupuesto del día</div><div class="hero-date">${escapeHtml(d.sub)} · The Shoreham</div></div><span class="pill ${st}">${statusLabel(st)}</span></div><div class="hero-grid"><div><div class="metric-label">Gastado / plan aplicado</div><div class="metric-main"><strong>${formatMoney(spent)}</strong></div><div class="metric-sub">de ${formatMoney(limit)} · restante ${formatMoney(Math.max(0,limit-spent))}</div></div><div class="ring" style="--pct:${pct(spent,limit)}"><div class="ring-content"><div class="ring-num">${Math.round(pct(spent,limit))}%</div><div class="ring-text">utilizado</div></div></div></div><div class="progress" style="margin-top:16px"><div class="progress-fill" style="width:${pct(spent,limit)}%"></div></div><div class="progress-foot"><span>Original ${formatMoney(originalBudget(d.id,'comida')+originalBudget(d.id,'transporte'))}</span><span>${budget?'Plan aplicado':'Excel activo'}</span></div></div>${hasPendingRec?`<div class="card budget-compare"><div class="compare-head"><div><div class="compare-title">El plan tiene una recomendación nueva</div><div class="compare-source">Revísala en Plan your Day antes de aplicarla.</div></div>${icon('map',20)}</div><button class="btn btn-secondary full" data-go-plan style="margin-top:11px">Ver recomendación</button></div>`:''}${allCategories().map(c=>categoryCard(d.id,c)).join('')}<div class="list-title">Gastos del día</div>${expenseList(d.id)}`}
 
-function viewPlan(){const d=TRIP_DAYS.find(x=>x.id===selectedDayId),list=plansFor(d.id),rec=recommendation(d.id),origT=originalBudget(d.id,'transporte'),origF=originalBudget(d.id,'comida'),appliedT=effectiveBudget(d.id,'transporte'),appliedF=effectiveBudget(d.id,'comida'),diff=(rec.transporte+rec.comida)-(origT+origF),canApply=rec.transporte!==appliedT||rec.comida!==appliedF,ich=getIchiranPlan();const rows=list.length?list.map(p=>`<div class="activity-row"><div class="activity-time">${escapeHtml(p.time||'—')}</div><div class="row-icon">${icon(p.icon||'pin',19)}</div><div class="row-main"><div class="row-title">${escapeHtml(p.title)}</div><div class="row-meta">${escapeHtml(p.address||'')}<br>${escapeHtml(p.transportMode||'')} · ${formatMoney(p.transportCost||0)} estimados${p.createdBy?` · por ${escapeHtml(p.createdBy)}`:''}</div>${p.notes?`<div class="row-meta">${escapeHtml(p.notes)}</div>`:''}</div><button class="row-action danger" data-delete-plan="${p.id}">${icon('trash',17)}</button></div>`).join(''):emptyState('map','Añadan destinos y actividades para construir el plan compartido del día.');return `${dayStrip(d.id)}<div class="section-title"><h2>Plan your Day</h2><span class="sub">Compartido</span></div><div class="card excel-plan"><div class="label">Plan original del Excel</div><p>${escapeHtml(d.excelPlan)}</p></div><div class="card budget-compare"><div class="compare-head"><div><div class="compare-title">Recomendación del presupuesto</div><div class="compare-source">The Shoreham · 2 personas · matriz del Excel</div></div>${icon('wallet',20)}</div><div class="compare-grid"><div class="compare-box"><div class="label">Original</div><div class="value">${formatMoney(origT+origF)}</div></div><div class="compare-box"><div class="label">Recomendado</div><div class="value">${formatMoney(rec.transporte+rec.comida)}</div></div><div class="compare-box"><div class="label">Diferencia</div><div class="value ${diff>0?'up':diff<0?'down':''}">${diff>0?'+':''}${formatMoney(diff)}</div></div></div><div class="compare-notes"><strong>Transporte:</strong> ${formatMoney(origT)} → ${formatMoney(rec.transporte)}<br><strong>Comida:</strong> ${formatMoney(origF)} → ${formatMoney(rec.comida)}<br>${escapeHtml(rec.reason)}</div><div class="button-row"><button class="btn btn-primary" data-apply-budget="${d.id}" ${canApply?'':'disabled'}>${icon('check',15)} Aplicar al día</button><button class="btn btn-secondary" data-reset-budget="${d.id}" ${budgetDoc(d.id)?'':'disabled'}>${icon('reset',15)} Restaurar Excel</button></div>${ich&&ich.dayId!==ICHIRAN_SOURCE_DAY&&(d.id===ich.dayId||d.id===ICHIRAN_SOURCE_DAY)?`<button class="btn btn-secondary full" data-apply-ichiran style="margin-top:8px">Aplicar ambos días afectados por Ichiran</button>`:''}</div><div class="list-title">Plan compartido · ${escapeHtml(d.label)}</div>${rows}`}
+function viewPlan(){const d=TRIP_DAYS.find(x=>x.id===selectedDayId),list=plansFor(d.id),rec=recommendation(d.id),origT=originalBudget(d.id,'transporte'),origF=originalBudget(d.id,'comida'),appliedT=effectiveBudget(d.id,'transporte'),appliedF=effectiveBudget(d.id,'comida'),diff=(rec.transporte+rec.comida)-(origT+origF),canApply=rec.transporte!==appliedT||rec.comida!==appliedF,ich=getIchiranPlan();const rows=list.length?list.map(p=>{const origin=p.originLabel||'The Shoreham',destination=p.address||'',routeBits=[p.transportMode||'',p.routeDuration||'',p.routeDistance||''].filter(Boolean).join(' · ');return `<div class="activity-row"><div class="activity-time">${escapeHtml(p.time||'—')}</div><div class="row-icon">${icon(p.icon||'pin',19)}</div><div class="row-main"><div class="row-title">${escapeHtml(p.title)}</div><div class="row-meta">${escapeHtml(origin)} → ${escapeHtml(destination)}<br>${escapeHtml(routeBits)}${Number.isFinite(Number(p.transportCost))?` · ${formatMoney(p.transportCost||0)} presupuestados`:''}${p.createdBy?` · por ${escapeHtml(p.createdBy)}`:''}</div>${p.routeSummary?`<div class="row-meta">${escapeHtml(p.routeSummary)}</div>`:''}${p.uberUrl?`<a class="route-link" href="${escapeHtml(p.uberUrl)}" target="_blank" rel="noopener">Abrir en Uber</a>`:''}${p.notes?`<div class="row-meta">${escapeHtml(p.notes)}</div>`:''}</div><button class="row-action danger" data-delete-plan="${p.id}">${icon('trash',17)}</button></div>`}).join(''):emptyState('map','Añadan destinos y actividades para construir el plan compartido del día.');return `${dayStrip(d.id)}<div class="section-title"><h2>Plan your Day</h2><span class="sub">Compartido</span></div><div class="card excel-plan"><div class="label">Plan original del Excel</div><p>${escapeHtml(d.excelPlan)}</p></div><div class="card budget-compare"><div class="compare-head"><div><div class="compare-title">Recomendación del presupuesto</div><div class="compare-source">The Shoreham · 2 personas · rutas seleccionadas</div></div>${icon('wallet',20)}</div><div class="compare-grid"><div class="compare-box"><div class="label">Original</div><div class="value">${formatMoney(origT+origF)}</div></div><div class="compare-box"><div class="label">Recomendado</div><div class="value">${formatMoney(rec.transporte+rec.comida)}</div></div><div class="compare-box"><div class="label">Diferencia</div><div class="value ${diff>0?'up':diff<0?'down':''}">${diff>0?'+':''}${formatMoney(diff)}</div></div></div><div class="compare-notes"><strong>Transporte:</strong> ${formatMoney(origT)} → ${formatMoney(rec.transporte)}<br><strong>Comida:</strong> ${formatMoney(origF)} → ${formatMoney(rec.comida)}<br>${escapeHtml(rec.reason)}</div><div class="button-row"><button class="btn btn-primary" data-apply-budget="${d.id}" ${canApply?'':'disabled'}>${icon('check',15)} Aplicar al día</button><button class="btn btn-secondary" data-reset-budget="${d.id}" ${budgetDoc(d.id)?'':'disabled'}>${icon('reset',15)} Restaurar Excel</button></div>${ich&&ich.dayId!==ICHIRAN_SOURCE_DAY&&(d.id===ich.dayId||d.id===ICHIRAN_SOURCE_DAY)?`<button class="btn btn-secondary full" data-apply-ichiran style="margin-top:8px">Aplicar ambos días afectados por Ichiran</button>`:''}</div><div class="list-title">Plan compartido · ${escapeHtml(d.label)}</div>${rows}`}
 
 function viewDias(){const totalSpent=controlledSpent(),limit=tripEffectiveTotal();return `<div class="section-title"><h2>Resumen del viaje</h2><span class="sub">10 días</span></div><div class="card hero"><div class="hero-grid" style="margin-top:0"><div><div class="metric-label">Comida + transporte</div><div class="metric-main"><strong>${formatMoney(totalSpent)}</strong></div><div class="metric-sub">Plan aplicado ${formatMoney(limit)} · original ${formatMoney(tripOriginalTotal())}</div></div><div class="ring" style="--pct:${pct(totalSpent,limit)}"><div class="ring-content"><div class="ring-num">${Math.round(pct(totalSpent,limit))}%</div><div class="ring-text">viaje</div></div></div></div></div>${TRIP_DAYS.map(d=>{const spent=sum(expensesFor({dayId:d.id}).filter(e=>e.category==='comida'||e.category==='transporte')),lim=effectiveBudget(d.id,'comida')+effectiveBudget(d.id,'transporte'),f=sum(expensesFor({dayId:d.id,categoryId:'comida'})),t=sum(expensesFor({dayId:d.id,categoryId:'transporte'}));return `<div class="card day-card" data-open-day="${d.id}"><div class="day-card-top"><div><div class="day-card-title">${escapeHtml(d.label)}</div><div class="day-card-date">${escapeHtml(d.sub)} · ${plansFor(d.id).length} actividades</div></div><div class="day-card-budget">${formatMoney(spent)}<br><span style="color:var(--text-faint)">de ${formatMoney(lim)}</span></div></div><div class="dual-bars"><div class="progress"><div class="progress-fill" style="width:${pct(f,effectiveBudget(d.id,'comida'))}%"></div></div><div class="progress"><div class="progress-fill" style="width:${pct(t,effectiveBudget(d.id,'transporte'))}%;background:var(--lavender)"></div></div></div></div>`}).join('')}`}
 
@@ -675,12 +706,116 @@ function openExpense(){expenseCategory='comida';expenseWho=state.me;document.get
 function renderExpenseChoices(){const cats=document.getElementById('expenseCategories');cats.innerHTML=allCategories().map(c=>`<button class="choice ${expenseCategory===c.id?'selected':''}" data-exp-cat="${c.id}">${icon(c.icon||'tag',15)} ${escapeHtml(c.name)}</button>`).join('');cats.querySelectorAll('[data-exp-cat]').forEach(b=>b.onclick=()=>{expenseCategory=b.dataset.expCat;renderExpenseChoices()});const who=document.getElementById('expenseWho');who.innerHTML=['Nicky','Steven'].map(n=>`<button class="choice ${expenseWho===n?'selected':''}" data-exp-who="${n}">${n}</button>`).join('');who.querySelectorAll('[data-exp-who]').forEach(b=>b.onclick=()=>{expenseWho=b.dataset.expWho;renderExpenseChoices()})}
 document.getElementById('saveExpense').onclick=()=>{const amount=Math.round(Number(document.getElementById('expenseAmount').value)*100)/100,dayId=document.getElementById('expenseDay').value,note=document.getElementById('expenseNote').value.trim().slice(0,140);if(!amount||amount<=0||amount>5000)return showToast('Ingresa un monto válido');if(!expenseWho)return showToast('Selecciona quién lo registró');closeOverlay('overlayExpense');queueWrite(addDoc(tripCollection('expenses'),{amount,category:expenseCategory,paidBy:expenseWho,dayId,note,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||expenseWho}),'Guardando…','Gasto guardado','No se pudo guardar')};
 
-function openPlan(){document.getElementById('planDay').innerHTML=TRIP_DAYS.map(d=>`<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');document.getElementById('planDestination').innerHTML=DESTINATIONS.map(d=>`<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('');document.getElementById('planTime').value='';document.getElementById('planNotes').value='';document.getElementById('planMode').value='Automático';document.getElementById('planCustomTitle').value='';document.getElementById('planCustomAddress').value='';updatePlanPreview();openOverlay('overlayPlan')}
-document.getElementById('planDestination').onchange=updatePlanPreview;document.getElementById('planCustomZone').onchange=updatePlanPreview;document.getElementById('planMode').onchange=updatePlanPreview;
-function currentPlanSelection(){const id=document.getElementById('planDestination').value,base=DESTINATIONS.find(d=>d.id===id);if(id!=='custom')return{...base};const group=document.getElementById('planCustomZone').value;return{id:'custom',name:document.getElementById('planCustomTitle').value.trim()||'Lugar personalizado',address:document.getElementById('planCustomAddress').value.trim(),group,cost:GROUP_COSTS[group]||0,mode:GROUP_MODES[group]||'Automático',icon:'pin',route:`Estimación por zona: ${groupLabel(group)}.`}}
-function updatePlanPreview(){const custom=document.getElementById('planDestination').value==='custom';document.getElementById('customPlanFields').hidden=!custom;const d=currentPlanSelection();document.getElementById('planEstimatePreview').innerHTML=`<strong style="color:var(--amber)">${escapeHtml(d.mode)}</strong> · ${formatMoney(d.cost)} para 2 personas<br>${escapeHtml(d.route)}${d.mealTransfer?`<br><strong>Comida:</strong> moverá ${formatMoney(d.mealTransfer)} de Ichiran al día elegido.`:''}`}
-document.getElementById('planCustomTitle').addEventListener('input',updatePlanPreview);document.getElementById('planCustomAddress').addEventListener('input',updatePlanPreview);
-document.getElementById('savePlan').onclick=async()=>{const d=currentPlanSelection(),dayId=document.getElementById('planDay').value,time=document.getElementById('planTime').value,notes=document.getElementById('planNotes').value.trim().slice(0,180),manualMode=document.getElementById('planMode').value,mode=manualMode==='Automático'?d.mode:manualMode;if(d.id==='custom'&&!document.getElementById('planCustomTitle').value.trim())return showToast('Escribe el nombre del lugar');if(d.id==='ichiran'){const existing=getIchiranPlan();if(existing){if(existing.dayId===dayId)return showToast('Ichiran ya está añadido en este día');if(!confirm(`Ichiran ya está en ${TRIP_DAYS.find(x=>x.id===existing.dayId)?.label}. ¿Moverlo al día seleccionado?`))return;await deleteDoc(doc(db,'trips',TRIP_ID,'plans',existing.id))}}closeOverlay('overlayPlan');queueWrite(addDoc(tripCollection('plans'),{dayId,activityId:d.id,title:d.name,address:d.address||'',time,transportMode:mode,routeGroup:d.group,transportCost:Number(d.cost)||0,mealTransfer:Number(d.mealTransfer)||0,sourceMealDay:d.sourceMealDay||'',icon:d.icon||'pin',notes,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil'}),'Actualizando plan…','Actividad añadida','No se pudo añadir')};
+function openPlan(){
+  selectedRouteOption=null;currentRouteOptions=[];
+  document.getElementById('planDay').innerHTML=TRIP_DAYS.map(d=>`<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');
+  document.getElementById('planDestination').innerHTML=DESTINATIONS.map(d=>`<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('');
+  document.getElementById('planTime').value='';document.getElementById('planNotes').value='';document.getElementById('planTravelers').value='2';
+  document.getElementById('planCustomTitle').value='';document.getElementById('planOriginType').value='shoreham';document.getElementById('planOriginAddress').value='';
+  document.getElementById('transportResults').hidden=true;document.getElementById('transportResults').innerHTML='';
+  syncDestinationAddress();updatePlanPreview();openOverlay('overlayPlan')
+}
+
+document.getElementById('planDestination').onchange=()=>{selectedRouteOption=null;syncDestinationAddress();updatePlanPreview()};
+document.getElementById('planDay').onchange=()=>{selectedRouteOption=null;updatePlanPreview()};
+document.getElementById('planTime').onchange=()=>{selectedRouteOption=null;updatePlanPreview()};
+document.getElementById('planOriginType').onchange=()=>{selectedRouteOption=null;updatePlanPreview()};
+
+document.getElementById('planCustomTitle').addEventListener('input',updatePlanPreview);
+document.getElementById('planDestinationAddress').addEventListener('input',()=>{selectedRouteOption=null;debouncedPlaceAutocomplete('destination')});
+document.getElementById('planOriginAddress').addEventListener('input',()=>{selectedRouteOption=null;debouncedPlaceAutocomplete('origin')});
+
+function currentPlanSelection(){
+  const id=document.getElementById('planDestination').value,base=DESTINATIONS.find(d=>d.id===id);
+  if(id!=='custom')return{...base,address:document.getElementById('planDestinationAddress').value.trim()||base.address};
+  return{id:'custom',name:document.getElementById('planCustomTitle').value.trim()||'Lugar personalizado',address:document.getElementById('planDestinationAddress').value.trim(),group:'custom',cost:0,mode:'Por calcular',icon:'pin',route:'Calcula la ruta con la dirección exacta.'}
+}
+
+function syncDestinationAddress(){
+  const id=document.getElementById('planDestination').value,base=DESTINATIONS.find(d=>d.id===id);
+  document.getElementById('customPlanFields').hidden=id!=='custom';
+  document.getElementById('planDestinationAddress').value=id==='custom'?'':(base?.address||'');
+}
+
+function previousPlanForOrigin(dayId,time){
+  const list=plansFor(dayId).filter(p=>p.address);
+  if(!list.length)return null;
+  const eligible=time?list.filter(p=>!p.time||p.time<time):list;
+  return eligible.at(-1)||list.at(-1)||null;
+}
+
+async function resolvePlanOrigin(){
+  const type=document.getElementById('planOriginType').value,dayId=document.getElementById('planDay').value,time=document.getElementById('planTime').value;
+  if(type==='shoreham')return{type,label:'The Shoreham',address:SHOREHAM_ADDRESS};
+  if(type==='custom'){
+    const address=document.getElementById('planOriginAddress').value.trim();if(!address)throw new Error('Escribe la dirección exacta de salida');
+    return{type,label:'Dirección personalizada',address};
+  }
+  if(type==='previous'){
+    const previous=previousPlanForOrigin(dayId,time);if(!previous)throw new Error('Todavía no hay una actividad anterior con dirección en este día');
+    return{type,label:previous.title||'Actividad anterior',address:previous.address};
+  }
+  if(type==='current'){
+    if(!navigator.geolocation)throw new Error('Este dispositivo no permite obtener la ubicación actual');
+    const position=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,()=>reject(new Error('No se pudo obtener la ubicación actual')), {enableHighAccuracy:true,timeout:10000,maximumAge:60000}));
+    return{type,label:'Ubicación actual',location:{latitude:position.coords.latitude,longitude:position.coords.longitude},address:'Ubicación actual'};
+  }
+  return{type:'shoreham',label:'The Shoreham',address:SHOREHAM_ADDRESS};
+}
+
+function updatePlanPreview(){
+  const type=document.getElementById('planOriginType').value,wrap=document.getElementById('planOriginAddressWrap'),hint=document.getElementById('planOriginHint'),d=currentPlanSelection();
+  wrap.hidden=type!=='custom';
+  if(type==='shoreham')hint.textContent=SHOREHAM_ADDRESS;
+  else if(type==='previous'){const p=previousPlanForOrigin(document.getElementById('planDay').value,document.getElementById('planTime').value);hint.textContent=p?`${p.title} · ${p.address}`:'No hay una actividad anterior todavía.'}
+  else if(type==='current')hint.textContent='La app solicitará permiso de ubicación al calcular.';
+  else hint.textContent='Escribe la dirección exacta desde donde saldrán.';
+  document.getElementById('planEstimatePreview').innerHTML=selectedRouteOption?`<strong style="color:var(--amber)">${escapeHtml(selectedRouteOption.label)}</strong> seleccionado · ${escapeHtml(selectedRouteOption.durationText||'')} · ${escapeHtml(selectedRouteOption.costText||formatMoney(selectedRouteOption.cost||0))}`:`Destino: <strong>${escapeHtml(d.address||'Escribe una dirección')}</strong><br>Presiona <strong>Calcular transporte</strong> para comparar caminando, transporte público y Uber.`
+}
+
+function tripDepartureISO(dayId,time){return `${dayId}T${time||'10:00'}:00-04:00`}
+function routeGroupKey(origin,destination,mode){let s=`${origin}|${destination}|${mode}`,h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return`route-${mode}-${Math.abs(h)}`}
+function routeIcon(mode){return mode==='walk'?'walk':mode==='transit'?'train':'car'}
+
+function renderTransportOptions(options){
+  currentRouteOptions=options||[];const box=document.getElementById('transportResults');box.hidden=false;
+  if(!currentRouteOptions.length){box.innerHTML='<div class="setup-box">No se encontraron rutas para estas direcciones.</div>';return}
+  box.innerHTML=currentRouteOptions.map(o=>`<button type="button" class="transport-option ${selectedRouteOption?.id===o.id?'selected':''} ${o.recommended?'recommended':''}" data-route-option="${escapeHtml(o.id)}"><span class="transport-option-icon">${icon(routeIcon(o.id),20)}</span><span><span class="transport-option-title">${escapeHtml(o.label)}</span><span class="transport-option-meta">${escapeHtml([o.durationText,o.distanceText,o.summary].filter(Boolean).join(' · '))}</span></span><span class="transport-option-price">${escapeHtml(o.costText||formatMoney(o.cost||0))}<small>${escapeHtml(o.priceNote||'')}</small></span></button>`).join('');
+  box.querySelectorAll('[data-route-option]').forEach(b=>b.onclick=()=>{selectedRouteOption=currentRouteOptions.find(o=>o.id===b.dataset.routeOption)||null;renderTransportOptions(currentRouteOptions);updatePlanPreview()});
+}
+
+async function calculatePlanTransport(){
+  const button=document.getElementById('calculateTransport'),box=document.getElementById('transportResults'),d=currentPlanSelection(),travelers=Math.max(1,Math.min(6,Number(document.getElementById('planTravelers').value)||2));
+  if(d.id==='custom'&&!document.getElementById('planCustomTitle').value.trim())return showToast('Escribe el nombre del lugar');
+  if(!d.address)return showToast('Escribe la dirección exacta de llegada');
+  button.disabled=true;button.textContent='Calculando…';box.hidden=false;box.innerHTML='<div class="route-loading"><span class="route-spinner"></span>Buscando las mejores opciones…</div>';
+  try{
+    if(!calculateTransportCallable)throw new Error('El servicio de rutas todavía no está desplegado');
+    const origin=await resolvePlanOrigin(),fallbackTransitCost=d.group==='metlife'?83:d.group==='airport-lga'?65:NYC_TRANSIT_FALLBACK_PER_PERSON*travelers;
+    const response=await calculateTransportCallable({origin,destination:{address:d.address},departureTime:tripDepartureISO(document.getElementById('planDay').value,document.getElementById('planTime').value),travelers,fallbackTransitCost});
+    const options=response.data?.options||[];selectedRouteOption=options.find(o=>o.recommended)||options[0]||null;renderTransportOptions(options);updatePlanPreview();
+  }catch(error){console.error(error);selectedRouteOption=null;box.innerHTML=`<div class="setup-box"><strong>No se pudo calcular todavía.</strong><br>${escapeHtml(error?.message||'Revisa las direcciones y la configuración de Firebase Functions.')}</div>`;updatePlanPreview()}
+  finally{button.disabled=false;button.textContent='Calcular transporte'}
+}
+document.getElementById('calculateTransport').onclick=calculatePlanTransport;
+
+function debouncedPlaceAutocomplete(kind){
+  clearTimeout(routeAutocompleteTimers[kind]);routeAutocompleteTimers[kind]=setTimeout(()=>loadPlaceSuggestions(kind),320)
+}
+async function loadPlaceSuggestions(kind){
+  const input=document.getElementById(kind==='origin'?'planOriginAddress':'planDestinationAddress'),list=document.getElementById(kind==='origin'?'planOriginSuggestions':'planDestinationSuggestions'),value=input.value.trim();
+  if(value.length<3||!autocompletePlacesCallable){list.innerHTML='';return}
+  try{const response=await autocompletePlacesCallable({input:value});list.innerHTML=(response.data?.suggestions||[]).slice(0,6).map(s=>`<option value="${escapeHtml(s.text)}"></option>`).join('')}catch(e){console.debug('Autocomplete no disponible',e);list.innerHTML=''}
+}
+
+document.getElementById('savePlan').onclick=async()=>{
+  const d=currentPlanSelection(),dayId=document.getElementById('planDay').value,time=document.getElementById('planTime').value,notes=document.getElementById('planNotes').value.trim().slice(0,180),travelers=Math.max(1,Math.min(6,Number(document.getElementById('planTravelers').value)||2));
+  if(d.id==='custom'&&!document.getElementById('planCustomTitle').value.trim())return showToast('Escribe el nombre del lugar');if(!d.address)return showToast('Escribe la dirección exacta de llegada');
+  let origin;try{origin=await resolvePlanOrigin()}catch(e){return showToast(e.message)}
+  if(d.id==='ichiran'){const existing=getIchiranPlan();if(existing){if(existing.dayId===dayId)return showToast('Ichiran ya está añadido en este día');if(!confirm(`Ichiran ya está en ${TRIP_DAYS.find(x=>x.id===existing.dayId)?.label}. ¿Moverlo al día seleccionado?`))return;await deleteDoc(doc(db,'trips',TRIP_ID,'plans',existing.id))}}
+  const route=selectedRouteOption;
+  closeOverlay('overlayPlan');queueWrite(addDoc(tripCollection('plans'),{dayId,activityId:d.id,title:d.name,address:d.address||'',destinationAddress:d.address||'',originType:origin.type,originLabel:origin.label,originAddress:origin.address||'',originLocation:origin.location||null,time,travelers,transportMode:route?.label||d.mode||'Sin calcular',routeGroup:route?routeGroupKey(origin.address||origin.label,d.address,route.id):d.group,transportCost:Number(route?.budgetCost??route?.cost??d.cost)||0,routeDuration:route?.durationText||'',routeDistance:route?.distanceText||'',routeSummary:route?.summary||d.route||'',routeSource:route?.source||'legacy',uberUrl:route?.uberUrl||'',mealTransfer:Number(d.mealTransfer)||0,sourceMealDay:d.sourceMealDay||'',icon:d.icon||'pin',notes,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil'}),'Actualizando plan…','Actividad añadida','No se pudo añadir')
+};
 
 function openPacking(){document.getElementById('packName').value='';document.getElementById('packQty').value='1';document.getElementById('packNote').value='';packOwner='Ambos';renderPackOwners();openOverlay('overlayPacking');setTimeout(()=>document.getElementById('packName').focus(),120)}
 function renderPackOwners(){const w=document.getElementById('packOwner');w.innerHTML=['Nicky','Steven','Ambos'].map(n=>`<button class="choice ${packOwner===n?'selected':''}" data-owner="${n}">${n}</button>`).join('');w.querySelectorAll('[data-owner]').forEach(b=>b.onclick=()=>{packOwner=b.dataset.owner;renderPackOwners()})}
