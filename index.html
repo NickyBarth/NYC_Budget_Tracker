@@ -377,6 +377,71 @@ html[data-theme="dark"] .setup-box{background:#151D17;color:#B9C5BB;border-color
 .pull-refresh-text{font-size:10px;font-weight:750;white-space:nowrap}
 @keyframes pullSpin{to{transform:rotate(360deg)}}
 
+/* ===== Add plan: progressive, mobile-first layout ===== */
+.plan-sheet{padding:8px 14px calc(18px + var(--safe-bottom));scroll-padding-bottom:96px}
+.plan-sheet .sheet-handle{margin-bottom:10px}
+.plan-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:2px 4px 14px}
+.plan-sheet-head h2{font-size:29px;line-height:1;margin:3px 0 5px}
+.plan-sheet-head p{font-size:11px;line-height:1.45;color:var(--text-faint);margin:0;max-width:270px}
+.plan-kicker{font-size:8px;line-height:1;text-transform:uppercase;letter-spacing:.18em;font-weight:800;color:var(--amber)}
+.plan-close{width:34px;height:34px;border:1px solid var(--border);border-radius:50%;background:var(--surface-2);color:var(--text-dim);font-size:24px;line-height:1;display:grid;place-items:center;padding:0;cursor:pointer;flex:0 0 auto}
+.plan-block{background:var(--surface);border:1px solid var(--border);border-radius:20px;margin:0 0 12px;overflow:hidden;box-shadow:0 8px 22px rgba(37,59,45,.055)}
+.plan-block-head{display:flex;align-items:center;gap:11px;padding:14px 14px 11px;border-bottom:1px solid var(--border)}
+.plan-step{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:var(--surface-3);color:var(--amber);font-family:var(--mono);font-size:10px;font-weight:700}
+.plan-block-head h3{font-family:var(--display);font-size:20px;line-height:1;margin:0;color:var(--text)}
+.plan-block-head p{font-size:9.5px;line-height:1.35;color:var(--text-faint);margin:3px 0 0}
+.plan-block-body{padding:13px 14px 15px}
+.plan-label{display:block;font-size:9px;line-height:1.2;color:var(--text-faint);font-weight:750;margin:0 0 6px}
+.plan-block-body .plan-label:not(:first-child){margin-top:12px}
+.plan-two-col{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(108px,.75fr);gap:9px}
+.plan-two-col .plan-label{margin-top:0!important}
+.plan-block select,.plan-block .input,.plan-block textarea{border-radius:13px;padding:11px 12px;font-size:12px}
+.plan-block select{min-height:42px}
+.plan-block textarea{min-height:74px}
+.route-point-card{display:grid;grid-template-columns:30px minmax(0,1fr);gap:9px;align-items:flex-start}
+.route-point-dot{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;margin-top:22px;background:var(--amber);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;box-shadow:0 5px 13px rgba(27,67,50,.16)}
+.route-point-dot.destination{background:var(--surface-3);color:var(--amber);border:1px solid var(--border-strong);box-shadow:none}
+.route-point-content{min-width:0}
+.route-connector{width:1px;height:17px;margin:-1px 0 -1px 13px;background:repeating-linear-gradient(to bottom,var(--border-strong) 0 3px,transparent 3px 6px)}
+.route-origin-note{font-size:9.5px;line-height:1.4;margin:6px 2px 0;color:var(--text-faint)}
+.travelers-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:10px 11px;margin-top:13px}
+.travelers-title{display:block;font-size:11px;font-weight:750;color:var(--text)}
+.travelers-sub{display:block;font-size:8.5px;line-height:1.35;color:var(--text-faint);margin-top:2px}
+.travelers-input{width:66px!important;min-width:66px;text-align:center;padding:9px 8px!important;font-family:var(--mono)}
+.route-calc-btn{margin-top:12px;min-height:44px;border-radius:14px;font-size:11px}
+.plan-estimate-preview{margin-top:10px;padding:11px 12px;border-radius:13px;font-size:10px;line-height:1.45;background:var(--surface-2)}
+.transport-results{margin-top:10px;gap:8px}
+.transport-option{position:relative;grid-template-columns:38px minmax(0,1fr) auto;border-radius:15px;padding:11px 12px;gap:10px;background:var(--surface-2)}
+.transport-option:before{content:'';position:absolute;right:10px;top:10px;width:8px;height:8px;border-radius:50%;border:1px solid var(--border-strong);background:transparent}
+.transport-option.selected:before{border-color:var(--amber);background:var(--amber);box-shadow:0 0 0 3px color-mix(in srgb,var(--amber) 14%,transparent)}
+.transport-option-icon{width:38px;height:38px}
+.transport-option-title{font-size:17px}
+.transport-option-meta{font-size:9px;padding-right:5px}
+.transport-option-price{font-size:17px;padding-top:7px}
+.transport-option-price small{font-size:7.5px}
+.transport-option.recommended:after{font-size:7px;margin-top:-3px}
+.plan-block.compact .plan-block-head{border-bottom:0;padding-bottom:8px}
+.plan-block.compact .plan-block-body{padding-top:0}
+.plan-actions{position:sticky;bottom:calc(-18px - var(--safe-bottom));z-index:4;margin:4px -14px 0;padding:12px 14px calc(14px + var(--safe-bottom));background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 24%);backdrop-filter:blur(14px)}
+.plan-actions .btn{min-height:46px;border-radius:14px;font-size:12px}
+.plan-cancel{width:100%;border:0;background:none;color:var(--text-faint);padding:10px 8px 1px;font-size:10px;font-weight:750;cursor:pointer}
+html[data-theme="dark"] .plan-block{background:#111713;border-color:rgba(227,235,225,.09);box-shadow:0 10px 26px rgba(0,0,0,.18)}
+html[data-theme="dark"] .plan-block-head{border-bottom-color:rgba(227,235,225,.08)}
+html[data-theme="dark"] .plan-step,html[data-theme="dark"] .route-point-dot.destination{background:#1D2921;color:#A3B18A;border-color:rgba(163,177,138,.12)}
+html[data-theme="dark"] .plan-close,html[data-theme="dark"] .travelers-row,html[data-theme="dark"] .plan-estimate-preview,html[data-theme="dark"] .transport-option{background:#18211B;border-color:rgba(227,235,225,.09)}
+html[data-theme="dark"] .route-point-dot{background:#789174;color:#0B100D}
+html[data-theme="dark"] .plan-actions{background:linear-gradient(180deg,rgba(11,16,13,0),#0B100D 24%)}
+@media(max-width:390px){
+  .plan-sheet{padding-left:12px;padding-right:12px}
+  .plan-sheet-head{padding-left:2px;padding-right:2px}
+  .plan-sheet-head h2{font-size:27px}
+  .plan-two-col{grid-template-columns:minmax(0,1fr) 104px}
+  .plan-block-head{padding:13px 12px 10px}
+  .plan-block-body{padding:12px}
+  .transport-option{grid-template-columns:36px minmax(0,1fr) auto;padding:10px}
+  .transport-option-price{font-size:16px;max-width:76px}
+}
+
 </style>
 </head>
 <body>
@@ -405,40 +470,77 @@ html[data-theme="dark"] .setup-box{background:#151D17;color:#B9C5BB;border-color
   <button class="btn btn-primary full" id="saveExpense" style="margin-top:18px">Guardar gasto</button><button class="btn btn-secondary full" data-close="overlayExpense" style="margin-top:8px">Cancelar</button>
 </div></div>
 
-<div class="overlay" id="overlayPlan"><div class="sheet"><div class="sheet-handle"></div><h2>Añadir al plan</h2>
-  <div class="field-label">Día</div><select id="planDay"></select>
-  <div class="field-label">Destino o actividad</div><select id="planDestination"></select>
-  <div id="customPlanFields" hidden>
-    <div class="field-label">Nombre del lugar</div><input class="input" id="planCustomTitle" maxlength="80" placeholder="Ej. MoMA">
+<div class="overlay" id="overlayPlan"><div class="sheet plan-sheet"><div class="sheet-handle"></div>
+  <div class="plan-sheet-head">
+    <div><div class="plan-kicker">Nuevo plan</div><h2>Añadir actividad</h2><p>Completa lo esencial y calcula la mejor forma de llegar.</p></div>
+    <button class="plan-close" type="button" data-close="overlayPlan" aria-label="Cerrar">×</button>
   </div>
 
-  <div class="route-section">
-    <div class="field-label">Lugar de salida</div>
-    <select id="planOriginType">
-      <option value="shoreham">The Shoreham</option>
-      <option value="previous">Actividad anterior del día</option>
-      <option value="custom">Otra dirección</option>
-      <option value="current">Mi ubicación actual</option>
-    </select>
-    <div id="planOriginAddressWrap" hidden>
-      <div class="field-label">Dirección exacta de salida</div>
-      <input class="input" id="planOriginAddress" maxlength="160" list="planOriginSuggestions" autocomplete="street-address" placeholder="Ej. 75 9th Ave, New York, NY">
-      <datalist id="planOriginSuggestions"></datalist>
+  <section class="plan-block">
+    <div class="plan-block-head"><span class="plan-step">1</span><div><h3>Actividad</h3><p>Elige el día y el lugar que visitarán.</p></div></div>
+    <div class="plan-block-body">
+      <div class="plan-two-col">
+        <div><label class="plan-label" for="planDay">Día</label><select id="planDay"></select></div>
+        <div><label class="plan-label" for="planTime">Hora</label><input class="input" id="planTime" type="time"></div>
+      </div>
+      <label class="plan-label" for="planDestination">Destino o actividad</label><select id="planDestination"></select>
+      <div id="customPlanFields" hidden>
+        <label class="plan-label" for="planCustomTitle">Nombre del lugar</label><input class="input" id="planCustomTitle" maxlength="80" placeholder="Ej. MoMA">
+      </div>
     </div>
-    <div class="route-origin-note" id="planOriginHint"></div>
+  </section>
 
-    <div class="field-label">Dirección exacta de llegada</div>
-    <input class="input" id="planDestinationAddress" maxlength="160" list="planDestinationSuggestions" autocomplete="street-address" placeholder="Escribe una dirección, lugar o atracción">
-    <datalist id="planDestinationSuggestions"></datalist>
+  <section class="plan-block route-section">
+    <div class="plan-block-head"><span class="plan-step">2</span><div><h3>Ruta y transporte</h3><p>Define el punto de salida y compara las opciones.</p></div></div>
+    <div class="plan-block-body">
+      <div class="route-point-card">
+        <span class="route-point-dot">A</span>
+        <div class="route-point-content">
+          <label class="plan-label" for="planOriginType">Salen desde</label>
+          <select id="planOriginType">
+            <option value="shoreham">The Shoreham</option>
+            <option value="previous">Actividad anterior del día</option>
+            <option value="custom">Otra dirección</option>
+            <option value="current">Mi ubicación actual</option>
+          </select>
+          <div id="planOriginAddressWrap" hidden>
+            <label class="plan-label" for="planOriginAddress">Dirección exacta de salida</label>
+            <input class="input" id="planOriginAddress" maxlength="160" list="planOriginSuggestions" autocomplete="street-address" placeholder="Ej. 75 9th Ave, New York, NY">
+            <datalist id="planOriginSuggestions"></datalist>
+          </div>
+          <div class="route-origin-note" id="planOriginHint"></div>
+        </div>
+      </div>
+      <div class="route-connector" aria-hidden="true"></div>
+      <div class="route-point-card">
+        <span class="route-point-dot destination">B</span>
+        <div class="route-point-content">
+          <label class="plan-label" for="planDestinationAddress">Llegan a</label>
+          <input class="input" id="planDestinationAddress" maxlength="160" list="planDestinationSuggestions" autocomplete="street-address" placeholder="Dirección, lugar o atracción">
+          <datalist id="planDestinationSuggestions"></datalist>
+        </div>
+      </div>
+
+      <div class="travelers-row">
+        <div><span class="travelers-title">Personas</span><span class="travelers-sub">Se usa para calcular el costo total.</span></div>
+        <input class="input travelers-input" id="planTravelers" type="number" min="1" max="6" value="2" aria-label="Cantidad de personas">
+      </div>
+
+      <button class="btn btn-primary full route-calc-btn" id="calculateTransport">Calcular transporte</button>
+      <div class="transport-results" id="transportResults" hidden></div>
+      <div class="setup-box plan-estimate-preview" id="planEstimatePreview"></div>
+    </div>
+  </section>
+
+  <section class="plan-block compact">
+    <div class="plan-block-head"><span class="plan-step">3</span><div><h3>Detalles</h3><p>Opcional: agrega información útil para ese día.</p></div></div>
+    <div class="plan-block-body"><textarea id="planNotes" maxlength="180" placeholder="Reserva, entradas, hora de salida o cualquier recordatorio…"></textarea></div>
+  </section>
+
+  <div class="plan-actions">
+    <button class="btn btn-primary full" id="savePlan">Añadir al día</button>
+    <button class="plan-cancel" type="button" data-close="overlayPlan">Cancelar</button>
   </div>
-
-  <div class="form-grid"><div><div class="field-label">Hora aproximada</div><input class="input" id="planTime" type="time"></div><div><div class="field-label">Personas</div><input class="input" id="planTravelers" type="number" min="1" max="6" value="2"></div></div></div>
-  <div class="field-label">Nota opcional</div><textarea id="planNotes" maxlength="180" placeholder="Reserva, hora de salida, entrada, etc."></textarea>
-
-  <button class="btn btn-secondary full route-calc-btn" id="calculateTransport">Calcular transporte</button>
-  <div class="transport-results" id="transportResults" hidden></div>
-  <div class="setup-box" id="planEstimatePreview" style="margin-top:12px"></div>
-  <button class="btn btn-primary full" id="savePlan" style="margin-top:18px">Añadir al día</button><button class="btn btn-secondary full" data-close="overlayPlan" style="margin-top:8px">Cancelar</button>
 </div></div>
 
 <div class="overlay" id="overlayPacking"><div class="sheet"><div class="sheet-handle"></div><h2>Añadir a la lista</h2>
@@ -692,7 +794,7 @@ async function applyIchiranBudgets(){const ich=getIchiranPlan();if(!ich||ich.day
 function applyBudgetDirect(dayId){const r=recommendation(dayId);return setDoc(doc(db,'trips',TRIP_ID,'budgets',dayId),{dayId,transporte:r.transporte,comida:r.comida,reason:r.reason,updatedBy:state.me||'Sin perfil',updatedAt:serverTimestamp(),updatedAtMs:Date.now()})}
 function addCategory(){const input=document.getElementById('newCategory'),name=input.value.trim().replace(/\s+/g,' ');if(!name)return;if(allCategories().some(c=>c.name.toLowerCase()===name.toLowerCase()))return showToast('La categoría ya existe');input.value='';const hex=CUSTOM_COLORS[state.customCategories.length%CUSTOM_COLORS.length];queueWrite(addDoc(tripCollection('categories'),{name,hex,icon:'tag',createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil'}),'Guardando…','Categoría añadida','No se pudo añadir')}
 
-function openOverlay(id){document.getElementById(id).classList.add('show')}
+function openOverlay(id){const overlay=document.getElementById(id);overlay.classList.add('show');const sheet=overlay.querySelector('.sheet');if(sheet)sheet.scrollTop=0}
 function closeOverlay(id){document.getElementById(id).classList.remove('show')}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeOverlay(b.dataset.close));document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&o.id!=='overlayIdentity')closeOverlay(o.id)}));
 document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;if(state.tab!=='more')state.moreView='menu';render()});
