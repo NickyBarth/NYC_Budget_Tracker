@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NYC Trip · Budget & Plan</title>
-<meta name="theme-color" content="#0F0F10">
+<meta name="theme-color" content="#FAF8F3">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NYC Trip">
 <link rel="apple-touch-icon" sizes="180x180" href="app-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="app-icon.png">
@@ -58,7 +58,7 @@ button,input,select,textarea{font:inherit}
 button{color:inherit}
 ::-webkit-scrollbar{display:none}*{scrollbar-width:none}
 #app{max-width:500px;margin:0 auto;min-height:100vh;position:relative;background:linear-gradient(180deg,rgba(20,16,17,.97),rgba(15,15,16,.995));box-shadow:0 0 80px rgba(0,0,0,.65);transition:background-image .35s ease, background-color .35s ease}
-#app.home-hero-bg{background-image:linear-gradient(180deg,rgba(10,10,11,.10) 0%,rgba(10,10,11,.28) 18%,rgba(10,10,11,.62) 42%,rgba(10,10,11,.86) 60%,rgba(10,10,11,.97) 76%,rgba(10,10,11,.995) 100%),url("hero-nyc.png");background-size:cover;background-position:center top;background-repeat:no-repeat;background-color:#0F0F10}
+#app.home-hero-bg{background-image:linear-gradient(180deg,rgba(10,10,11,.10) 0%,rgba(10,10,11,.28) 18%,rgba(10,10,11,.62) 42%,rgba(10,10,11,.86) 60%,rgba(10,10,11,.97) 76%,rgba(10,10,11,.995) 100%),url("hero-nyc-green.jpg");background-size:cover;background-position:center top;background-repeat:no-repeat;background-color:#0F0F10}
 #app:before{content:"";position:fixed;inset:0;max-width:500px;margin:auto;pointer-events:none;opacity:.13;background-image:linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.02) 50%,transparent 50.2%);background-size:80px 100%}
 header.top{position:sticky;top:0;z-index:25;padding:17px 18px 12px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(15,15,16,.98) 70%,rgba(15,15,16,.72) 90%,transparent);backdrop-filter:blur(16px)}
 #app.home-hero-bg header.top{background:linear-gradient(180deg,rgba(10,10,11,.58) 0%,rgba(10,10,11,.20) 65%,rgba(10,10,11,0) 100%)}
@@ -68,7 +68,7 @@ header.top{position:sticky;top:0;z-index:25;padding:17px 18px 12px;display:flex;
 .brand .eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}.brand h1{font-family:var(--display);font-size:31px;line-height:.95;margin:4px 0 0;font-weight:600;letter-spacing:.035em}.top-actions{display:flex;align-items:center;gap:10px}.sync-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 10px var(--success)}.sync-dot.offline{background:var(--text-faint);box-shadow:none}.sync-dot.pending{background:var(--warning);box-shadow:0 0 10px var(--warning)}.sync-dot.error{background:var(--danger);box-shadow:0 0 10px var(--danger)}
 .profile-btn{width:46px;height:46px;border-radius:50%;padding:2px;border:1px solid rgba(223,169,140,.78);background:linear-gradient(145deg,rgba(91,15,31,.18),rgba(15,15,16,.78));box-shadow:0 0 0 1px rgba(223,169,140,.08),0 10px 20px rgba(0,0,0,.24);position:relative;overflow:hidden;cursor:pointer}.profile-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}.profile-btn .profile-placeholder{display:grid;place-items:center;width:100%;height:100%;color:var(--amber)}
 main{padding:0 17px calc(108px + var(--safe-bottom));position:relative;z-index:1}.section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 1px 12px}.section-title h2{margin:0;font-family:var(--display);font-size:27px;font-weight:600;letter-spacing:.02em}.section-title .sub{font-size:11px;color:var(--text-faint)}
-.home-stage{margin:0 -17px 16px;padding:24px 17px 150px;position:relative;min-height:430px;background-image:linear-gradient(180deg,rgba(10,10,11,.07) 0%,rgba(10,10,11,.15) 20%,rgba(10,10,11,.34) 44%,rgba(10,10,11,.70) 72%,rgba(10,10,11,.96) 94%,rgba(10,10,11,1) 100%),url("hero-nyc.png");background-size:100% auto;background-position:center top;background-repeat:no-repeat;border-radius:0 0 26px 26px;box-shadow:0 14px 28px rgba(0,0,0,.24)}
+.home-stage{margin:0 -17px 16px;padding:24px 17px 150px;position:relative;min-height:430px;background-image:linear-gradient(180deg,rgba(10,10,11,.07) 0%,rgba(10,10,11,.15) 20%,rgba(10,10,11,.34) 44%,rgba(10,10,11,.70) 72%,rgba(10,10,11,.96) 94%,rgba(10,10,11,1) 100%),url("hero-nyc-green.jpg");background-size:100% auto;background-position:center top;background-repeat:no-repeat;border-radius:0 0 26px 26px;box-shadow:0 14px 28px rgba(0,0,0,.24)}
 .home-intro{padding:11px 64px 4px 2px;position:relative}.home-intro .intro-date{font-size:11px;color:var(--stone);font-family:var(--body);font-weight:500;letter-spacing:.01em;opacity:.92}.home-intro .intro-line{width:28px;height:1.5px;background:linear-gradient(90deg,var(--amber),transparent);border-radius:99px;margin:6px 0 10px}.home-intro .intro-title{font-family:var(--display);font-size:50px;line-height:.92;letter-spacing:-.025em;color:var(--stone);text-shadow:0 8px 30px rgba(0,0,0,.42)}
 
 .icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}.icon svg{display:block}
@@ -98,6 +98,127 @@ nav.bottom{position:fixed;z-index:35;left:50%;bottom:0;transform:translateX(-50%
 .setup-box{padding:14px;border:1px solid var(--border-strong);border-radius:14px;background:var(--surface);font-size:11px;color:var(--text-dim);line-height:1.5}.setup-box code{color:var(--amber)}
 @media(max-width:390px){.home-stage{min-height:410px;padding-bottom:142px}.home-intro .intro-title{font-size:44px}.day-chip{min-width:47px;padding:7px 5px}.day-chip .num{font-size:20px}.metric-main{font-size:36px}.ring{width:74px;height:74px}.category-card{grid-template-columns:48px 1fr auto;padding:12px}.category-icon{width:44px;height:44px}.category-name{font-size:17px}.category-amount{font-size:17px}.compare-grid{gap:5px}.compare-box{padding:9px 5px}.fab{right:14px;width:52px;height:52px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+/* ===== Elegant white + green theme ===== */
+:root{
+  --bg:#FAF8F3;
+  --bg-2:#F2EFE6;
+  --surface:#FFFFFF;
+  --surface-2:#FAF8F3;
+  --surface-3:#EEF2EA;
+  --surface-soft:rgba(163,177,138,.16);
+  --border:rgba(27,67,50,.10);
+  --border-strong:rgba(27,67,50,.18);
+  --text:#1B4332;
+  --text-dim:#52685C;
+  --text-faint:#87948B;
+  --amber:#1B4332;
+  --amber-soft:#315F48;
+  --mauve:#A3B18A;
+  --lavender:#789174;
+  --stone:#F2EFE6;
+  --success:#2E7D58;
+  --warning:#B78432;
+  --danger:#B95555;
+  --food:#1B4332;
+  --transport:#6F8F72;
+  --tickets:#94A985;
+}
+html,body{background:#F4F1EA;color:var(--text)}
+body{background-image:linear-gradient(180deg,#F8F6F0 0%,#EFEBE2 100%)}
+#app{background:#FAF8F3;box-shadow:0 0 70px rgba(41,57,48,.16)}
+#app.home-hero-bg{background:#FAF8F3}
+#app:before{display:none}
+header.top{background:rgba(250,248,243,.88);border-bottom:1px solid rgba(27,67,50,.06);backdrop-filter:blur(18px)}
+#app.home-hero-bg header.top{background:transparent;border:0}
+#app.home-mode header.top{top:22px;right:18px}
+.brand .eyebrow{color:#557061}.brand h1{color:#1B4332}
+.profile-btn{width:45px;height:45px;border:2px solid rgba(255,255,255,.90);background:#EEF2EA;box-shadow:0 6px 18px rgba(39,61,48,.18),0 0 0 1px rgba(27,67,50,.10)}
+.profile-btn .profile-placeholder{color:#1B4332}
+main{padding:0 16px calc(108px + var(--safe-bottom))}
+.section-title h2{color:#1B4332}.section-title .sub{color:#7D8C82}
+.home-stage{
+  margin:0 -16px 16px;
+  min-height:505px;
+  padding:30px 16px 16px;
+  background-image:linear-gradient(180deg,rgba(250,248,243,.06) 0%,rgba(250,248,243,.04) 28%,rgba(250,248,243,.16) 54%,rgba(250,248,243,.72) 80%,#FAF8F3 100%),url("hero-nyc-green.jpg");
+  background-size:100% auto;
+  background-position:center top;
+  background-repeat:no-repeat;
+  border-radius:0;
+  box-shadow:none;
+}
+.home-intro{min-height:382px;padding:12px 66px 0 3px}
+.home-intro .intro-date{font-family:var(--body);font-size:13px;font-weight:500;color:#315F48;letter-spacing:.01em}
+.home-intro .intro-line{width:32px;height:1.5px;background:#315F48;margin:7px 0 12px}
+.home-intro .intro-title{font-family:var(--display);font-size:49px;line-height:.92;letter-spacing:-.02em;color:#1B4332;text-shadow:0 1px 0 rgba(255,255,255,.35)}
+.day-strip-wrap{padding:7px;border-radius:22px;background:rgba(255,255,255,.92);border:1px solid rgba(27,67,50,.08);box-shadow:0 12px 28px rgba(45,68,54,.12);backdrop-filter:blur(18px);margin:0}
+.day-strip{gap:5px}
+.day-chip{min-width:50px;border-radius:15px;padding:8px 6px;color:#597064}
+.day-chip .weekday{font-size:7.5px;letter-spacing:.13em}.day-chip .num{font-size:22px}
+.day-chip.active{background:linear-gradient(160deg,#567A5D,#1B4332);border-color:rgba(27,67,50,.12);box-shadow:0 8px 18px rgba(27,67,50,.22)}
+.day-chip.active .weekday,.day-chip.active .num{color:#fff}
+.day-chip.has-plan:not(.active){border-color:rgba(27,67,50,.14);color:#1B4332}
+.card{background:rgba(255,255,255,.94);border:1px solid rgba(27,67,50,.08);box-shadow:0 10px 28px rgba(43,64,51,.08);backdrop-filter:blur(14px)}
+.hero{padding:17px 17px 16px;border-radius:22px}
+.hero:after{display:none}
+.hero.nyc-photo{background:rgba(255,255,255,.95);border-color:rgba(27,67,50,.08);backdrop-filter:blur(14px)}
+.hero.nyc-photo:before{display:none}
+.hero.nyc-photo .hero-label,.hero.nyc-photo .hero-date,.hero.nyc-photo .metric-label,.hero.nyc-photo .metric-sub,.hero.nyc-photo .progress-foot{color:inherit}
+.hero.nyc-photo .hero-title{color:#1B4332;text-shadow:none}
+.hero.nyc-photo .ring:after{background:#fff}
+.hero-label{color:#567A5D}.hero-title{color:#1B4332}.hero-date{color:#687A70}
+.metric-label{color:#597064}.metric-main,.metric-main strong{color:#1B4332}.metric-sub{color:#65766C}
+.ring{--ring-color:#3D704E;background:conic-gradient(var(--ring-color) calc(var(--pct)*1%),#E5E9E2 0)}
+.ring:after{background:#fff}.ring-num{color:#1B4332}.ring-text{color:#66786D}
+.progress{background:#E5E8E3}.progress-fill{background:linear-gradient(90deg,#6F8F72,#315F48)}
+.progress-foot{color:#7C8981}
+.pill{border:1px solid rgba(27,67,50,.08)}
+.pill.good{color:#2E7D58;background:#E8F3EC}.pill.warn{color:#9A6D25;background:#F7EEDB}.pill.over{color:#A33F49;background:#F9E5E6}.pill.neutral{color:#315F48;background:#EDF3EE}
+.category-card{padding:14px 15px;grid-template-columns:50px 1fr auto;gap:12px;border-radius:19px}
+.category-icon{width:46px;height:46px;border-radius:50%;background:#F0F4ED;border:1px solid rgba(27,67,50,.08);color:#1B4332;box-shadow:none}
+.category-icon.transport{color:#486B52;background:#EEF2EA;border-color:rgba(72,107,82,.10)}
+.category-icon.ticket{color:#486B52;background:#F1F4EE;border-color:rgba(72,107,82,.10)}
+.category-name{font-size:19px;color:#1B4332}.category-meta{font-size:10px;color:#6D7C73}
+.category-amount{font-size:19px;color:#1B4332}.category-amount small{color:#7D8A82}
+.mini-progress{background:#E5E8E3}.mini-progress span,.category-content .mini-progress.transport span,.category-content .mini-progress.ticket span{background:#315F48}
+.list-title{color:#7B8980}
+.expense-row,.activity-row,.packing-row{border-bottom-color:rgba(27,67,50,.08)}
+.row-icon{background:#F0F4ED;color:#315F48}.row-title{color:#1B4332}.row-meta{color:#7A887F}.row-amount{color:#1B4332}
+.empty{color:#819087}.empty .empty-icon{color:#486B52;background:#F0F4ED;border-color:rgba(27,67,50,.15)}
+.budget-compare,.excel-plan,.packing-summary,.day-card,.dashboard-stat,.cat-manage-row,.more-card{background:#fff}
+.compare-box{background:#F5F6F2;border-color:rgba(27,67,50,.08)}
+.compare-box .label,.compare-source,.compare-notes{color:#738178}.compare-box .value{color:#1B4332}
+.btn-primary{background:linear-gradient(145deg,#486B52,#1B4332);color:#fff;box-shadow:0 8px 20px rgba(27,67,50,.18)}
+.btn-secondary{background:#EFF3EC;border-color:rgba(27,67,50,.10);color:#315F48}
+.btn-danger{background:#F8E9E9;border-color:#F0D4D4;color:#A64C4C}
+.activity-time{color:#315F48}.activity-row .row-icon{color:#315F48}
+.tabs-inline{background:#EEF2EA;border-color:rgba(27,67,50,.08)}.tabs-inline button{color:#718078}.tabs-inline button.active{background:#fff;color:#1B4332;box-shadow:0 3px 10px rgba(35,58,44,.08)}
+.packing-number,.packing-number span{color:#1B4332}.check-btn{border-color:rgba(27,67,50,.24)}.packing-row.done .check-btn{background:#315F48;border-color:#315F48;color:#fff}.owner-badge{background:#EEF2EA;color:#315F48}
+.day-card-title,.day-card-budget{color:#1B4332}.day-card-date{color:#7D8A82}
+.more-icon{background:#EEF2EA;border-color:rgba(27,67,50,.08);color:#315F48}.more-title{color:#1B4332}.more-sub{color:#7B8980}.back-link{color:#315F48}
+.dashboard-stat .label,.dashboard-stat .sub{color:#7B8980}.dashboard-stat .value{color:#1B4332}
+.cat-manage-row .cat-name,.cat-manage-row .cat-total{color:#1B4332}
+nav.bottom{background:rgba(250,248,243,.96);border-top:1px solid rgba(27,67,50,.08);box-shadow:0 -8px 26px rgba(45,68,54,.08)}
+nav.bottom button{color:#77867D}nav.bottom button.active{color:#1B4332}
+.fab{background:linear-gradient(145deg,#6F8F72,#315F48);color:#fff;box-shadow:0 12px 26px rgba(27,67,50,.26)}
+.overlay{background:rgba(27,45,35,.30)}
+.sheet{background:linear-gradient(180deg,#FFFFFF,#F7F5EF);border-top-color:rgba(27,67,50,.10)}
+.sheet-handle{background:#D6DDD6}.sheet h2{color:#1B4332}.field-label{color:#718078}
+.input,select,textarea{background:#F5F6F2;color:#1B4332;border-color:rgba(27,67,50,.12)}
+.input:focus,select:focus,textarea:focus{border-color:#789174}
+.choice{background:#F3F5F0;color:#52685C;border-color:rgba(27,67,50,.10)}.choice.selected{border-color:#315F48;color:#1B4332;background:#E9F0E9}
+.identity-opt{background:#fff;border-color:rgba(27,67,50,.10)}.identity-opt img{border-color:#315F48}.identity-opt span{color:#1B4332}
+.toast{background:#1B4332;color:#fff;border-color:transparent}
+.setup-box{background:#fff;color:#52685C;border-color:rgba(27,67,50,.10)}.setup-box code{color:#1B4332}
+@media(max-width:390px){
+  .home-stage{min-height:475px}
+  .home-intro{min-height:355px;padding-right:62px}
+  .home-intro .intro-title{font-size:44px}
+  .day-chip{min-width:47px;padding:7px 5px}
+  .day-chip .num{font-size:20px}
+}
+
 </style>
 </head>
 <body>
@@ -208,7 +329,7 @@ const FIXED_CATEGORIES=[
  {id:'transporte',name:'Transporte',icon:'train',hex:'#A89BB5',fixed:true,hasLimit:true},
  {id:'entradas',name:'Entradas',icon:'ticket',hex:'#D9A6C2',fixed:true,hasLimit:false}
 ];
-const CUSTOM_COLORS=['#D07A9D','#8D7DB4','#CC8A5F','#7596A5','#9E8577','#6F9B88'];
+const CUSTOM_COLORS=['#486B52','#789174','#A3B18A','#6D8072','#8B9A86','#B2BCA8'];
 
 const ICON_PATHS={
  home:'<path d="M3 11.5 12 4l9 7.5V21h-6v-6H9v6H3z"/>',
