@@ -10,6 +10,13 @@
 <meta name="apple-mobile-web-app-title" content="NYC Trip">
 <link rel="apple-touch-icon" sizes="180x180" href="app-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="app-icon.png">
+<script>
+(() => {
+  const savedTheme = localStorage.getItem('nyc_trip_theme');
+  const systemTheme = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.dataset.theme = savedTheme || systemTheme;
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -135,6 +142,9 @@ header.top{background:rgba(250,248,243,.88);border-bottom:1px solid rgba(27,67,5
 .brand .eyebrow{color:#557061}.brand h1{color:#1B4332}
 .profile-btn{width:45px;height:45px;border:2px solid rgba(255,255,255,.90);background:#EEF2EA;box-shadow:0 6px 18px rgba(39,61,48,.18),0 0 0 1px rgba(27,67,50,.10)}
 .profile-btn .profile-placeholder{color:#1B4332}
+.theme-toggle{width:41px;height:41px;border-radius:50%;border:1px solid rgba(27,67,50,.10);background:rgba(255,255,255,.88);color:#1B4332;display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:0 6px 18px rgba(39,61,48,.12);backdrop-filter:blur(14px);transition:transform .18s ease,background .2s ease,color .2s ease}
+.theme-toggle:active{transform:scale(.94)}
+#app.home-mode header.top .top-actions{gap:8px}
 main{padding:0 16px calc(108px + var(--safe-bottom))}
 .section-title h2{color:#1B4332}.section-title .sub{color:#7D8C82}
 .home-stage{
@@ -219,13 +229,113 @@ nav.bottom button{color:#77867D}nav.bottom button.active{color:#1B4332}
   .day-chip .num{font-size:20px}
 }
 
+
+/* ===== Dark mode: charcoal + elegant green ===== */
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#090D0A;
+  --bg-2:#0D130F;
+  --surface:#111713;
+  --surface-2:#162019;
+  --surface-3:#1C2A20;
+  --surface-soft:rgba(163,177,138,.10);
+  --border:rgba(227,235,225,.10);
+  --border-strong:rgba(227,235,225,.18);
+  --text:#F0F3EC;
+  --text-dim:#B9C5BB;
+  --text-faint:#819087;
+  --amber:#A3B18A;
+  --amber-soft:#789174;
+  --mauve:#315F48;
+  --lavender:#86A187;
+  --stone:#F0F3EC;
+  --success:#6FC394;
+  --warning:#D5B66E;
+  --danger:#E27C82;
+  --food:#A3B18A;
+  --transport:#789174;
+  --tickets:#9CB595;
+}
+html[data-theme="dark"] body{background:#080C09;background-image:linear-gradient(180deg,#080C09 0%,#0D130F 100%);color:var(--text)}
+html[data-theme="dark"] #app{background:#0B100D;box-shadow:0 0 80px rgba(0,0,0,.65)}
+html[data-theme="dark"] #app.home-hero-bg{background:#0B100D}
+html[data-theme="dark"] header.top{background:rgba(9,13,10,.88);border-bottom-color:rgba(163,177,138,.08)}
+html[data-theme="dark"] #app.home-hero-bg header.top{background:transparent;border:0}
+html[data-theme="dark"] .brand .eyebrow{color:#A3B18A}
+html[data-theme="dark"] .brand h1{color:#F0F3EC}
+html[data-theme="dark"] .theme-toggle{background:rgba(11,16,13,.78);border-color:rgba(240,243,236,.18);color:#F0F3EC;box-shadow:0 7px 20px rgba(0,0,0,.30)}
+html[data-theme="dark"] .profile-btn{border-color:rgba(240,243,236,.82);background:#172019;box-shadow:0 7px 20px rgba(0,0,0,.30),0 0 0 1px rgba(163,177,138,.12)}
+html[data-theme="dark"] .profile-btn .profile-placeholder{color:#A3B18A}
+html[data-theme="dark"] .section-title h2{color:#F0F3EC}
+html[data-theme="dark"] .section-title .sub{color:#819087}
+html[data-theme="dark"] .home-stage{
+  background-image:linear-gradient(180deg,rgba(5,9,6,.05) 0%,rgba(5,9,6,.08) 30%,rgba(5,9,6,.25) 54%,rgba(7,11,8,.76) 80%,#0B100D 100%),url("hero-nyc-night.png");
+  background-color:#0B100D;
+}
+html[data-theme="dark"] .home-intro .intro-date{color:#D9E1D8;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+html[data-theme="dark"] .home-intro .intro-line{background:#A3B18A}
+html[data-theme="dark"] .home-intro .intro-title{color:#F2F5EF;text-shadow:0 5px 24px rgba(0,0,0,.55)}
+html[data-theme="dark"] .day-strip-wrap{background:rgba(13,19,15,.88);border-color:rgba(163,177,138,.14);box-shadow:0 14px 30px rgba(0,0,0,.34)}
+html[data-theme="dark"] .day-chip{color:#99A69D}
+html[data-theme="dark"] .day-chip.active{background:linear-gradient(160deg,#63806A,#315F48);border-color:rgba(163,177,138,.22);box-shadow:0 9px 20px rgba(0,0,0,.30)}
+html[data-theme="dark"] .day-chip.active .weekday,html[data-theme="dark"] .day-chip.active .num{color:#fff}
+html[data-theme="dark"] .day-chip.has-plan:not(.active){border-color:rgba(163,177,138,.18);color:#D8E0D7}
+html[data-theme="dark"] .card,html[data-theme="dark"] .budget-compare,html[data-theme="dark"] .excel-plan,html[data-theme="dark"] .packing-summary,html[data-theme="dark"] .day-card,html[data-theme="dark"] .dashboard-stat,html[data-theme="dark"] .cat-manage-row,html[data-theme="dark"] .more-card{background:rgba(17,23,19,.94);border-color:rgba(227,235,225,.08);box-shadow:0 12px 30px rgba(0,0,0,.25)}
+html[data-theme="dark"] .hero.nyc-photo{background:rgba(17,23,19,.94);border-color:rgba(227,235,225,.08)}
+html[data-theme="dark"] .hero.nyc-photo .hero-label,html[data-theme="dark"] .hero.nyc-photo .hero-date,html[data-theme="dark"] .hero.nyc-photo .metric-label,html[data-theme="dark"] .hero.nyc-photo .metric-sub,html[data-theme="dark"] .hero.nyc-photo .progress-foot{color:inherit}
+html[data-theme="dark"] .hero.nyc-photo .hero-title,html[data-theme="dark"] .hero-title{color:#F0F3EC}
+html[data-theme="dark"] .hero.nyc-photo .ring:after,html[data-theme="dark"] .ring:after{background:#111713}
+html[data-theme="dark"] .hero-label{color:#A3B18A}
+html[data-theme="dark"] .hero-date,html[data-theme="dark"] .metric-sub{color:#B9C5BB}
+html[data-theme="dark"] .metric-label,html[data-theme="dark"] .progress-foot{color:#819087}
+html[data-theme="dark"] .metric-main,html[data-theme="dark"] .metric-main strong,html[data-theme="dark"] .ring-num{color:#F0F3EC}
+html[data-theme="dark"] .ring{--ring-color:#86A187;background:conic-gradient(var(--ring-color) calc(var(--pct)*1%),#27332B 0)}
+html[data-theme="dark"] .ring-text{color:#9DAAA0}
+html[data-theme="dark"] .progress,html[data-theme="dark"] .mini-progress{background:#27322B}
+html[data-theme="dark"] .progress-fill,html[data-theme="dark"] .mini-progress span,html[data-theme="dark"] .category-content .mini-progress.transport span,html[data-theme="dark"] .category-content .mini-progress.ticket span{background:linear-gradient(90deg,#789174,#A3B18A)}
+html[data-theme="dark"] .pill{border-color:rgba(227,235,225,.08)}
+html[data-theme="dark"] .pill.neutral{color:#B8C8B6;background:rgba(163,177,138,.10)}
+html[data-theme="dark"] .category-icon{background:#1A241C;border-color:rgba(163,177,138,.12);color:#B6C5B2}
+html[data-theme="dark"] .category-icon.transport,html[data-theme="dark"] .category-icon.ticket{background:#19221B;border-color:rgba(163,177,138,.10);color:#A3B18A}
+html[data-theme="dark"] .category-name,html[data-theme="dark"] .category-amount,html[data-theme="dark"] .row-title,html[data-theme="dark"] .row-amount,html[data-theme="dark"] .day-card-title,html[data-theme="dark"] .day-card-budget,html[data-theme="dark"] .more-title,html[data-theme="dark"] .dashboard-stat .value,html[data-theme="dark"] .cat-manage-row .cat-name,html[data-theme="dark"] .cat-manage-row .cat-total{color:#F0F3EC}
+html[data-theme="dark"] .category-meta,html[data-theme="dark"] .category-amount small,html[data-theme="dark"] .row-meta,html[data-theme="dark"] .day-card-date,html[data-theme="dark"] .more-sub,html[data-theme="dark"] .dashboard-stat .label,html[data-theme="dark"] .dashboard-stat .sub{color:#8D9B91}
+html[data-theme="dark"] .expense-row,html[data-theme="dark"] .activity-row,html[data-theme="dark"] .packing-row{border-bottom-color:rgba(227,235,225,.08)}
+html[data-theme="dark"] .row-icon,html[data-theme="dark"] .more-icon,html[data-theme="dark"] .empty .empty-icon{background:#19231C;border-color:rgba(163,177,138,.12);color:#A3B18A}
+html[data-theme="dark"] .compare-box{background:#18211B;border-color:rgba(227,235,225,.08)}
+html[data-theme="dark"] .compare-box .label,html[data-theme="dark"] .compare-source,html[data-theme="dark"] .compare-notes{color:#8D9B91}
+html[data-theme="dark"] .compare-box .value{color:#F0F3EC}
+html[data-theme="dark"] .btn-primary{background:linear-gradient(145deg,#789174,#315F48);color:#fff;box-shadow:0 9px 22px rgba(0,0,0,.24)}
+html[data-theme="dark"] .btn-secondary{background:#1B271F;border-color:rgba(163,177,138,.12);color:#C9D3C8}
+html[data-theme="dark"] .tabs-inline{background:#172019;border-color:rgba(227,235,225,.08)}
+html[data-theme="dark"] .tabs-inline button{color:#8D9B91}
+html[data-theme="dark"] .tabs-inline button.active{background:#243128;color:#F0F3EC;box-shadow:none}
+html[data-theme="dark"] .packing-number,html[data-theme="dark"] .packing-number span{color:#F0F3EC}
+html[data-theme="dark"] .owner-badge{background:#1B271F;color:#B8C8B6}
+html[data-theme="dark"] nav.bottom{background:rgba(9,13,10,.96);border-top-color:rgba(227,235,225,.08);box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+html[data-theme="dark"] nav.bottom button{color:#839188}
+html[data-theme="dark"] nav.bottom button.active{color:#A3B18A}
+html[data-theme="dark"] .fab{background:linear-gradient(145deg,#86A187,#315F48);color:#fff;box-shadow:0 13px 28px rgba(0,0,0,.38)}
+html[data-theme="dark"] .overlay{background:rgba(2,5,3,.64)}
+html[data-theme="dark"] .sheet{background:linear-gradient(180deg,#141B16,#0B100D);border-top-color:rgba(227,235,225,.10)}
+html[data-theme="dark"] .sheet-handle{background:#39463D}
+html[data-theme="dark"] .sheet h2{color:#F0F3EC}
+html[data-theme="dark"] .field-label{color:#8D9B91}
+html[data-theme="dark"] .input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#18211B;color:#F0F3EC;border-color:rgba(227,235,225,.11)}
+html[data-theme="dark"] .input:focus,html[data-theme="dark"] select:focus,html[data-theme="dark"] textarea:focus{border-color:#789174}
+html[data-theme="dark"] .choice{background:#18211B;color:#AAB7AC;border-color:rgba(227,235,225,.10)}
+html[data-theme="dark"] .choice.selected{border-color:#789174;color:#F0F3EC;background:#213027}
+html[data-theme="dark"] .identity-opt{background:#151D17;border-color:rgba(227,235,225,.10)}
+html[data-theme="dark"] .identity-opt span{color:#F0F3EC}
+html[data-theme="dark"] .toast{background:#E8EFE7;color:#173221}
+html[data-theme="dark"] .setup-box{background:#151D17;color:#B9C5BB;border-color:rgba(227,235,225,.10)}
+
 </style>
 </head>
 <body>
 <div id="app">
 <header class="top">
   <div class="brand"><div class="eyebrow">Jul 29 — Ago 7, 2026</div><h1>NYC TRIP</h1></div>
-  <div class="top-actions"><div class="sync-dot" id="syncDot" title="Estado de sincronización"></div><button class="profile-btn" id="btnProfile" aria-label="Cambiar perfil"><span class="profile-placeholder" id="profilePlaceholder"></span><img id="profileImage" alt="Perfil" hidden></button></div>
+  <div class="top-actions"><div class="sync-dot" id="syncDot" title="Estado de sincronización"></div><button class="theme-toggle" id="btnTheme" type="button" aria-label="Activar modo oscuro" title="Cambiar tema"></button><button class="profile-btn" id="btnProfile" aria-label="Cambiar perfil"><span class="profile-placeholder" id="profilePlaceholder"></span><img id="profileImage" alt="Perfil" hidden></button></div>
 </header>
 <main id="main"></main>
 <button class="fab" id="fabAdd" aria-label="Agregar"></button>
@@ -336,6 +446,8 @@ const ICON_PATHS={
  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',
  chart:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>',
  more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+ moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/>',
  plus:'<path d="M12 5v14M5 12h14"/>',
  food:'<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3c-2 3-2 7 0 10h3V3zM18 13v8"/>',
  train:'<rect x="5" y="3" width="14" height="16" rx="3"/><path d="M8 7h8M8 12h.01M16 12h.01M8 19l-2 2M16 19l2 2"/>',
@@ -366,6 +478,26 @@ function icon(name,size=20){return `<span class="icon"><svg width="${size}" heig
 document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon,20));
 document.getElementById('fabAdd').innerHTML=icon('plus',25);
 document.getElementById('profilePlaceholder').innerHTML=icon('user',18);
+
+const THEME_STORAGE_KEY='nyc_trip_theme';
+function currentTheme(){return document.documentElement.dataset.theme==='dark'?'dark':'light'}
+function updateThemeButton(){
+  const button=document.getElementById('btnTheme');
+  if(!button)return;
+  const dark=currentTheme()==='dark';
+  button.innerHTML=icon(dark?'sun':'moon',19);
+  button.setAttribute('aria-label',dark?'Activar modo claro':'Activar modo oscuro');
+  button.title=dark?'Modo claro':'Modo oscuro';
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=dark?'#090D0A':'#FAF8F3';
+}
+function applyTheme(theme,{save=true}={}){
+  const resolved=theme==='dark'?'dark':'light';
+  document.documentElement.dataset.theme=resolved;
+  if(save)localStorage.setItem(THEME_STORAGE_KEY,resolved);
+  updateThemeButton();
+}
+updateThemeButton();
 
 const CACHE={expenses:'nyc_expenses_v3',categories:'nyc_categories_v3',plans:'nyc_plans_v1',packing:'nyc_packing_v1',budgets:'nyc_budgets_v1'};
 function readCache(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch(_){return[]}}
@@ -432,7 +564,7 @@ function categoryCardTrip(id,spent){const c=getCategory(id),limit=c?.hasLimit?TR
 function viewCategories(){return `${moreBack('Categorías')}${allCategories().map(c=>`<div class="card cat-manage-row"><div class="category-icon ${c.id==='transporte'?'transport':c.id==='entradas'?'ticket':''}" style="width:38px;height:38px;border-radius:12px">${icon(c.icon||'tag',18)}</div><div class="cat-name">${escapeHtml(c.name)}</div><div class="cat-total">${formatMoney(sum(expensesFor({categoryId:c.id})))}</div>${c.fixed?'':`<button class="row-action danger" data-delete-category="${c.id}">${icon('trash',16)}</button>`}</div>`).join('')}<div class="card" style="padding:14px;margin-top:12px"><div class="field-label" style="margin-top:0">Nueva categoría</div><div style="display:flex;gap:8px"><input class="input" id="newCategory" maxlength="40" placeholder="Ej. Souvenirs"><button class="btn btn-primary" id="addCategory">Añadir</button></div></div>`}
 function viewProfile(){return `${moreBack('Perfil')}<div class="card profile-panel"><img class="profile-large" src="${state.me||'Nicky'}.jpg" alt="${escapeHtml(state.me||'Perfil')}"><h3>${escapeHtml(state.me||'Sin seleccionar')}</h3><p>El perfil identifica quién añadió información. No calcula deudas ni divide gastos.</p><button class="btn btn-primary full" data-change-profile style="margin-top:12px">Cambiar perfil</button></div>`}
 
-function render(){const main=document.getElementById('main');const app=document.getElementById('app');if(!FIREBASE_CONFIGURED){main.innerHTML='<div class="section-title"><h2>Configuración pendiente</h2></div><div class="setup-box">Falta configurar <code>firebaseConfig</code>.</div>';return}main.innerHTML=state.tab==='hoy'?viewHoy():state.tab==='plan'?viewPlan():state.tab==='dias'?viewDias():state.tab==='lista'?viewPacking():viewMore();app.classList.toggle('home-hero-bg',state.tab==='hoy');app.classList.toggle('home-mode',state.tab==='hoy');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));const fab=document.getElementById('fabAdd');fab.style.display=['hoy','plan','lista'].includes(state.tab)?'grid':'none';fab.title=state.tab==='hoy'?'Agregar gasto':state.tab==='plan'?'Añadir actividad':'Añadir artículo';bindDynamic();setProfileUI();updateSync()}
+function render(){const main=document.getElementById('main');const app=document.getElementById('app');if(!FIREBASE_CONFIGURED){main.innerHTML='<div class="section-title"><h2>Configuración pendiente</h2></div><div class="setup-box">Falta configurar <code>firebaseConfig</code>.</div>';return}main.innerHTML=state.tab==='hoy'?viewHoy():state.tab==='plan'?viewPlan():state.tab==='dias'?viewDias():state.tab==='lista'?viewPacking():viewMore();app.classList.toggle('home-hero-bg',state.tab==='hoy');app.classList.toggle('home-mode',state.tab==='hoy');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));const fab=document.getElementById('fabAdd');fab.style.display=['hoy','plan','lista'].includes(state.tab)?'grid':'none';fab.title=state.tab==='hoy'?'Agregar gasto':state.tab==='plan'?'Añadir actividad':'Añadir artículo';bindDynamic();setProfileUI();updateThemeButton();updateSync()}
 function bindDynamic(){document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{selectedDayId=b.dataset.day;render()});document.querySelectorAll('[data-open-day]').forEach(b=>b.onclick=()=>{selectedDayId=b.dataset.openDay;state.tab='hoy';render()});document.querySelectorAll('[data-go-plan]').forEach(b=>b.onclick=()=>{state.tab='plan';render()});document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{state.moreView=b.dataset.more;render()});document.querySelectorAll('[data-change-profile]').forEach(b=>b.onclick=openIdentity);document.querySelectorAll('[data-pack-filter]').forEach(b=>b.onclick=()=>{state.packingFilter=b.dataset.packFilter;render()});
  document.querySelectorAll('[data-delete-expense]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este gasto?'))queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'expenses',b.dataset.deleteExpense)),'Eliminando…','Gasto eliminado','No se pudo eliminar')});
  document.querySelectorAll('[data-delete-plan]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar esta actividad del plan?'))queueWrite(deleteDoc(doc(db,'trips',TRIP_ID,'plans',b.dataset.deletePlan)),'Actualizando plan…','Actividad eliminada','No se pudo eliminar')});
@@ -452,6 +584,7 @@ function closeOverlay(id){document.getElementById(id).classList.remove('show')}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeOverlay(b.dataset.close));document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&o.id!=='overlayIdentity')closeOverlay(o.id)}));
 document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;if(state.tab!=='more')state.moreView='menu';render()});
 document.getElementById('fabAdd').onclick=()=>{if(!state.me)return openIdentity();if(state.tab==='hoy')openExpense();else if(state.tab==='plan')openPlan();else if(state.tab==='lista')openPacking()};
+document.getElementById('btnTheme').onclick=()=>applyTheme(currentTheme()==='dark'?'light':'dark');
 document.getElementById('btnProfile').onclick=openIdentity;
 function openIdentity(){openOverlay('overlayIdentity')}
 document.querySelectorAll('[data-identity]').forEach(b=>b.onclick=()=>{state.me=b.dataset.identity;localStorage.setItem('nyc_trip_identity',state.me);closeOverlay('overlayIdentity');setProfileUI();showToast(`Perfil: ${state.me}`);render()});
