@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NYC Trip">
-<link rel="apple-touch-icon" sizes="180x180" href="app-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="app-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="app-icon.png?v=20260720-2">
+<link rel="icon" type="image/png" sizes="192x192" href="app-icon.png?v=20260720-2">
 <script>
 (() => {
   const savedTheme = localStorage.getItem('nyc_trip_theme');
@@ -333,10 +333,52 @@ html[data-theme="dark"] .identity-opt span{color:#F0F3EC}
 html[data-theme="dark"] .toast{background:#E8EFE7;color:#173221}
 html[data-theme="dark"] .setup-box{background:#151D17;color:#B9C5BB;border-color:rgba(227,235,225,.10)}
 
+
+/* Profile image: keep the selected person's photo visible inside the header circle. */
+.profile-btn > *{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);border-radius:50%}
+.profile-btn img{object-fit:cover;display:block}
+.profile-btn .profile-placeholder{display:grid;place-items:center}
+.profile-btn [hidden]{display:none!important}
+
+/* Native-style pull to refresh for the standalone iPhone shortcut. */
+.pull-refresh{
+  --pull:0px;
+  position:fixed;
+  z-index:90;
+  top:calc(env(safe-area-inset-top,0px) + 8px);
+  left:50%;
+  width:max-content;
+  max-width:calc(100vw - 32px);
+  min-height:38px;
+  padding:8px 13px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--text);
+  background:color-mix(in srgb,var(--surface) 92%,transparent);
+  border:1px solid var(--border-strong);
+  box-shadow:0 10px 28px rgba(0,0,0,.18);
+  backdrop-filter:blur(16px);
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,calc(-64px + var(--pull)));
+  transition:opacity .16s ease,transform .16s ease;
+}
+.pull-refresh.visible{opacity:1;transition:none}
+.pull-refresh.ready{border-color:var(--amber)}
+.pull-refresh.refreshing{opacity:1;transform:translate(-50%,8px);transition:opacity .16s ease,transform .16s ease}
+.pull-refresh-icon{font-size:18px;line-height:1;color:var(--amber);transform:rotate(calc(var(--pull) * 2deg))}
+.pull-refresh.ready .pull-refresh-icon{transform:rotate(180deg)}
+.pull-refresh.refreshing .pull-refresh-icon{animation:pullSpin .72s linear infinite}
+.pull-refresh-text{font-size:10px;font-weight:750;white-space:nowrap}
+@keyframes pullSpin{to{transform:rotate(360deg)}}
+
 </style>
 </head>
 <body>
 <div id="app">
+<div class="pull-refresh" id="pullRefresh" aria-live="polite"><span class="pull-refresh-icon">↻</span><span class="pull-refresh-text" id="pullRefreshText">Desliza para actualizar</span></div>
 <header class="top">
   <div class="brand"><div class="eyebrow">Jul 29 — Ago 7, 2026</div><h1>NYC TRIP</h1></div>
   <div class="top-actions"><div class="sync-dot" id="syncDot" title="Estado de sincronización"></div><button class="theme-toggle" id="btnTheme" type="button" aria-label="Activar modo oscuro" title="Cambiar tema"></button><button class="profile-btn" id="btnProfile" aria-label="Cambiar perfil"><span class="profile-placeholder" id="profilePlaceholder"></span><img id="profileImage" alt="Perfil" hidden></button></div>
@@ -506,7 +548,9 @@ updateThemeButton();
 const CACHE={expenses:'nyc_expenses_v3',categories:'nyc_categories_v3',plans:'nyc_plans_v1',packing:'nyc_packing_v1',budgets:'nyc_budgets_v1'};
 function readCache(key){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch(_){return[]}}
 function writeCache(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){console.warn(e)}}
-let state={tab:'hoy',moreView:'menu',expenses:readCache(CACHE.expenses),customCategories:readCache(CACHE.categories),plans:readCache(CACHE.plans),packing:readCache(CACHE.packing),budgets:readCache(CACHE.budgets),me:localStorage.getItem('nyc_trip_identity')||null,packingFilter:'all',packingMineOnly:false,pending:{expenses:false,categories:false,plans:false,packing:false,budgets:false},syncError:false};
+const PROFILE_IMAGES={Nicky:'Nicky.jpg',Steven:'Steven.jpg'};
+function normalizeIdentity(value){const match=Object.keys(PROFILE_IMAGES).find(name=>name.toLowerCase()===String(value||'').toLowerCase());return match||null}
+let state={tab:'hoy',moreView:'menu',expenses:readCache(CACHE.expenses),customCategories:readCache(CACHE.categories),plans:readCache(CACHE.plans),packing:readCache(CACHE.packing),budgets:readCache(CACHE.budgets),me:normalizeIdentity(localStorage.getItem('nyc_trip_identity')),packingFilter:'all',packingMineOnly:false,pending:{expenses:false,categories:false,plans:false,packing:false,budgets:false},syncError:false};
 let db=null,unsubs=[];
 let selectedDayId=todayId();
 let expenseCategory='comida',expenseWho=null,packOwner='Ambos';
@@ -537,9 +581,25 @@ function transportRecommendation(dayId){const list=plansFor(dayId);if(!list.leng
 function groupLabel(g){return({'metro-brooklyn-lower':'Brooklyn / Lower Manhattan','metro-uptown':'Upper Manhattan','metro-queens':'Queens','metlife':'MetLife','airport-lga':'LGA','walk-midtown':'Midtown','walk-central':'Central Park','walk-chelsea':'Chelsea'})[g]||'Ruta'}
 function recommendation(dayId){const t=transportRecommendation(dayId),f=foodRecommendation(dayId);return{transporte:t.value,comida:f.value,reason:`Transporte: ${t.reason} Comida: ${f.reason}`}}
 
-function setProfileUI(){const img=document.getElementById('profileImage'),ph=document.getElementById('profilePlaceholder');if(state.me){img.src=`${state.me}.jpg`;img.alt=state.me;img.hidden=false;ph.hidden=true}else{img.hidden=true;ph.hidden=false}}
-function queueWrite(promise,pending,success,failure){showToast(pending);promise.then(()=>showToast(success)).catch(e=>{console.error(e);showToast(failure)})}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2500)}
+function setProfileUI(){
+  const img=document.getElementById('profileImage'),ph=document.getElementById('profilePlaceholder');
+  if(!img||!ph)return;
+  const identity=normalizeIdentity(state.me);
+  if(!identity){
+    img.hidden=true;
+    img.removeAttribute('src');
+    ph.hidden=false;
+    return;
+  }
+  state.me=identity;
+  const src=PROFILE_IMAGES[identity];
+  img.alt=`Perfil de ${identity}`;
+  img.onload=()=>{img.hidden=false;ph.hidden=true};
+  img.onerror=()=>{img.hidden=true;ph.hidden=false;console.warn(`No se pudo cargar ${src}`)};
+  ph.hidden=true;
+  img.hidden=false;
+  if(img.getAttribute('src')!==src)img.src=src;
+}
 function updateSync(){const d=document.getElementById('syncDot');d.className='sync-dot';if(state.syncError){d.classList.add('error');d.title='Error de sincronización'}else if(!navigator.onLine){d.classList.add('offline');d.title='Sin conexión'}else if(Object.values(state.pending).some(Boolean)){d.classList.add('pending');d.title='Sincronizando'}else d.title='Sincronizado'}
 window.addEventListener('online',updateSync);window.addEventListener('offline',updateSync);
 
@@ -609,7 +669,7 @@ document.getElementById('fabAdd').onclick=()=>{if(!state.me)return openIdentity(
 document.getElementById('btnTheme').onclick=()=>applyTheme(currentTheme()==='dark'?'light':'dark');
 document.getElementById('btnProfile').onclick=openIdentity;
 function openIdentity(){openOverlay('overlayIdentity')}
-document.querySelectorAll('[data-identity]').forEach(b=>b.onclick=()=>{state.me=b.dataset.identity;localStorage.setItem('nyc_trip_identity',state.me);closeOverlay('overlayIdentity');setProfileUI();showToast(`Perfil: ${state.me}`);render()});
+document.querySelectorAll('[data-identity]').forEach(b=>b.onclick=()=>{state.me=normalizeIdentity(b.dataset.identity);localStorage.setItem('nyc_trip_identity',state.me);closeOverlay('overlayIdentity');setProfileUI();showToast(`Perfil: ${state.me}`);render()});
 
 function openExpense(){expenseCategory='comida';expenseWho=state.me;document.getElementById('expenseAmount').value='';document.getElementById('expenseNote').value='';document.getElementById('expenseDay').innerHTML=TRIP_DAYS.map(d=>`<option value="${d.id}" ${d.id===selectedDayId?'selected':''}>${escapeHtml(d.label)} · ${escapeHtml(d.sub)}</option>`).join('');renderExpenseChoices();openOverlay('overlayExpense');setTimeout(()=>document.getElementById('expenseAmount').focus(),120)}
 function renderExpenseChoices(){const cats=document.getElementById('expenseCategories');cats.innerHTML=allCategories().map(c=>`<button class="choice ${expenseCategory===c.id?'selected':''}" data-exp-cat="${c.id}">${icon(c.icon||'tag',15)} ${escapeHtml(c.name)}</button>`).join('');cats.querySelectorAll('[data-exp-cat]').forEach(b=>b.onclick=()=>{expenseCategory=b.dataset.expCat;renderExpenseChoices()});const who=document.getElementById('expenseWho');who.innerHTML=['Nicky','Steven'].map(n=>`<button class="choice ${expenseWho===n?'selected':''}" data-exp-who="${n}">${n}</button>`).join('');who.querySelectorAll('[data-exp-who]').forEach(b=>b.onclick=()=>{expenseWho=b.dataset.expWho;renderExpenseChoices()})}
@@ -625,6 +685,67 @@ document.getElementById('savePlan').onclick=async()=>{const d=currentPlanSelecti
 function openPacking(){document.getElementById('packName').value='';document.getElementById('packQty').value='1';document.getElementById('packNote').value='';packOwner='Ambos';renderPackOwners();openOverlay('overlayPacking');setTimeout(()=>document.getElementById('packName').focus(),120)}
 function renderPackOwners(){const w=document.getElementById('packOwner');w.innerHTML=['Nicky','Steven','Ambos'].map(n=>`<button class="choice ${packOwner===n?'selected':''}" data-owner="${n}">${n}</button>`).join('');w.querySelectorAll('[data-owner]').forEach(b=>b.onclick=()=>{packOwner=b.dataset.owner;renderPackOwners()})}
 document.getElementById('savePacking').onclick=()=>{const name=document.getElementById('packName').value.trim().replace(/\s+/g,' '),qty=Math.max(1,Math.min(99,Number(document.getElementById('packQty').value)||1)),note=document.getElementById('packNote').value.trim().slice(0,120);if(!name)return showToast('Escribe el artículo');closeOverlay('overlayPacking');queueWrite(addDoc(tripCollection('packing'),{name,category:'General',owner:packOwner,qty,note,done:false,createdAt:serverTimestamp(),createdAtMs:Date.now(),createdBy:state.me||'Sin perfil',updatedAt:serverTimestamp(),updatedAtMs:Date.now(),updatedBy:state.me||'Sin perfil'}),'Añadiendo…','Artículo añadido','No se pudo añadir')};
+
+
+function setupPullToRefresh(){
+  const indicator=document.getElementById('pullRefresh');
+  const label=document.getElementById('pullRefreshText');
+  if(!indicator||!label)return;
+  const threshold=82;
+  const maxPull=128;
+  let startY=0,startX=0,distance=0,tracking=false,refreshing=false;
+
+  const reset=()=>{
+    tracking=false;
+    distance=0;
+    indicator.classList.remove('visible','ready');
+    indicator.style.setProperty('--pull','0px');
+    label.textContent='Desliza para actualizar';
+  };
+
+  window.addEventListener('touchstart',event=>{
+    if(refreshing||window.scrollY>0||document.querySelector('.overlay.show')||event.touches.length!==1)return;
+    const touch=event.touches[0];
+    startY=touch.clientY;
+    startX=touch.clientX;
+    distance=0;
+    tracking=true;
+  },{passive:true});
+
+  window.addEventListener('touchmove',event=>{
+    if(!tracking||refreshing||event.touches.length!==1)return;
+    const touch=event.touches[0];
+    const deltaY=touch.clientY-startY;
+    const deltaX=Math.abs(touch.clientX-startX);
+    if(deltaY<=0||deltaX>deltaY){reset();return}
+    distance=Math.min(maxPull,deltaY*.58);
+    if(distance<8)return;
+    indicator.classList.add('visible');
+    indicator.style.setProperty('--pull',`${distance}px`);
+    const ready=distance>=threshold;
+    indicator.classList.toggle('ready',ready);
+    label.textContent=ready?'Suelta para actualizar':'Desliza para actualizar';
+    if(event.cancelable)event.preventDefault();
+  },{passive:false});
+
+  const finish=()=>{
+    if(!tracking||refreshing)return;
+    const shouldRefresh=distance>=threshold;
+    tracking=false;
+    if(!shouldRefresh){reset();return}
+    refreshing=true;
+    indicator.classList.remove('ready');
+    indicator.classList.add('visible','refreshing');
+    indicator.style.setProperty('--pull','0px');
+    label.textContent='Actualizando…';
+    if(navigator.vibrate)navigator.vibrate(15);
+    setTimeout(()=>window.location.reload(),420);
+  };
+
+  window.addEventListener('touchend',finish,{passive:true});
+  window.addEventListener('touchcancel',()=>{if(!refreshing)reset()},{passive:true});
+}
+setupPullToRefresh();
 
 setProfileUI();render();updateSync();if(FIREBASE_CONFIGURED){try{initializeFirebase()}catch(e){console.error(e);state.syncError=true;updateSync();showToast('Error iniciando Firebase')}}if(!state.me)openIdentity();
 </script>
