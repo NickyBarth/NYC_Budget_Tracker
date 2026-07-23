@@ -735,6 +735,33 @@ function setProfileUI(){
 function updateSync(){const d=document.getElementById('syncDot');d.className='sync-dot';if(state.syncError){d.classList.add('error');d.title='Error de sincronización'}else if(!navigator.onLine){d.classList.add('offline');d.title='Sin conexión'}else if(Object.values(state.pending).some(Boolean)){d.classList.add('pending');d.title='Sincronizando'}else d.title='Sincronizado'}
 window.addEventListener('online',updateSync);window.addEventListener('offline',updateSync);
 
+let toastTimer=null;
+function showToast(message){
+  const toast=document.getElementById('toast');
+  if(!toast)return;
+  clearTimeout(toastTimer);
+  toast.textContent=String(message||'');
+  toast.classList.add('show');
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),2600);
+}
+
+async function queueWrite(writePromise,pendingMessage,successMessage,errorMessage){
+  if(pendingMessage)showToast(pendingMessage);
+  try{
+    await writePromise;
+    state.syncError=false;
+    updateSync();
+    if(successMessage)showToast(successMessage);
+    return true;
+  }catch(error){
+    console.error(error);
+    state.syncError=true;
+    updateSync();
+    showToast(errorMessage||'No se pudo guardar');
+    return false;
+  }
+}
+
 function initializeFirebase(){const app=initializeApp(firebaseConfig);db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});functions=getFunctions(app,ROUTING_REGION);calculateTransportCallable=httpsCallable(functions,'calculateTransport');autocompletePlacesCallable=httpsCallable(functions,'autocompletePlaces');listenCollection('expenses','createdAtMs',CACHE.expenses);listenCollection('categories','createdAtMs',CACHE.categories);listenCollection('plans','createdAtMs',CACHE.plans);listenCollection('packing','createdAtMs',CACHE.packing);listenCollection('budgets','updatedAtMs',CACHE.budgets)}
 function listenCollection(name,orderField,cacheKey){const q=query(tripCollection(name),orderBy(orderField,'asc'));const unsub=onSnapshot(q,{includeMetadataChanges:true},snap=>{let data=snap.docs.map(d=>({id:d.id,...d.data()}));if(name==='categories')data=data.map(c=>({...c,fixed:false,hasLimit:false}));state[name==='categories'?'customCategories':name]=data;writeCache(cacheKey,data.map(cleanForCache));state.pending[name]=snap.metadata.hasPendingWrites;state.syncError=false;updateSync();render()},err=>{console.error(name,err);state.syncError=true;updateSync();showToast(`Error cargando ${name}`)});unsubs.push(unsub)}
 function cleanForCache(o){const x={};for(const[k,v]of Object.entries(o)){if(k!=='createdAt'&&k!=='updatedAt')x[k]=v}return x}
